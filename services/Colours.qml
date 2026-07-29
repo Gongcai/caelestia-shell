@@ -79,7 +79,8 @@ Singleton {
     }
 
     function setMode(mode: string): void {
-        Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-m", mode]);
+        const flavour = mode === "light" ? "latte" : "mocha";
+        Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-n", "catppuccin", "-f", flavour, "-m", mode]);
     }
 
     function reloadHyprRules(): void {

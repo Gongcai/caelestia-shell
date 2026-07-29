@@ -161,6 +161,16 @@ Singleton {
     }
 
     function fetchCityFromCoords(coords: string): void {
+        const namedLocations = {
+            "35.7575847,119.2024296": "五莲县",
+            "34.2946358,108.9416069": "未央区"
+        };
+        if (namedLocations[coords]) {
+            city = namedLocations[coords];
+            cachedCities.set(coords, city);
+            return;
+        }
+
         if (cachedCities.has(coords)) {
             city = cachedCities.get(coords);
             return;
