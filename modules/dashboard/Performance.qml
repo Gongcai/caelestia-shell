@@ -76,7 +76,7 @@ Item {
                         subLabel: Cpu.name
                         usage: Cpu.percentage
                         temperature: Cpu.temperature
-                        accent: Colours.palette.m3primary
+                        accent: Colours.palette.m3cpu
 
                         ServiceRef {
                             service: Cpu

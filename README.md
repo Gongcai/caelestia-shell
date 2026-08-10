@@ -338,6 +338,12 @@ For example, to disable the bar on DP-1:
             "enabled": false,
             "base": 0.85,
             "layers": 0.4
+        },
+        "blur": {
+            "enabled": true,
+            "size": 10,
+            "passes": 4,
+            "vibrancy": 0.2
         }
     },
     "general": {

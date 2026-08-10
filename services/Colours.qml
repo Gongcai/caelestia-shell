@@ -87,12 +87,26 @@ Singleton {
         let rule, trEnabled;
         if (Hypr.usingLua) {
             rule = `eval hl.layer_rule({ match = { namespace = "caelestia-drawers" }, %1 = %2 })`;
-            trEnabled = transparency.enabled;
+            trEnabled = transparency.enabled && GlobalConfig.appearance.blur.enabled;
         } else {
             rule = "keyword layerrule %1 %2, match:namespace caelestia-drawers";
-            trEnabled = transparency.enabled ? 1 : 0;
+            trEnabled = transparency.enabled && GlobalConfig.appearance.blur.enabled ? 1 : 0;
         }
         Hypr.extras.batchMessage([rule.arg("blur").arg(trEnabled), rule.arg("ignore_alpha").arg(Math.max(0, transparency.base - 0.03))]);
+    }
+
+    function applyBlurSettings(): void {
+        const blur = GlobalConfig.appearance.blur;
+        Hypr.extras.applyOptions({
+            "decoration:blur:size": Math.round(blur.size),
+            "decoration:blur:passes": Math.round(blur.passes),
+            "decoration:blur:vibrancy": blur.vibrancy
+        });
+        requestReloadHyprRules();
+    }
+
+    function requestApplyBlurSettings(): void {
+        blurSettingsTimer.restart();
     }
 
     function requestReloadHyprRules(): void {
@@ -104,11 +118,11 @@ Singleton {
         }
     }
 
-    Component.onCompleted: root.requestReloadHyprRules()
+    Component.onCompleted: root.requestApplyBlurSettings()
 
     Connections {
         function onConfigReloaded(): void {
-            root.reloadHyprRules();
+            root.requestApplyBlurSettings();
         }
 
         target: Hypr
@@ -137,6 +151,33 @@ Singleton {
                 root.reloadHyprRules();
                 restart();
             }
+        }
+    }
+
+    Timer {
+        id: blurSettingsTimer
+
+        interval: 50
+        onTriggered: root.applyBlurSettings()
+    }
+
+    Connections {
+        target: GlobalConfig.appearance.blur
+
+        function onEnabledChanged(): void {
+            root.requestReloadHyprRules();
+        }
+
+        function onSizeChanged(): void {
+            root.requestApplyBlurSettings();
+        }
+
+        function onPassesChanged(): void {
+            root.requestApplyBlurSettings();
+        }
+
+        function onVibrancyChanged(): void {
+            root.requestApplyBlurSettings();
         }
     }
 
@@ -267,6 +308,8 @@ Singleton {
         property color m3onTertiary: "#48290c"
         property color m3tertiaryContainer: "#b58763"
         property color m3onTertiaryContainer: "#000000"
+        // Dedicated performance accent: keep CPU distinct from the semantic error/red colour.
+        property color m3cpu: root.light ? "#4c587a" : "#7885a8"
         property color m3error: "#ffb4ab"
         property color m3onError: "#690005"
         property color m3errorContainer: "#93000a"

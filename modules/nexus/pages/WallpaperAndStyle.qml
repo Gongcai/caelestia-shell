@@ -192,18 +192,81 @@ PageBase {
             onToggled: GlobalConfig.background.wallpaperEnabled = checked
         }
 
-        ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Tokens.spacing.extraSmall / 2
 
-            text: qsTr("Transparency")
-            subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
-            checked: Colours.transparency.enabled
-            onToggled: GlobalConfig.appearance.transparency.enabled = checked
+            SectionHeader {
+                first: true
+                text: qsTr("Transparency & blur")
+            }
+
+            ToggleRow {
+                first: true
+                text: qsTr("Transparency")
+                subtext: qsTr("Allow the wallpaper and windows to show through panels")
+                checked: GlobalConfig.appearance.transparency.enabled
+                onToggled: GlobalConfig.appearance.transparency.enabled = checked
+            }
+
+            SliderRow {
+                icon: "opacity"
+                label: qsTr("Surface opacity")
+                value: GlobalConfig.appearance.transparency.base
+                valueLabel: qsTr("%1%").arg(Math.round(value * 100))
+                enabled: GlobalConfig.appearance.transparency.enabled
+                onMoved: v => GlobalConfig.appearance.transparency.base = Math.round(v * 100) / 100
+            }
+
+            SliderRow {
+                icon: "layers"
+                label: qsTr("Layer opacity")
+                value: GlobalConfig.appearance.transparency.layers
+                valueLabel: qsTr("%1%").arg(Math.round(value * 100))
+                enabled: GlobalConfig.appearance.transparency.enabled
+                onMoved: v => GlobalConfig.appearance.transparency.layers = Math.round(v * 100) / 100
+            }
+
+            ToggleRow {
+                text: qsTr("Background blur")
+                subtext: qsTr("Blur transparent Shell surfaces using Hyprland")
+                checked: GlobalConfig.appearance.blur.enabled
+                onToggled: GlobalConfig.appearance.blur.enabled = checked
+            }
+
+            StepperRow {
+                label: qsTr("Blur radius")
+                subtext: qsTr("Hyprland-wide sampling distance used by each pass")
+                value: GlobalConfig.appearance.blur.size
+                from: 1
+                to: 40
+                stepSize: 1
+                enabled: GlobalConfig.appearance.blur.enabled
+                onMoved: v => GlobalConfig.appearance.blur.size = Math.round(v)
+            }
+
+            StepperRow {
+                label: qsTr("Blur passes")
+                subtext: qsTr("Hyprland-wide; higher values are smoother but cost more GPU")
+                value: GlobalConfig.appearance.blur.passes
+                from: 1
+                to: 8
+                stepSize: 1
+                enabled: GlobalConfig.appearance.blur.enabled
+                onMoved: v => GlobalConfig.appearance.blur.passes = Math.round(v)
+            }
+
+            SliderRow {
+                icon: "blur_on"
+                label: qsTr("Blur vibrancy")
+                value: GlobalConfig.appearance.blur.vibrancy
+                valueLabel: qsTr("%1%").arg(Math.round(value * 100))
+                enabled: GlobalConfig.appearance.blur.enabled
+                onMoved: v => GlobalConfig.appearance.blur.vibrancy = Math.round(v * 100) / 100
+            }
         }
 
         ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
-
             last: true
             text: qsTr("Dark theme")
             checked: !Colours.light

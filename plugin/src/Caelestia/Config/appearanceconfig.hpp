@@ -304,6 +304,20 @@ public:
         : ConfigObject(parent) {}
 };
 
+class AppearanceBlur : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_GLOBAL_PROPERTY(bool, enabled, true)
+    CONFIG_GLOBAL_PROPERTY(int, size, 10)
+    CONFIG_GLOBAL_PROPERTY(int, passes, 4)
+    CONFIG_GLOBAL_PROPERTY(qreal, vibrancy, 0.2)
+
+public:
+    explicit AppearanceBlur(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
 class AppearanceConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -315,6 +329,7 @@ class AppearanceConfig : public ConfigObject {
     CONFIG_SUBOBJECT(AppearanceFont, font)
     CONFIG_SUBOBJECT(AppearanceAnim, anim)
     CONFIG_SUBOBJECT(AppearanceTransparency, transparency)
+    CONFIG_SUBOBJECT(AppearanceBlur, blur)
 
 public:
     explicit AppearanceConfig(QObject* parent = nullptr)
@@ -324,7 +339,8 @@ public:
         , m_padding(new AppearancePadding(this))
         , m_font(new AppearanceFont(this))
         , m_anim(new AppearanceAnim(this))
-        , m_transparency(new AppearanceTransparency(this)) {}
+        , m_transparency(new AppearanceTransparency(this))
+        , m_blur(new AppearanceBlur(this)) {}
 };
 
 } // namespace caelestia::config
