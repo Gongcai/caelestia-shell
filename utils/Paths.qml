@@ -32,6 +32,14 @@ Singleton {
         return toLocalFile(path.replace(/~|(\$({?)HOME(}?))+/, home));
     }
 
+    function toFileUrl(path: string): string {
+        if (!path)
+            return "";
+        if (/^[a-z][a-z0-9+.-]*:/i.test(path))
+            return path;
+        return encodeURI(`file://${absolutePath(path)}`);
+    }
+
     function shortenHome(path: string): string {
         return path.replace(home, "~");
     }

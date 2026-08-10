@@ -11,11 +11,12 @@ import qs.services
 Item {
     id: root
 
-    property alias source: img.source
+    property string source
     property alias text: label.text
     property alias radius: imgWrapper.radius
     property alias imgHeight: imgWrapper.implicitHeight
     property bool fillLabel: true
+    property bool video
 
     signal clicked
 
@@ -39,7 +40,7 @@ Item {
             Loader {
                 anchors.centerIn: parent
 
-                opacity: img.status === Image.Ready ? 0 : 1
+                opacity: root.video || img.status === Image.Ready ? 0 : 1
                 active: opacity > 0
 
                 sourceComponent: StyledRect {
@@ -65,12 +66,21 @@ Item {
                 }
             }
 
+            MaterialIcon {
+                anchors.centerIn: parent
+                visible: root.video
+                text: "video_library"
+                color: Colours.palette.m3onSurfaceVariant
+                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
+            }
+
             Image {
                 id: img
 
                 anchors.fill: parent
                 asynchronous: true
                 fillMode: Image.PreserveAspectCrop
+                source: root.video ? "" : root.source
                 sourceSize: {
                     const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
                     return Qt.size(width * dpr, height * dpr);

@@ -71,6 +71,8 @@ class BackgroundConfig : public ConfigObject {
 
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(bool, wallpaperEnabled, true)
+    // Empty means inherit the global wallpaper selection.
+    CONFIG_PROPERTY(QString, wallpaperPath, QString())
     CONFIG_SUBOBJECT(DesktopClock, desktopClock)
     CONFIG_SUBOBJECT(BackgroundVisualiser, visualiser)
 

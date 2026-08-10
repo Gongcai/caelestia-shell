@@ -6,12 +6,14 @@ import qs.components
 import qs.components.effects
 import qs.components.images
 import qs.services
+import qs.utils
 
 Item {
     id: root
 
     required property FileSystemEntry modelData
     required property ScreenState screenState
+    readonly property bool video: Images.isValidVideoByName(modelData.path)
 
     scale: 0.5
     opacity: 0
@@ -59,14 +61,15 @@ Item {
 
         MaterialIcon {
             anchors.centerIn: parent
-            text: "image"
+            text: root.video ? "video_library" : "image"
             color: Colours.tPalette.m3outline
             fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.DemiBold).build()
         }
 
         CachingImage {
             anchors.fill: parent
-            path: root.modelData.path
+            visible: !root.video
+            path: root.video ? "" : root.modelData.path
             smooth: !root.PathView.view.moving
             sourceSize: {
                 const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;

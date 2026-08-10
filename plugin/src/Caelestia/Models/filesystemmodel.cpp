@@ -6,6 +6,16 @@
 
 namespace caelestia::models {
 
+namespace {
+
+bool isVideoFile(const QString& path) {
+    const auto suffix = QFileInfo(path).suffix().toLower();
+    return suffix == QStringLiteral("mp4") || suffix == QStringLiteral("m4v") || suffix == QStringLiteral("webm") ||
+           suffix == QStringLiteral("mkv") || suffix == QStringLiteral("mov");
+}
+
+} // namespace
+
 FileSystemEntry::FileSystemEntry(const QString& path, const QString& relativePath, QObject* parent)
     : QObject(parent)
     , m_fileInfo(path)
@@ -302,6 +312,7 @@ void FileSystemModel::updateEntriesForDir(const QString& dir) {
             for (const auto& format : formats) {
                 extraNameFilters << "*." + format;
             }
+            extraNameFilters << "*.mp4" << "*.m4v" << "*.webm" << "*.mkv" << "*.mov";
 
             QDir::Filters filters = QDir::Files;
             if (showHidden) {
@@ -341,7 +352,7 @@ void FileSystemModel::updateEntriesForDir(const QString& dir) {
 
             if (filter == Images) {
                 QImageReader reader(path);
-                if (!reader.canRead()) {
+                if (!reader.canRead() && !isVideoFile(path)) {
                     continue;
                 }
             }

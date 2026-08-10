@@ -35,7 +35,7 @@
 }: let
   version = "1.0.0";
 
-  qs = quickshell.withModules [qt6.qtimageformats];
+  qs = quickshell.withModules [qt6.qtimageformats qt6.qtmultimedia];
 
   runtimeDeps =
     [

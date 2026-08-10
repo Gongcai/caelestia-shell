@@ -86,6 +86,7 @@ Dependencies:
 -   [`libpipewire`](https://pipewire.org)
 -   `glibc`
 -   `qt6-declarative`
+-   `qt6-multimedia` (for video wallpapers)
 -   `gcc-libs`
 -   [`material-symbols`](https://fonts.google.com/icons)
 -   [`caskaydia-cove-nerd`](https://www.nerdfonts.com/font-downloads)
@@ -189,6 +190,17 @@ by default. To change it, change the wallpapers path in `~/.config/caelestia/she
 
 To set the wallpaper, you can use the command `caelestia wallpaper`. Use `caelestia wallpaper -h` for more info about
 the command.
+
+Video wallpapers can be selected from the shell's wallpaper page. They are played silently and looped using Qt
+Multimedia. Selecting a regular image wallpaper switches back to image mode. The selected video path is stored in
+`~/.local/state/caelestia/wallpaper/video.txt`.
+
+The wallpaper page scans the configured wallpaper directory for images and videos (`mp4`, `m4v`, `webm`, `mkv`, and
+`mov`). A separate wallpaper can be selected for each display; display-specific choices are stored in
+`~/.config/caelestia/monitors/<display>/shell.json`, and can be cleared to inherit the global wallpaper again.
+
+Caelestia starts video playback with NVIDIA CUDA/NVDEC when launched through `shell-switch`. Video playback pauses
+automatically while Game mode is enabled and resumes when it is disabled.
 
 ## Updating
 

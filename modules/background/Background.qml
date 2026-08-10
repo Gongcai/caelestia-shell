@@ -15,6 +15,7 @@ Variants {
         id: win
 
         required property ShellScreen modelData
+        readonly property string effectiveWallpaper: Wallpapers.pathForScreen(modelData.name)
 
         screen: modelData
         name: "background"
@@ -47,7 +48,23 @@ Variants {
                 anchors.fill: parent
                 active: Config.background.wallpaperEnabled
 
-                sourceComponent: Wallpaper {}
+                sourceComponent: Wallpapers.isVideoPath(win.effectiveWallpaper) ? videoWallpaperComponent : imageWallpaperComponent
+            }
+
+            Component {
+                id: imageWallpaperComponent
+
+                Wallpaper {
+                    source: win.effectiveWallpaper
+                }
+            }
+
+            Component {
+                id: videoWallpaperComponent
+
+                VideoWallpaper {
+                    source: win.effectiveWallpaper
+                }
             }
 
             Visualiser {

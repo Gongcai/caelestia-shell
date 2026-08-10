@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.Models
 import qs.services
+import qs.utils
 import qs.modules.nexus.common
 
 PageBase {
@@ -41,9 +42,10 @@ PageBase {
                 enabled: modelData
 
                 source: String(modelData?.path ?? "")
+                video: Images.isValidVideoByName(String(modelData?.path ?? ""))
                 text: modelData?.name ?? ""
                 onClicked: {
-                    Wallpapers.setWallpaper(modelData.path);
+                    Wallpapers.setWallpaperForScreen(root.nState.selectedWallpaperScreen || root.nState.screen.name, modelData.path);
                     root.nState.closeSubPage();
                     root.nState.closeSubPage();
                 }

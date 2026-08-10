@@ -16,8 +16,16 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
+    readonly property string targetScreen: nState.selectedWallpaperScreen || nState.screen.name
+    readonly property string screenOverride: String(targetScreen ? GlobalConfig.forScreen(targetScreen).background.wallpaperPath ?? "" : "")
+
     title: qsTr("Wallpapers")
     isSubPage: true
+
+    Component.onCompleted: {
+        if (!nState.selectedWallpaperScreen)
+            nState.selectedWallpaperScreen = nState.screen.name;
+    }
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -25,8 +33,47 @@ PageBase {
         width: root.cappedWidth
         spacing: Tokens.spacing.small
 
-        ButtonRow {
+        StyledText {
+            text: qsTr("Target display")
+            font: Tokens.font.title.small
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Tokens.spacing.small
+
+            Repeater {
+                model: Screens.screens
+
+                IconTextButton {
+                    required property ShellScreen modelData
+
+                    Layout.fillWidth: true
+                    icon: "monitor"
+                    text: modelData.name
+                    font: Tokens.font.body.medium
+                    isRound: true
+                    shapeMorph: true
+                    type: modelData.name === root.targetScreen ? IconTextButton.Filled : IconTextButton.Tonal
+                    onClicked: root.nState.selectedWallpaperScreen = modelData.name
+                }
+            }
+        }
+
+        IconTextButton {
+            Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: Tokens.spacing.medium
+            icon: "language"
+            text: qsTr("Use global wallpaper")
+            font: Tokens.font.body.medium
+            isRound: true
+            shapeMorph: true
+            type: IconTextButton.Text
+            disabled: !root.screenOverride
+            onClicked: Wallpapers.clearWallpaperForScreen(root.targetScreen)
+        }
+
+        ButtonRow {
             Layout.alignment: Qt.AlignHCenter
             spacing: Tokens.spacing.small
 
@@ -47,7 +94,31 @@ PageBase {
                     filterLabel: qsTr("Image files")
                     filters: Images.validImageExtensions
                     onAccepted: path => {
-                        Wallpapers.setWallpaper(path);
+                        Wallpapers.setWallpaperForScreen(root.targetScreen, path);
+                        root.nState.closeSubPage();
+                    }
+                }
+            }
+
+            IconTextButton {
+                icon: "video_library"
+                text: qsTr("Video")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                onClicked: videoDialog.open()
+
+                FileDialog {
+                    id: videoDialog
+
+                    cwd: ["Videos"]
+                    title: qsTr("Select a video")
+                    filterLabel: qsTr("Video files")
+                    filters: Images.validVideoExtensions
+                    onAccepted: path => {
+                        Wallpapers.setWallpaperForScreen(root.targetScreen, path);
                         root.nState.closeSubPage();
                     }
                 }
@@ -63,7 +134,7 @@ PageBase {
                 verticalPadding: Tokens.padding.medium
                 type: IconTextButton.Tonal
                 onClicked: {
-                    Wallpapers.setRandom();
+                    Wallpapers.setRandomForScreen(root.targetScreen);
                     root.nState.closeSubPage();
                 }
             }
@@ -76,7 +147,7 @@ PageBase {
             text: qsTr("Featured wallpaper")
             fillLabel: false
             onClicked: {
-                Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
+                Wallpapers.setWallpaperForScreen(root.targetScreen, Quickshell.shellPath("assets/wallpaper.webp"));
                 root.nState.closeSubPage();
             }
         }
@@ -127,6 +198,7 @@ PageBase {
                     enabled: modelData
 
                     source: String(modelData?.path ?? "")
+                    video: Images.isValidVideoByName(String(modelData?.path ?? ""))
                     text: {
                         if (!modelData)
                             return "";
@@ -142,7 +214,7 @@ PageBase {
                             root.nState.selectedWallpaperCategory = Wallpapers.getCategoryFor(modelData);
                             root.nState.openSubPage(2); // Category page
                         } else {
-                            Wallpapers.setWallpaper(modelData.path);
+                            Wallpapers.setWallpaperForScreen(root.targetScreen, modelData.path);
                             root.nState.closeSubPage();
                         }
                     }

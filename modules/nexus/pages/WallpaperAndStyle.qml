@@ -13,6 +13,9 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
+    readonly property string effectiveWallpaper: Wallpapers.pathForScreen(nState.screen.name)
+    readonly property bool videoWallpaper: Wallpapers.isVideoPath(effectiveWallpaper)
+
     title: qsTr("Wallpaper & style")
 
     ColumnLayout {
@@ -114,16 +117,25 @@ PageBase {
 
                     interval: 100
                     onTriggered: {
-                        if (wallImg.status !== Image.Ready)
+                        if (!root.videoWallpaper && wallImg.status !== Image.Ready)
                             wallIndicatorLoader.opacity = 1;
                     }
+                }
+
+                MaterialIcon {
+                    anchors.centerIn: parent
+                    visible: root.videoWallpaper
+                    text: "video_library"
+                    color: Colours.palette.m3onSurfaceVariant
+                    fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
                 }
 
                 FadeImage {
                     id: wallImg
 
                     anchors.fill: parent
-                    source: Wallpapers.current
+                    visible: !root.videoWallpaper
+                    source: root.videoWallpaper ? "" : root.effectiveWallpaper
                     preventInit: wallIndicatorLoader.opacity > 0
                     fadeOutAnim: Anim.DefaultEffects
                     fadeInAnim: Anim.SlowEffects
@@ -154,7 +166,10 @@ PageBase {
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
                 disabled: !Config.background.wallpaperEnabled
-                onClicked: root.nState.openSubPage(1) // Wallpaper page
+                onClicked: {
+                    root.nState.selectedWallpaperScreen = root.nState.screen.name;
+                    root.nState.openSubPage(1); // Wallpaper page
+                }
             }
 
             IconTextButton {
