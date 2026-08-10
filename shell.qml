@@ -11,12 +11,19 @@ import "modules/areapicker"
 import "modules/lock"
 import QtQuick
 import Quickshell
+import Caelestia.Config
 import qs.services
 
 ShellRoot {
     id: root
 
     settings.watchFiles: true
+
+    Binding {
+        target: I18n
+        property: "language"
+        value: GlobalConfig.general.language
+    }
 
     Binding {
         target: ShellState

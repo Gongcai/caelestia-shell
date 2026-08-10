@@ -91,6 +91,7 @@ class GeneralConfig : public ConfigObject {
     QML_ANONYMOUS
 
     CONFIG_GLOBAL_PROPERTY(QString, logo)
+    CONFIG_GLOBAL_PROPERTY(QString, language, u"en_US"_s)
     CONFIG_PROPERTY(bool, showOverFullscreen, false)
     CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
     CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)

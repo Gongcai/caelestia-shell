@@ -28,6 +28,16 @@ PageBase {
             text: qsTr("12-hour")
         }
     ]
+    readonly property list<MenuItem> languageItems: [
+        MenuItem {
+            readonly property string code: "en_US"
+            text: "English"
+        },
+        MenuItem {
+            readonly property string code: "zh_CN"
+            text: "简体中文"
+        }
+    ]
 
     title: qsTr("Language & region")
 
@@ -43,48 +53,14 @@ PageBase {
             text: qsTr("Language")
         }
 
-        // Read-only: the shell follows the system locale (no in-shell translations yet)
-        ConnectedRect {
-            Layout.fillWidth: true
+        SelectRow {
             first: true
             last: true
-            implicitHeight: localeLayout.implicitHeight + localeLayout.anchors.margins * 2
-
-            RowLayout {
-                id: localeLayout
-
-                anchors.fill: parent
-                anchors.margins: Tokens.padding.medium
-                anchors.leftMargin: Tokens.padding.largeIncreased
-                anchors.rightMargin: Tokens.padding.largeIncreased
-                spacing: Tokens.spacing.medium
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("System language")
-                        font: Tokens.font.body.small
-                        elide: Text.ElideRight
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: qsTr("Follows your system locale (%1)").arg(Qt.locale().name)
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                        elide: Text.ElideRight
-                    }
-                }
-
-                StyledText {
-                    text: Qt.locale().nativeLanguageName || Qt.locale().name
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
-                }
-            }
+            label: qsTr("Interface language")
+            subtext: qsTr("Language used across the shell")
+            menuItems: root.languageItems
+            active: root.languageItems.find(item => item.code === GlobalConfig.general.language) ?? root.languageItems[0]
+            onSelected: item => GlobalConfig.general.language = item.code
         }
 
         // Weather

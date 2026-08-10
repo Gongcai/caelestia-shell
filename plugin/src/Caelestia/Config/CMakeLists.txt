@@ -5,6 +5,8 @@ qml_module(caelestia-config
         configattached.cpp
         configobject.cpp
         rootconfig.cpp
+        i18n.cpp
+        i18n.hpp
         appearanceconfig.cpp
         font.cpp
         fontbuilder.cpp
@@ -31,4 +33,13 @@ qml_module(caelestia-config
     LIBRARIES
         Qt::Quick
         Qt::QuickControls2
+)
+
+set_source_files_properties(translations/caelestia_zh_CN.qm PROPERTIES
+    QT_RESOURCE_ALIAS caelestia_zh_CN.qm
+)
+qt_add_resources(caelestia-config "caelestia-translations"
+    PREFIX "/caelestia/i18n"
+    FILES
+        translations/caelestia_zh_CN.qm
 )
