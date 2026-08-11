@@ -128,7 +128,8 @@ StyledWindow {
             root.screenState.launcher = false;
             root.screenState.session = false;
             root.screenState.sidebar = false;
-            root.screenState.dashboard = false;
+            if (!panels.dashboard.modalActive)
+                root.screenState.dashboard = false;
             panels.popouts.hasCurrent = false;
             bar.closeTray();
         }

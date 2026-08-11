@@ -12,6 +12,7 @@ QtObject {
 
     property string selectedWallpaperCategory
     property string selectedWallpaperScreen
+    property string selectedWidgetScreen
     property BluetoothDevice selectedBtDevice
     property DesktopEntry selectedApp
     property int editingVpnIndex: -1

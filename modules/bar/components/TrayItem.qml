@@ -11,6 +11,7 @@ MouseArea {
     id: root
 
     required property SystemTrayItem modelData
+    readonly property bool needsContrastRecolour: ["nm-applet", "Fcitx"].includes(modelData.id)
 
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     implicitWidth: Tokens.font.body.small.pointSize * 2
@@ -29,6 +30,6 @@ MouseArea {
         anchors.fill: parent
         source: Icons.getTrayIcon(root.modelData.id, root.modelData.icon)
         colour: Colours.palette.m3secondary
-        layer.enabled: Config.bar.tray.recolour
+        layer.enabled: Config.bar.tray.recolour || root.needsContrastRecolour
     }
 }

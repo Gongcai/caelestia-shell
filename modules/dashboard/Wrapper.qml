@@ -23,6 +23,11 @@ Item {
                 Quickshell.execDetached(["notify-send", "-a", "caelestia-shell", "-u", "critical", "Unable to change profile picture", `Failed to change profile picture to ${Paths.shortenHome(path)}`]);
         }
     }
+    readonly property FileDialog kdeConnectFilePicker: FileDialog {
+        title: qsTr("Send a file")
+        filterLabel: qsTr("Files")
+    }
+    readonly property bool modalActive: facePicker.opened || kdeConnectFilePicker.opened
 
     readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
     readonly property bool shouldBeActive: screenState.dashboard && Config.dashboard.enabled
@@ -49,6 +54,7 @@ Item {
         sourceComponent: Content {
             screenState: root.screenState
             facePicker: root.facePicker
+            kdeConnectFilePicker: root.kdeConnectFilePicker
         }
     }
 }

@@ -37,6 +37,24 @@ Singleton {
         return true;
     }
 
+    function clearAll(): void {
+        const pending = [];
+        const notifications = root.list.slice();
+
+        // Remove the model in one update so delegates and bindings do not
+        // process a full list filter for every notification.
+        root.list = [];
+        for (const notif of notifications) {
+            notif.closed = true;
+            notif.notification?.dismiss();
+            if (notif.locks.size > 0)
+                pending.push(notif);
+            else
+                notif.destroy();
+        }
+        root.list = pending;
+    }
+
     onDndChanged: {
         if (!GlobalConfig.utilities.toasts.dndChanged)
             return;
@@ -136,15 +154,13 @@ Singleton {
         name: "clearNotifs"
         description: "Clear all notifications"
         onPressed: {
-            for (const notif of root.list.slice())
-                notif.close();
+            root.clearAll();
         }
     }
 
     IpcHandler {
         function clear(): void {
-            for (const notif of root.list.slice())
-                notif.close();
+            root.clearAll();
         }
 
         function isDndEnabled(): bool {

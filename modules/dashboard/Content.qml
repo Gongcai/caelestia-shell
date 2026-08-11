@@ -14,6 +14,7 @@ Item {
 
     required property ScreenState screenState
     required property FileDialog facePicker
+    required property FileDialog kdeConnectFilePicker
 
     readonly property var dashboardTabs: {
         const allTabs = [
@@ -40,6 +41,12 @@ Item {
                 iconName: "cloud",
                 text: qsTr("Weather"),
                 enabled: Config.dashboard.showWeather
+            },
+            {
+                component: kdeConnectComponent,
+                iconName: "devices_other",
+                text: qsTr("KDE Connect"),
+                enabled: Config.dashboard.showKdeConnect
             }
         ];
         return allTabs.filter(tab => tab.enabled);
@@ -179,6 +186,14 @@ Item {
                 id: weatherComponent
 
                 WeatherTab {}
+            }
+
+            Component {
+                id: kdeConnectComponent
+
+                KdeConnect {
+                    filePicker: root.kdeConnectFilePicker
+                }
             }
 
             Behavior on contentX {

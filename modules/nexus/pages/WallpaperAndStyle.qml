@@ -197,6 +197,24 @@ PageBase {
             spacing: Tokens.spacing.extraSmall / 2
 
             SectionHeader {
+                text: qsTr("Desktop")
+            }
+
+            NavRow {
+                first: true
+                last: true
+                icon: "widgets"
+                text: qsTr("Desktop widgets")
+                subtext: qsTr("Clock and per-display placement")
+                onClicked: root.nState.openSubPage(4)
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Tokens.spacing.extraSmall / 2
+
+            SectionHeader {
                 first: true
                 text: qsTr("Transparency & blur")
             }

@@ -9,6 +9,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
+import qs.utils
 
 CustomMouseArea {
     id: root
@@ -16,6 +17,7 @@ CustomMouseArea {
     required property ScreenState screenState
 
     property date currentDate: screenState.dashboardDate
+    readonly property bool showLunar: screenState.dashboardLunar
     readonly property int currMonth: currentDate.getMonth()
     readonly property int currYear: currentDate.getFullYear()
     readonly property int nonAnimCurrMonth: screenState.dashboardDate.getMonth()
@@ -118,11 +120,7 @@ CustomMouseArea {
                 StateLayer {
                     color: Colours.palette.m3primary
                     radius: pressed ? Tokens.rounding.small : height / 2
-                    disabled: {
-                        const now = new Date();
-                        return root.nonAnimCurrMonth === now.getMonth() && root.nonAnimCurrYear === now.getFullYear();
-                    }
-                    onClicked: root.screenState.dashboardDate = new Date()
+                    onClicked: root.screenState.dashboardLunar = !root.screenState.dashboardLunar
 
                     Behavior on radius {
                         Anim {
@@ -140,7 +138,7 @@ CustomMouseArea {
                     }
 
                     anchors.centerIn: parent
-                    text: grid.title
+                    text: root.showLunar ? qsTr("Lunar %1").arg(Lunar.monthLabel(root.currYear, root.currMonth)) : grid.title
                     color: Colours.palette.m3primary
                     font: Tokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
                 }
@@ -206,7 +204,7 @@ CustomMouseArea {
                         anchors.centerIn: parent
 
                         horizontalAlignment: Text.AlignHCenter
-                        text: grid.locale.toString(dayItem.model.day)
+                        text: root.showLunar ? (Lunar.fromDate(dayItem.model.date)?.day ?? "") : grid.locale.toString(dayItem.model.day)
                         color: {
                             const dayOfWeek = dayItem.model.date.getDay();
                             if (dayOfWeek === 0 || dayOfWeek === 6)

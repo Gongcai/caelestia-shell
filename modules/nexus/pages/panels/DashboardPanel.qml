@@ -63,10 +63,17 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: qsTr("Weather")
             checked: Config.dashboard.showWeather
             onToggled: GlobalConfig.dashboard.showWeather = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("KDE Connect")
+            subtext: qsTr("Phone and device controls in the dashboard")
+            checked: Config.dashboard.showKdeConnect
+            onToggled: GlobalConfig.dashboard.showKdeConnect = checked
         }
 
         // Performance widgets

@@ -9,6 +9,7 @@ import qs.services
 LazyLoader {
     id: loader
 
+    readonly property bool opened: active || activeAsync
     property list<string> cwd: ["Home"]
     property string filterLabel: "All files"
     property list<string> filters: ["*"]

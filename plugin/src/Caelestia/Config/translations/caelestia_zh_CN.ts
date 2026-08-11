@@ -443,12 +443,12 @@
     <message>
         <location filename="../../../../../services/Audio.qml" line="+103"/>
         <source>Unknown</source>
-        <translation>未知</translation>
+        <translation type="unfinished">未知</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Application</source>
-        <translation>未知应用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+28"/>
@@ -456,23 +456,23 @@
         <location line="+12"/>
         <location line="+1"/>
         <source>Unknown Device</source>
-        <translation>未知设备</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Audio output changed</source>
-        <translation>音频输出已更改</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+12"/>
         <source>Now using: %1</source>
-        <translation>现在使用：%1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Audio input changed</source>
-        <translation>音频输入已更改</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -886,7 +886,7 @@
     <message>
         <location line="+13"/>
         <source>Full</source>
-        <translation>满的</translation>
+        <translation>已充满</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1171,6 +1171,14 @@
     </message>
 </context>
 <context>
+    <name>Calendar</name>
+    <message>
+        <location filename="../../../../../modules/dashboard/dash/Calendar.qml" line="+141"/>
+        <source>Lunar %1</source>
+        <translation>农历 %1</translation>
+    </message>
+</context>
+<context>
     <name>ColourSelect</name>
     <message>
         <location filename="../../../../../modules/nexus/pages/wallandstyle/ColourSelect.qml" line="+11"/>
@@ -1229,7 +1237,7 @@
 <context>
     <name>Content</name>
     <message>
-        <location filename="../../../../../modules/dashboard/Content.qml" line="+23"/>
+        <location filename="../../../../../modules/dashboard/Content.qml" line="+24"/>
         <source>Dashboard</source>
         <translation>仪表板</translation>
     </message>
@@ -1247,6 +1255,11 @@
         <location line="+6"/>
         <source>Weather</source>
         <translation>天气</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>KDE Connect</source>
+        <translation>KDE Connect</translation>
     </message>
     <message>
         <location filename="../../../../../modules/launcher/Content.qml" line="+61"/>
@@ -1329,9 +1342,19 @@
         <translation>性能</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Weather</source>
         <translation>天气</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>KDE Connect</source>
+        <translation>KDE Connect</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Phone and device controls in the dashboard</source>
+        <translation>在仪表板中控制手机和设备</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1356,12 +1379,12 @@
     <message>
         <location line="+6"/>
         <source>Memory</source>
-        <translation>记忆</translation>
+        <translation>内存</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Storage</source>
-        <translation>贮存</translation>
+        <translation>存储</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1382,6 +1405,160 @@
         <location line="+1"/>
         <source>Pixels dragged before the dashboard opens</source>
         <translation>在仪表板打开之前拖动的像素</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopWidgetsPage</name>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/wallandstyle/DesktopWidgetsPage.qml" line="+24"/>
+        <source>Top left</source>
+        <translation>左上</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Top centre</source>
+        <translation>上方居中</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Top right</source>
+        <translation>右上</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Middle left</source>
+        <translation>左侧居中</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Centre</source>
+        <translation>居中</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Middle right</source>
+        <translation>右侧居中</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Bottom left</source>
+        <translation>左下</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Bottom centre</source>
+        <translation>下方居中</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Bottom right</source>
+        <translation>右下</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Desktop widgets</source>
+        <translation>桌面小组件</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Target display</source>
+        <translation>目标显示器</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>All displays</source>
+        <translation>所有显示器</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Use global widget settings</source>
+        <translation>使用全局小组件设置</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+5"/>
+        <source>Clock</source>
+        <translation>时钟</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show a clock above the wallpaper</source>
+        <translation>在壁纸上方显示时钟</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Position</source>
+        <translation>位置</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clock placement on the desktop</source>
+        <translation>时钟在桌面上的位置</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Clock size</source>
+        <translation>时钟大小</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Scale relative to the default size</source>
+        <translation>相对于默认大小的缩放比例</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Horizontal offset</source>
+        <translation>水平偏移</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Positive values move the clock right</source>
+        <translation>正值向右移动时钟</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Vertical offset</source>
+        <translation>垂直偏移</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Positive values move the clock down</source>
+        <translation>正值向下移动时钟</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Clock background</source>
+        <translation>时钟底板</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Add a surface behind the clock</source>
+        <translation>在时钟后方添加底板</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Blur behind clock</source>
+        <translation>时钟背景模糊</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Soften the wallpaper beneath the clock surface</source>
+        <translation>模糊时钟底板下方的壁纸</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Clock shadow</source>
+        <translation>时钟阴影</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Invert clock colours</source>
+        <translation>反转时钟配色</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use the contrasting theme colour set</source>
+        <translation>使用对比主题色组</translation>
     </message>
 </context>
 <context>
@@ -1691,7 +1868,7 @@
 <context>
     <name>FileDialog</name>
     <message>
-        <location filename="../../../../../components/filedialog/FileDialog.qml" line="+15"/>
+        <location filename="../../../../../components/filedialog/FileDialog.qml" line="+16"/>
         <source>Select a file</source>
         <translation>选择一个文件</translation>
     </message>
@@ -1722,22 +1899,22 @@
     <message>
         <location filename="../../../../../services/GameMode.qml" line="+32"/>
         <source>Game mode enabled</source>
-        <translation>游戏模式已启用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Disabled Hyprland animations, blur, gaps and shadows</source>
-        <translation>禁用 Hyprland 动画、模糊、间隙和阴影</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Game mode disabled</source>
-        <translation>游戏模式已禁用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Hyprland settings restored</source>
-        <translation>Hyprland 设置已恢复</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1745,7 +1922,7 @@
     <message>
         <location filename="../../../../../modules/dashboard/performance/HeroCard.qml" line="+136"/>
         <source>Usage</source>
-        <translation>用法</translation>
+        <translation>使用率</translation>
     </message>
 </context>
 <context>
@@ -1753,52 +1930,52 @@
     <message>
         <location filename="../../../../../services/Hypr.qml" line="+105"/>
         <source>Caps lock enabled</source>
-        <translation>大写锁定已启用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Caps lock is currently enabled</source>
-        <translation>当前已启用大写锁定</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Caps lock disabled</source>
-        <translation>大写锁定已禁用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Caps lock is currently disabled</source>
-        <translation>大写锁定当前已禁用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Num lock enabled</source>
-        <translation>数字锁定已启用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Num lock is currently enabled</source>
-        <translation>数字锁定当前已启用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Num lock disabled</source>
-        <translation>数字锁定已禁用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Num lock is currently disabled</source>
-        <translation>数字锁定当前已禁用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Keyboard layout changed</source>
-        <translation>键盘布局已更改</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Layout changed to: %1</source>
-        <translation>布局更改为：%1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1866,6 +2043,105 @@
         <location line="+0"/>
         <source>XKB supports only 4 layouts at a time</source>
         <translation>XKB 一次仅支持 4 个布局</translation>
+    </message>
+</context>
+<context>
+    <name>KdeConnect</name>
+    <message>
+        <location filename="../../../../../modules/dashboard/KdeConnect.qml" line="+58"/>
+        <location line="+218"/>
+        <source>KDE Connect</source>
+        <translation>KDE Connect</translation>
+    </message>
+    <message>
+        <location line="-211"/>
+        <source>%1 device(s), %2 connected</source>
+        <translation>%1 台设备，%2 台已连接</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>KDE Connect is not running</source>
+        <translation>KDE Connect 未运行</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>No paired devices</source>
+        <translation>没有已配对设备</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>KDE Connect is unavailable</source>
+        <translation>KDE Connect 不可用</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Pair a phone with KDE Connect to use these controls</source>
+        <translation>使用 KDE Connect 配对手机后即可使用这些控制项</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Start kdeconnectd to connect your devices</source>
+        <translation>启动 kdeconnectd 以连接设备</translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>Connected</source>
+        <translation>已连接</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Paired, offline</source>
+        <translation>已配对，离线</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Not paired</source>
+        <translation>未配对</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Pair</source>
+        <translation>配对</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Accept</source>
+        <translation>接受</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Unpair</source>
+        <translation>取消配对</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Ping</source>
+        <translation>Ping</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Ring</source>
+        <translation>响铃</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Send clipboard</source>
+        <translation>发送剪贴板</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Send file</source>
+        <translation>发送文件</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>KDE Connect error</source>
+        <translation>KDE Connect 错误</translation>
     </message>
 </context>
 <context>
@@ -2287,12 +2563,12 @@
     <message>
         <location filename="../../../../../modules/dashboard/performance/MemoryCard.qml" line="+42"/>
         <source>Memory</source>
-        <translation>记忆</translation>
+        <translation>内存</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Used</source>
-        <translation>用过的</translation>
+        <translation>已使用</translation>
     </message>
 </context>
 <context>
@@ -2366,7 +2642,7 @@
     <message>
         <location line="+31"/>
         <source>Total</source>
-        <translation>全部的</translation>
+        <translation>总计</translation>
     </message>
 </context>
 <context>
@@ -2654,17 +2930,17 @@
     <message>
         <location filename="../../../../../services/Nmcli.qml" line="+602"/>
         <source>Open</source>
-        <translation>打开</translation>
+        <translation type="unfinished">打开</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enterprise</source>
-        <translation>企业</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enhanced Open</source>
-        <translation>增强开放</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2681,7 +2957,7 @@
         <location filename="../../../../../services/NotifData.qml" line="+19"/>
         <location line="+157"/>
         <source>now</source>
-        <translation>现在</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2873,30 +3149,30 @@
 <context>
     <name>Notifs</name>
     <message>
-        <location filename="../../../../../services/Notifs.qml" line="+45"/>
+        <location filename="../../../../../services/Notifs.qml" line="+63"/>
         <source>Do not disturb enabled</source>
-        <translation>请勿打扰已启用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Popup notifications are now disabled</source>
-        <translation>弹出通知现已禁用</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Do not disturb disabled</source>
-        <translation>禁用请勿打扰</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Popup notifications are now enabled</source>
-        <translation>现已启用弹出通知</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PageCompRegistry</name>
     <message>
-        <location filename="../../../../../modules/nexus/PageCompRegistry.qml" line="+208"/>
+        <location filename="../../../../../modules/nexus/PageCompRegistry.qml" line="+211"/>
         <source>Page under construction</source>
         <translation>页面正在建设中</translation>
     </message>
@@ -3111,12 +3387,12 @@
     <message>
         <location filename="../../../../../services/Players.qml" line="+64"/>
         <source>Now Playing</source>
-        <translation>正在播放</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 - %2</source>
-        <translation>%1 - %2</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3599,12 +3875,12 @@ Keyboard layout: %1</source>
     <message>
         <location filename="../../../../../modules/dashboard/performance/StorageCard.qml" line="+74"/>
         <source>Used</source>
-        <translation>用过的</translation>
+        <translation>已使用</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Storage</source>
-        <translation>贮存</translation>
+        <translation>存储</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3896,59 +4172,59 @@ Keyboard layout: %1</source>
     <message>
         <location filename="../../../../../services/VPN.qml" line="+272"/>
         <source>VPN connection failed</source>
-        <translation>VPN 连接失败</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>VPN disconnection failed</source>
-        <translation>VPN 断开失败</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+250"/>
         <source>VPN connected</source>
-        <translation>VPN已连接</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Connected to %1</source>
-        <translation>连接至 %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>VPN disconnected</source>
-        <translation>VPN 已断开</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Disconnected from %1</source>
-        <translation>与 %1 断开</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>VPN authentication required</source>
-        <translation>需要 VPN 身份验证</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+5"/>
         <source>%1: %2</source>
-        <translation>%1: %2</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>VPN error</source>
-        <translation>VPN 错误</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+225"/>
         <location line="+69"/>
         <source>Could not start %1. Is it installed?</source>
-        <translation>无法启动 %1。安装了吗？</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Could not connect to %1</source>
-        <translation>无法连接到 %1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3977,6 +4253,42 @@ Keyboard layout: %1</source>
 <context>
     <name>WallpaperAndStyle</name>
     <message>
+        <source>Top left</source>
+        <translation type="vanished">左上</translation>
+    </message>
+    <message>
+        <source>Top centre</source>
+        <translation type="vanished">上方居中</translation>
+    </message>
+    <message>
+        <source>Top right</source>
+        <translation type="vanished">右上</translation>
+    </message>
+    <message>
+        <source>Middle left</source>
+        <translation type="vanished">左侧居中</translation>
+    </message>
+    <message>
+        <source>Centre</source>
+        <translation type="vanished">居中</translation>
+    </message>
+    <message>
+        <source>Middle right</source>
+        <translation type="vanished">右侧居中</translation>
+    </message>
+    <message>
+        <source>Bottom left</source>
+        <translation type="vanished">左下</translation>
+    </message>
+    <message>
+        <source>Bottom centre</source>
+        <translation type="vanished">下方居中</translation>
+    </message>
+    <message>
+        <source>Bottom right</source>
+        <translation type="vanished">右下</translation>
+    </message>
+    <message>
         <location filename="../../../../../modules/nexus/pages/WallpaperAndStyle.qml" line="+19"/>
         <source>Wallpaper &amp; style</source>
         <translation>壁纸和风格</translation>
@@ -4000,6 +4312,101 @@ Keyboard layout: %1</source>
         <location line="+13"/>
         <source>Display wallpaper</source>
         <translation>显示壁纸</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Desktop</source>
+        <translation>桌面</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Desktop widgets</source>
+        <translation>桌面小组件</translation>
+    </message>
+    <message>
+        <source>Target display</source>
+        <translation type="vanished">目标显示器</translation>
+    </message>
+    <message>
+        <source>All displays</source>
+        <translation type="vanished">所有显示器</translation>
+    </message>
+    <message>
+        <source>Use global widget settings</source>
+        <translation type="vanished">使用全局小组件设置</translation>
+    </message>
+    <message>
+        <source>Clock</source>
+        <translation type="vanished">时钟</translation>
+    </message>
+    <message>
+        <source>Show a clock above the wallpaper</source>
+        <translation type="vanished">在壁纸上方显示时钟</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation type="vanished">位置</translation>
+    </message>
+    <message>
+        <source>Clock placement on the desktop</source>
+        <translation type="vanished">时钟在桌面上的位置</translation>
+    </message>
+    <message>
+        <source>Clock size</source>
+        <translation type="vanished">时钟大小</translation>
+    </message>
+    <message>
+        <source>Scale relative to the default size</source>
+        <translation type="vanished">相对于默认大小的缩放比例</translation>
+    </message>
+    <message>
+        <source>Horizontal offset</source>
+        <translation type="vanished">水平偏移</translation>
+    </message>
+    <message>
+        <source>Positive values move the clock right</source>
+        <translation type="vanished">正值向右移动时钟</translation>
+    </message>
+    <message>
+        <source>Vertical offset</source>
+        <translation type="vanished">垂直偏移</translation>
+    </message>
+    <message>
+        <source>Positive values move the clock down</source>
+        <translation type="vanished">正值向下移动时钟</translation>
+    </message>
+    <message>
+        <source>Clock background</source>
+        <translation type="vanished">时钟底板</translation>
+    </message>
+    <message>
+        <source>Add a surface behind the clock</source>
+        <translation type="vanished">在时钟后方添加底板</translation>
+    </message>
+    <message>
+        <source>Blur behind clock</source>
+        <translation type="vanished">时钟背景模糊</translation>
+    </message>
+    <message>
+        <source>Soften the wallpaper beneath the clock surface</source>
+        <translation type="vanished">模糊时钟底板下方的壁纸</translation>
+    </message>
+    <message>
+        <source>Clock shadow</source>
+        <translation type="vanished">时钟阴影</translation>
+    </message>
+    <message>
+        <source>Invert clock colours</source>
+        <translation type="vanished">反转时钟配色</translation>
+    </message>
+    <message>
+        <source>Use the contrasting theme colour set</source>
+        <translation type="vanished">使用对比主题色组</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clock and per-display placement</source>
+        <translation>时钟和分显示器布局</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4147,14 +4554,14 @@ Keyboard layout: %1</source>
     <message>
         <location filename="../../../../../services/Weather.qml" line="+25"/>
         <source>No weather</source>
-        <translation>没有天气</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+174"/>
         <location line="+14"/>
         <location line="+3"/>
         <source>Unknown City</source>
-        <translation>未知城市</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4244,6 +4651,74 @@ Keyboard layout: %1</source>
         <location line="+1"/>
         <source>Image files</source>
         <translation>图像文件</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Send a file</source>
+        <translation>发送文件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Files</source>
+        <translation>文件</translation>
+    </message>
+</context>
+<context>
+    <name>caelestia::services::Gpu</name>
+    <message>
+        <source>None</source>
+        <translation type="obsolete">无</translation>
+    </message>
+</context>
+<context>
+    <name>caelestia::services::KdeConnect</name>
+    <message>
+        <source>Pairing request sent</source>
+        <translation type="vanished">已发送配对请求</translation>
+    </message>
+    <message>
+        <source>Pairing accepted</source>
+        <translation type="vanished">已接受配对</translation>
+    </message>
+    <message>
+        <source>Pairing cancelled</source>
+        <translation type="vanished">已取消配对请求</translation>
+    </message>
+    <message>
+        <source>Device unpaired</source>
+        <translation type="vanished">已取消设备配对</translation>
+    </message>
+    <message>
+        <source>Ping sent</source>
+        <translation type="vanished">已发送 Ping</translation>
+    </message>
+    <message>
+        <source>Phone is ringing</source>
+        <translation type="vanished">手机正在响铃</translation>
+    </message>
+    <message>
+        <source>Clipboard sent</source>
+        <translation type="vanished">已发送剪贴板</translation>
+    </message>
+    <message>
+        <source>Invalid device</source>
+        <translation type="vanished">设备无效</translation>
+    </message>
+    <message>
+        <source>File does not exist</source>
+        <translation type="vanished">文件不存在</translation>
+    </message>
+    <message>
+        <source>File sent</source>
+        <translation type="vanished">文件已发送</translation>
+    </message>
+    <message>
+        <source>Unable to send file</source>
+        <translation type="vanished">无法发送文件</translation>
+    </message>
+    <message>
+        <source>kdeconnect-cli is unavailable</source>
+        <translation type="vanished">kdeconnect-cli 不可用</translation>
     </message>
 </context>
 </TS>

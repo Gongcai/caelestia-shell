@@ -79,8 +79,17 @@ Singleton {
     }
 
     function setMode(mode: string): void {
-        const flavour = mode === "light" ? "latte" : "mocha";
-        Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-n", "catppuccin", "-f", flavour, "-m", mode]);
+        if (root.scheme === "maruko") {
+            const source = mode === "light" ? marukoLight : marukoDark;
+            const data = source.text();
+            if (data.length > 0) {
+                root.load(data, false);
+                schemeFile.setText(data);
+            }
+            return;
+        }
+
+        Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-m", mode]);
     }
 
     function reloadHyprRules(): void {
@@ -129,10 +138,27 @@ Singleton {
     }
 
     FileView {
+        id: schemeFile
+
         path: `${Paths.state}/scheme.json`
+        atomicWrites: true
         watchChanges: true
         onFileChanged: reload()
         onLoaded: root.load(text(), false)
+    }
+
+    FileView {
+        id: marukoLight
+
+        path: `${Quickshell.shellDir}/assets/schemes/maruko/light.json`
+        printErrors: false
+    }
+
+    FileView {
+        id: marukoDark
+
+        path: `${Quickshell.shellDir}/assets/schemes/maruko/dark.json`
+        printErrors: false
     }
 
     ImageAnalyser {
