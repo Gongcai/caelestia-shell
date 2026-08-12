@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
@@ -8,6 +9,10 @@ import qs.components.controls
 import qs.services
 
 Item {
+    id: root
+
+    required property ScreenState screenState
+
     ColumnLayout {
         id: layout
 
@@ -30,6 +35,39 @@ Item {
                 Layout.fillWidth: true
                 text: qsTr("Lyrics")
                 font: Tokens.font.title.medium
+            }
+
+            IconButton {
+                type: IconButton.Text
+                isToggle: true
+                isRound: true
+                checked: root.screenState.dashboardLyrics
+                icon: "view_sidebar"
+                ToolTip.visible: hovered
+                ToolTip.text: checked ? qsTr("Hide lyrics drawer") : qsTr("Show lyrics drawer")
+                onClicked: root.screenState.dashboardLyrics = internalChecked
+            }
+
+            IconButton {
+                type: IconButton.Text
+                isToggle: true
+                isRound: true
+                checked: root.screenState.dashboardLyricsExpanded
+                icon: "view_agenda"
+                ToolTip.visible: hovered
+                ToolTip.text: checked ? qsTr("Use single-line lyrics") : qsTr("Show full lyrics")
+                onClicked: root.screenState.dashboardLyricsExpanded = internalChecked
+            }
+
+            IconButton {
+                type: IconButton.Text
+                isToggle: true
+                isRound: true
+                checked: root.screenState.dashboardLyricsPinned
+                icon: "push_pin"
+                ToolTip.visible: hovered
+                ToolTip.text: checked ? qsTr("Unpin lyrics") : qsTr("Pin lyrics")
+                onClicked: root.screenState.dashboardLyricsPinned = internalChecked
             }
 
             LyricsInfo {}

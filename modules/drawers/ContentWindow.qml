@@ -62,6 +62,7 @@ StyledWindow {
         screenState.launcher = false;
         screenState.session = false;
         screenState.dashboard = false;
+        screenState.dashboardLyrics = false;
         panels.popouts.close();
     }
 
@@ -119,6 +120,8 @@ StyledWindow {
                 return true;
             if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
                 return true;
+            if (s.dashboardLyrics && !s.dashboardLyricsPinned && conf.dashboard.enabled)
+                return true;
             if (panels.popouts.currentName.startsWith("traymenu") && (panels.popouts.current as StackView)?.depth > 1)
                 return true;
             return false;
@@ -130,6 +133,8 @@ StyledWindow {
             root.screenState.sidebar = false;
             if (!panels.dashboard.modalActive)
                 root.screenState.dashboard = false;
+            if (!root.screenState.dashboardLyricsPinned)
+                root.screenState.dashboardLyrics = false;
             panels.popouts.hasCurrent = false;
             bar.closeTray();
         }
@@ -180,6 +185,13 @@ StyledWindow {
 
             panel: panels.dashboard
             deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: dashLyricsBg
+
+            panel: panels.dashboardLyrics
+            deformAmount: 0.08
         }
 
         PanelBg {
@@ -273,6 +285,9 @@ StyledWindow {
 
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
+            }
+            dashboardLyrics.transform: Matrix4x4 {
+                matrix: dashLyricsBg.deformMatrix
             }
             launcher.transform: Matrix4x4 {
                 matrix: launcherBg.deformMatrix

@@ -2389,9 +2389,62 @@
         <translation>歌词</translation>
     </message>
     <message>
+        <location filename="../../../../../modules/dashboard/media/LyricsAndSelector.qml" line="+11"/>
+        <source>Hide lyrics drawer</source>
+        <translation>隐藏歌词抽屉</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show lyrics drawer</source>
+        <translation>显示歌词抽屉</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Use single-line lyrics</source>
+        <translation>使用单行歌词</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show full lyrics</source>
+        <translation>显示完整歌词</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Unpin lyrics</source>
+        <translation>取消固定歌词</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pin lyrics</source>
+        <translation>固定歌词</translation>
+    </message>
+    <message>
         <location line="+22"/>
         <source>No players</source>
         <translation>没有玩家</translation>
+    </message>
+</context>
+<context>
+    <name>LyricsDrawer</name>
+    <message>
+        <location filename="../../../../../modules/dashboard/LyricsDrawer.qml" line="+116"/>
+        <source>Nothing playing</source>
+        <translation>当前没有播放媒体</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Loading lyrics...</source>
+        <translation>正在加载歌词...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No lyrics found</source>
+        <translation>没有找到歌词</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Instrumental</source>
+        <translation>纯音乐</translation>
     </message>
 </context>
 <context>

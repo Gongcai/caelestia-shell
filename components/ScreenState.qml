@@ -16,4 +16,7 @@ PersistentProperties {
     property int dashboardTab
     property date dashboardDate: new Date()
     property bool dashboardLunar
+    property bool dashboardLyrics
+    property bool dashboardLyricsPinned
+    property bool dashboardLyricsExpanded
 }

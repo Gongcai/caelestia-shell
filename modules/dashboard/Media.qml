@@ -143,6 +143,7 @@ Item {
                     LyricsAndSelector {
                         Layout.fillHeight: true
                         implicitWidth: Tokens.sizes.dashboard.mediaSectionWidth
+                        screenState: root.screenState
                     }
                 }
             }

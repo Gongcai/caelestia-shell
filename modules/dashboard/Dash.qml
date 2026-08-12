@@ -1,5 +1,7 @@
 import "dash"
+import QtQuick
 import QtQuick.Layouts
+import Caelestia.Blobs
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
@@ -13,6 +15,14 @@ GridLayout {
 
     rowSpacing: Tokens.spacing.medium
     columnSpacing: Tokens.spacing.medium
+
+    BlobGroup {
+        id: cardBlobs
+
+        color: Colours.tPalette.m3surfaceContainer
+        smoothing: 1
+        cornerFill: false
+    }
 
     Rect {
         Layout.column: 2
@@ -98,7 +108,15 @@ GridLayout {
         }
     }
 
-    component Rect: StyledRect {
-        color: Colours.tPalette.m3surfaceContainer
+    component Rect: Item {
+        property alias radius: background.radius
+
+        BlobRect {
+            id: background
+
+            anchors.fill: parent
+            group: cardBlobs
+            opacity: cardBlobs.color.a
+        }
     }
 }

@@ -21,18 +21,31 @@ layout(std140, binding = 0) uniform buf {
     vec4 rectData[80];
 };
 
-float sdRoundedBox(vec2 p, vec2 center, vec2 halfSize, float radius) {
-    vec2 d = abs(p - center) - halfSize + vec2(radius);
-    return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - radius;
+// Fourth-order norm used by the continuous corners. Unlike a circle, the
+// curvature of an L4 superellipse falls to zero where it meets a straight
+// edge, giving the join G2 continuity without iterative Bezier evaluation.
+float norm4(vec2 v) {
+    vec2 v2 = v * v;
+    return sqrt(sqrt(dot(v2, v2)));
 }
 
-float sdRoundedBox4(vec2 p, vec2 center, vec2 halfSize, vec4 r) {
+float sdContinuousBox(vec2 p, vec2 center, vec2 halfSize, float radius) {
+    // Let the softer corner occupy a slightly longer section of each edge.
+    // This keeps the visual indentation close to the old circular corner while
+    // making the transition gradual instead of looking overly square.
+    float extent = min(radius * 1.45, min(halfSize.x, halfSize.y));
+    vec2 d = abs(p - center) - halfSize + vec2(extent);
+    return norm4(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - extent;
+}
+
+float sdContinuousBox4(vec2 p, vec2 center, vec2 halfSize, vec4 r) {
     // r = (topRight, bottomRight, bottomLeft, topLeft)
     p -= center;
     r.xy = (p.x > 0.0) ? r.xy : r.wz;
     r.x  = (p.y > 0.0) ? r.y : r.x;
-    vec2 q = abs(p) - halfSize + r.x;
-    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
+    float extent = min(r.x * 1.45, min(halfSize.x, halfSize.y));
+    vec2 q = abs(p) - halfSize + extent;
+    return min(max(q.x, q.y), 0.0) + norm4(max(q, 0.0)) - extent;
 }
 
 float sdBox(vec2 p, vec2 center, vec2 halfSize) {
@@ -41,25 +54,21 @@ float sdBox(vec2 p, vec2 center, vec2 halfSize) {
 }
 
 float smin(float a, float b, float k) {
-    // Circular smooth min — the blend fillet is a true circular arc of radius k,
-    // tangent to both surfaces (not a polynomial/squircle curve). Deviates from
-    // min(a, b) only in the corner region where BOTH a < k and b < k (unlike the
-    // cubic it replaced, which deviated over the whole band |a - b| < k). Always
-    // <= min(a, b); max blend depth at a == b is (sqrt(2) - 1) * k. It is C1 but
-    // not C2 at the support boundary, so a circular-arc fillet shows the usual
-    // line-meets-arc curvature step — by design, that is the "circular" look.
-    return max(k, min(a, b)) - length(max(vec2(k) - vec2(a, b), vec2(0.0)));
+    // Compact L4 smooth min. The fourth-order support makes both the first and
+    // second derivatives settle to the hard minimum at the blend boundary, so
+    // connected panels receive the same continuous treatment as their corners.
+    return max(k, min(a, b)) - norm4(max(vec2(k) - vec2(a, b), vec2(0.0)));
 }
 
 float smax(float a, float b, float k) {
-    // Circular smooth max — dual of smin: -smin(-a, -b, k). Always >= max(a, b).
-    return min(-k, max(a, b)) + length(max(vec2(a, b) + vec2(k), vec2(0.0)));
+    // L4 smooth max — dual of smin: -smin(-a, -b, k).
+    return min(-k, max(a, b)) + norm4(max(vec2(a, b) + vec2(k), vec2(0.0)));
 }
 
 float smaxSharpA(float a, float b, float k) {
-    // Circular smax variant that keeps a's boundary sharp (no inward rounding at
+    // Continuous smax variant that keeps a's boundary sharp (no inward rounding at
     // a = 0). Used for the frame outer edge so it always fills to the edges.
-    float sm = min(-k, max(a, b)) + length(max(vec2(a, b) + vec2(k), vec2(0.0)));
+    float sm = smax(a, b, k);
     float blend = (sm - max(a, b)) * smoothstep(0.0, k * 0.5, -a);
     return max(a, b) + blend;
 }
@@ -95,7 +104,7 @@ void main() {
         vec2 transformedPixel = center + invDeform * (pixel - center);
 
         // Use pre-computed effective per-corner radii
-        float d = sdRoundedBox4(transformedPixel, center, rect.zw, radii);
+        float d = sdContinuousBox4(transformedPixel, center, rect.zw, radii);
 
         // Use pre-computed minimum eigenvalue for SDF correction
         d *= max(props.w, 0.01);
@@ -167,7 +176,7 @@ void main() {
                 continue;
             if ((excludeMask & (1 << j)) != 0)
                 continue;
-            // Circular smin deviates from min only where BOTH dArr are < smoothFactor.
+            // Compact smin deviates from min only where BOTH distances are inside its support.
             if (max(dArr[i], dArr[j]) >= smoothFactor)
                 continue;
             mergedSdf = min(mergedSdf, smin(dArr[i], dArr[j], smoothFactor));
@@ -176,7 +185,7 @@ void main() {
 
     if (hasInverted != 0) {
         float dOuter = sdBox(pixel, invertedOuter.xy, invertedOuter.zw) - 1.0;
-        float dInner = sdRoundedBox(pixel, invertedInner.xy, invertedInner.zw, invertedRadius);
+        float dInner = sdContinuousBox(pixel, invertedInner.xy, invertedInner.zw, invertedRadius);
 
         // Border sinks: track the opposite rect edge, clamped to border thickness
         float innerTop = invertedInner.y - invertedInner.w;
@@ -201,9 +210,9 @@ void main() {
             // the inner wall recedes to form its pocket. Too low and the wall recedes faster
             // than the junction can stay convex, denting the inner edge inward near the rect's
             // (squared) corners; too high and the rect nestles too deep before the wall yields.
-            // Tuned between the old cubic blend depth (k/6, too shallow) and the circular blend
-            // depth ((sqrt2-1)k): half the circular smin gap-closing distance, (2-sqrt2)k/2.
-            float preOff = smoothFactor * (2.0 - sqrt(2.0)) * 0.5;
+            // Half-gap offset for the fourth-order blend. Compared with a circular
+            // blend, L4 has a wider, flatter shoulder and needs a later sink onset.
+            float preOff = smoothFactor * (1.0 - pow(2.0, -0.75));
 
             // Top border: track rect's BOTTOM edge, only within border thickness
             float topPen = clamp(innerTop - (ctr.y + sinkSh.y) - preOff, 0.0, innerTop - outerTop);
@@ -239,7 +248,7 @@ void main() {
 
         dInner -= sinkValue;
 
-        // The circular smax fillet has radius kFrame; when it exceeds the border thickness
+        // The continuous smax fillet has radius kFrame; when it exceeds the border thickness
         // it can't complete inside the border, so the sharp outer-box term bleeds onto the
         // inner edge and bulges the inner corners (worst when thickness < smoothFactor — the
         // default border is thinner than the blend radius). Clamp kFrame to the thinnest side

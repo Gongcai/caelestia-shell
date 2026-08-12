@@ -28,6 +28,7 @@ Item {
     readonly property alias sessionWrapper: sessionWrapper
     readonly property alias launcher: launcher
     readonly property alias dashboard: dashboard
+    readonly property alias dashboardLyrics: dashboardLyrics
     readonly property alias popouts: popoutsWrapper.content
     readonly property alias popoutsWrapper: popoutsWrapper
     readonly property alias utilities: utilities
@@ -114,6 +115,14 @@ Item {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
+    }
+
+    Dashboard.LyricsDrawer {
+        id: dashboardLyrics
+
+        screen: root.screen
+        screenState: root.screenState
+        dashboard: dashboard
     }
 
     BarPopouts.ClipWrapper {
