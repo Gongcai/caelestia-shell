@@ -115,25 +115,79 @@ Item {
         }
     }
 
-    StyledText {
+    Item {
+        id: compactLyrics
+
         anchors.fill: parent
         anchors.leftMargin: Tokens.padding.large
         anchors.rightMargin: Tokens.padding.large
         visible: !root.expanded
-        text: {
-            if (!Players.active)
-                return qsTr("Nothing playing");
-            if (Lyrics.loading)
-                return qsTr("Loading lyrics...");
-            if (!Lyrics.hasLyrics)
-                return qsTr("No lyrics found");
-            return root.currentLyric || qsTr("Instrumental");
+
+        readonly property real overflow: Math.max(0, lyricText.implicitWidth - width)
+        readonly property bool shouldScroll: overflow > 1
+        property real scrollOffset
+
+        clip: true
+
+        function resetScroll(): void {
+            marquee.stop();
+            scrollOffset = 0;
+            if (shouldScroll && visible)
+                marquee.start();
         }
-        color: Lyrics.hasLyrics ? Colours.palette.m3primary : Colours.palette.m3outline
-        font: Tokens.font.title.medium
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
-        animate: true
+
+        onShouldScrollChanged: Qt.callLater(resetScroll)
+        onVisibleChanged: Qt.callLater(resetScroll)
+
+        StyledText {
+            id: lyricText
+
+            x: compactLyrics.shouldScroll ? compactLyrics.scrollOffset : (compactLyrics.width - implicitWidth) / 2
+            height: parent.height
+            text: {
+                if (!Players.active)
+                    return qsTr("Nothing playing");
+                if (Lyrics.loading)
+                    return qsTr("Loading lyrics...");
+                if (!Lyrics.hasLyrics)
+                    return qsTr("No lyrics found");
+                return root.currentLyric || qsTr("Instrumental");
+            }
+            color: Lyrics.hasLyrics ? Colours.palette.m3primary : Colours.palette.m3outline
+            font: Tokens.font.title.medium
+            verticalAlignment: Text.AlignVCenter
+            animate: true
+
+            onTextChanged: Qt.callLater(compactLyrics.resetScroll)
+        }
+
+        SequentialAnimation {
+            id: marquee
+
+            loops: Animation.Infinite
+
+            PauseAnimation {
+                duration: 1200
+            }
+            NumberAnimation {
+                target: compactLyrics
+                property: "scrollOffset"
+                from: 0
+                to: -compactLyrics.overflow
+                duration: Math.max(1000, compactLyrics.overflow * 25)
+                easing.type: Easing.Linear
+            }
+            PauseAnimation {
+                duration: 1200
+            }
+            NumberAnimation {
+                target: compactLyrics
+                property: "scrollOffset"
+                from: -compactLyrics.overflow
+                to: 0
+                duration: Math.max(1000, compactLyrics.overflow * 25)
+                easing.type: Easing.Linear
+            }
+        }
     }
 }
