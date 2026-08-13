@@ -1235,6 +1235,35 @@
     </message>
 </context>
 <context>
+    <name>ControlCenter</name>
+    <message><source>Control Centre</source><translation>控制中心</translation></message>
+    <message><source>Ethernet</source><translation>以太网</translation></message>
+    <message><source>Wi-Fi</source><translation>Wi-Fi</translation></message>
+    <message><source>Connected</source><translation>已连接</translation></message>
+    <message><source>Not connected</source><translation>未连接</translation></message>
+    <message><source>Off</source><translation>关闭</translation></message>
+    <message><source>Bluetooth</source><translation>蓝牙</translation></message>
+    <message><source>%1 connected</source><translation>已连接 %1 台设备</translation></message>
+    <message><source>VPN</source><translation>VPN</translation></message>
+    <message><source>Connecting...</source><translation>正在连接...</translation></message>
+    <message><source>Do Not Disturb</source><translation>勿扰模式</translation></message>
+    <message><source>On</source><translation>开启</translation></message>
+    <message><source>Game Mode</source><translation>游戏模式</translation></message>
+    <message><source>Keep Awake</source><translation>保持唤醒</translation></message>
+    <message><source>Microphone</source><translation>麦克风</translation></message>
+    <message><source>Muted</source><translation>已静音</translation></message>
+    <message><source>Display</source><translation>显示器</translation></message>
+    <message><source>Sound</source><translation>声音</translation></message>
+    <message><source>Screen Recording</source><translation>屏幕录制</translation></message>
+    <message><source>Paused</source><translation>已暂停</translation></message>
+    <message><source>Recording for %1</source><translation>已录制 %1</translation></message>
+    <message><source>Modes and recordings</source><translation>录制模式与历史</translation></message>
+</context>
+<context>
+    <name>RecorderPage</name>
+    <message><source>Screen Recording</source><translation>屏幕录制</translation></message>
+</context>
+<context>
     <name>Content</name>
     <message>
         <location filename="../../../../../modules/dashboard/Content.qml" line="+24"/>

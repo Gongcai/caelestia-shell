@@ -11,6 +11,7 @@ import qs.modules.bar.popouts as BarPopouts
 Item {
     id: root
 
+    required property ShellScreen screen
     required property ScreenState screenState
     required property Sidebar.Wrapper sidebar
     required property BarPopouts.Wrapper popouts
@@ -21,6 +22,7 @@ Item {
         property bool recordingListExpanded: false
         property string recordingConfirmDelete
         property string recordingMode
+        property string controlCenterPage: "main"
 
         reloadableId: "utilities"
     }
@@ -82,6 +84,7 @@ Item {
 
         sourceComponent: Content {
             implicitWidth: root.implicitWidth - root.totalPadding
+            screen: root.screen
             props: root.props
             screenState: root.screenState
             popouts: root.popouts

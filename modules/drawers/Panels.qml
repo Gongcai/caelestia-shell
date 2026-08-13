@@ -135,6 +135,7 @@ Item {
     Utilities.Wrapper {
         id: utilities
 
+        screen: root.screen
         screenState: root.screenState
         sidebar: sidebar
         popouts: popoutsWrapper.content

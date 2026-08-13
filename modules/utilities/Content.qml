@@ -1,73 +1,52 @@
 pragma ComponentBehavior: Bound
 
-import "cards"
 import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
+import Quickshell
 import qs.components
 import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root
 
+    required property ShellScreen screen
     required property var props
     required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property matrix4x4 deformMatrix
 
-    readonly property int enabledCards: (idleInhibit.active ? 1 : 0) + (record.active ? 1 : 0) + (toggles.active ? 1 : 0)
-    readonly property real nonAnimHeight: ((idleInhibit.item as IdleInhibit)?.nonAnimHeight ?? 0) + ((record.item as Record)?.nonAnimHeight ?? 0) + ((toggles.item as Toggles)?.implicitHeight ?? 0) + layout.spacing * Math.max(0, enabledCards - 1)
+    readonly property real nonAnimHeight: page.implicitHeight
 
-    implicitWidth: layout.implicitWidth
-    implicitHeight: layout.implicitHeight
+    implicitWidth: page.implicitWidth
+    implicitHeight: page.implicitHeight
 
-    ColumnLayout {
-        id: layout
+    Loader {
+        id: page
 
-        anchors.fill: parent
-        spacing: Tokens.spacing.medium
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-        Loader {
-            id: idleInhibit
+        sourceComponent: root.props.controlCenterPage === "recorder" ? recorderPage : mainPage
+    }
 
-            Layout.fillWidth: true
-            active: Config.utilities.cards.keepAwake
-            visible: active
+    Component {
+        id: mainPage
 
-            sourceComponent: IdleInhibit {
-                objectName: "utilitiesKeepAwake"
-            }
+        ControlCenter {
+            screen: root.screen
+            screenState: root.screenState
+            popouts: root.popouts
+            onOpenRecorder: root.props.controlCenterPage = "recorder"
         }
+    }
 
-        Loader {
-            id: record
+    Component {
+        id: recorderPage
 
-            Layout.fillWidth: true
-            active: Config.utilities.cards.recorder
-            visible: active
-            z: 1
-
-            sourceComponent: Record {
-                objectName: "utilitiesScreenRecorder"
-
-                props: root.props
-                screenState: root.screenState
-            }
-        }
-
-        Loader {
-            id: toggles
-
-            Layout.fillWidth: true
-            active: Config.utilities.cards.quickToggles
-            visible: active
-
-            sourceComponent: Toggles {
-                objectName: "utilitiesQuickToggles"
-
-                screenState: root.screenState
-                popouts: root.popouts
-            }
+        RecorderPage {
+            props: root.props
+            screenState: root.screenState
+            onBack: root.props.controlCenterPage = "main"
         }
     }
 
