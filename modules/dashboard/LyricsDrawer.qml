@@ -2,11 +2,13 @@ pragma ComponentBehavior: Bound
 
 import "media"
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Caelestia.Config
 import Caelestia.Services
 import qs.components
+import qs.components.controls
 import qs.services
 
 Item {
@@ -125,6 +127,7 @@ Item {
 
         readonly property real overflow: Math.max(0, lyricText.implicitWidth - width)
         readonly property bool shouldScroll: overflow > 1
+        readonly property bool hovered: hoverHandler.hovered
         property real scrollOffset
 
         clip: true
@@ -132,12 +135,17 @@ Item {
         function resetScroll(): void {
             marquee.stop();
             scrollOffset = 0;
-            if (shouldScroll && visible)
+            if (shouldScroll && visible && !hovered)
                 marquee.start();
         }
 
         onShouldScrollChanged: Qt.callLater(resetScroll)
         onVisibleChanged: Qt.callLater(resetScroll)
+        onHoveredChanged: Qt.callLater(resetScroll)
+
+        HoverHandler {
+            id: hoverHandler
+        }
 
         StyledText {
             id: lyricText
@@ -156,9 +164,55 @@ Item {
             color: Lyrics.hasLyrics ? Colours.palette.m3primary : Colours.palette.m3outline
             font: Tokens.font.title.medium
             verticalAlignment: Text.AlignVCenter
-            animate: true
+            opacity: compactLyrics.hovered ? 0 : 1
 
             onTextChanged: Qt.callLater(compactLyrics.resetScroll)
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.FastEffects
+                }
+            }
+        }
+
+        RowLayout {
+            anchors.centerIn: parent
+            spacing: Tokens.spacing.small
+            opacity: compactLyrics.hovered ? 1 : 0
+            enabled: compactLyrics.hovered
+
+            IconButton {
+                type: IconButton.Text
+                isRound: true
+                icon: "skip_previous"
+                font: Tokens.font.icon.small
+                disabled: !Players.active?.canGoPrevious
+                onClicked: Players.active?.previous()
+            }
+
+            IconButton {
+                type: IconButton.Tonal
+                isRound: true
+                icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+                font: Tokens.font.icon.small
+                disabled: !Players.active?.canTogglePlaying
+                onClicked: Players.active?.togglePlaying()
+            }
+
+            IconButton {
+                type: IconButton.Text
+                isRound: true
+                icon: "skip_next"
+                font: Tokens.font.icon.small
+                disabled: !Players.active?.canGoNext
+                onClicked: Players.active?.next()
+            }
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
         }
 
         SequentialAnimation {
