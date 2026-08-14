@@ -50,6 +50,12 @@ class LauncherConfig : public ConfigObject {
                 { u"command"_s, QStringList{ u"autocomplete"_s, u"calc"_s } },
             }),
             vmap({
+                { u"name"_s, u"Web Search"_s },
+                { u"icon"_s, u"travel_explore"_s },
+                { u"description"_s, u"Search with Bing in Microsoft Edge"_s },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"search"_s } },
+            }),
+            vmap({
                 { u"name"_s, u"Scheme"_s },
                 { u"icon"_s, u"palette"_s },
                 { u"description"_s, u"Change the current colour scheme"_s },

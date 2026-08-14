@@ -88,6 +88,30 @@
     </message>
 </context>
 <context>
+    <name>SearchItem</name>
+    <message>
+        <location filename="../../../../../modules/launcher/items/SearchItem.qml" line="+49"/>
+        <source>Search Bing for &quot;%1&quot;</source>
+        <translation>使用 Bing 搜索“%1”</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Type a web search query</source>
+        <translation>输入网页搜索内容</translation>
+    </message>
+</context>
+<context>
+    <name>LauncherActions</name>
+    <message>
+        <source>Web Search</source>
+        <translation>网页搜索</translation>
+    </message>
+    <message>
+        <source>Search with Bing in Microsoft Edge</source>
+        <translation>使用 Microsoft Edge 和 Bing 搜索</translation>
+    </message>
+</context>
+<context>
     <name>ActiveWindow</name>
     <message>
         <location filename="../../../../../modules/bar/components/ActiveWindow.qml" line="+19"/>

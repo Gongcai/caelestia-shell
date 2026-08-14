@@ -29,7 +29,7 @@ StyledListView {
     function stateForText(text: string): string {
         const prefix = GlobalConfig.launcher.actionPrefix;
         if (text.startsWith(prefix)) {
-            for (const action of ["calc", "scheme", "variant"])
+            for (const action of ["calc", "search", "scheme", "variant"])
                 if (text.startsWith(`${prefix}${action} `))
                     return action;
 
@@ -44,6 +44,7 @@ StyledListView {
         case "actions":
             return Actions.query(text);
         case "calc":
+        case "search":
             return [0];
         case "scheme":
             return Schemes.query(text);
@@ -111,6 +112,13 @@ StyledListView {
 
             PropertyChanges {
                 root.delegate: calcItem
+            }
+        },
+        State {
+            name: "search"
+
+            PropertyChanges {
+                root.delegate: searchItem
             }
         },
         State {
@@ -267,6 +275,14 @@ StyledListView {
         id: calcItem
 
         CalcItem {
+            list: root
+        }
+    }
+
+    Component {
+        id: searchItem
+
+        SearchItem {
             list: root
         }
     }
