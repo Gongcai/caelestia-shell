@@ -15,6 +15,17 @@ PageBase {
 
     readonly property string effectiveWallpaper: Wallpapers.pathForScreen(nState.screen.name)
     readonly property bool videoWallpaper: Wallpapers.isVideoPath(effectiveWallpaper)
+    readonly property list<string> fontFamilies: [...Qt.fontFamilies()].sort((a, b) => a.localeCompare(b))
+
+    function setInterfaceFont(family: string): void {
+        const font = GlobalConfig.appearance.font;
+        font.headline.family = family;
+        font.title.family = family;
+        font.body.family = family;
+        font.label.family = family;
+        font.clock = family;
+        font.workspaces = family;
+    }
 
     title: qsTr("Wallpaper & style")
 
@@ -281,6 +292,84 @@ PageBase {
                 valueLabel: qsTr("%1%").arg(Math.round(value * 100))
                 enabled: GlobalConfig.appearance.blur.enabled
                 onMoved: v => GlobalConfig.appearance.blur.vibrancy = Math.round(v * 100) / 100
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Tokens.spacing.extraSmall / 2
+
+            SectionHeader {
+                text: qsTr("Font")
+            }
+
+            StepperRow {
+                first: true
+                label: qsTr("Font size")
+                subtext: qsTr("Scale all Shell text")
+                value: Math.round(GlobalConfig.appearance.font.scale * 100)
+                from: 50
+                to: 200
+                stepSize: 5
+                onMoved: v => GlobalConfig.appearance.font.scale = v / 100
+            }
+
+            DialogSelectButton {
+                id: interfaceFontPicker
+
+                function keyFor(item: var): string {
+                    return item;
+                }
+
+                function labelFor(item: var): string {
+                    return item;
+                }
+
+                rootParent: root.flickable
+                icon: "font_download"
+                label: qsTr("Interface font") + ": " + GlobalConfig.appearance.font.body.family
+                subtext: qsTr("Apply one family to all Shell text")
+                header: qsTr("Interface font")
+                acceptLabel: qsTr("Select")
+                model: root.fontFamilies
+                currentItem: root.fontFamilies.includes(GlobalConfig.appearance.font.body.family) ? GlobalConfig.appearance.font.body.family : null
+                searchable: true
+                previewFont: true
+                last: false
+
+                onAccepted: {
+                    if (interfaceFontPicker.selectedItem)
+                        root.setInterfaceFont(interfaceFontPicker.selectedItem);
+                }
+            }
+
+            DialogSelectButton {
+                id: monospaceFontPicker
+
+                function keyFor(item: var): string {
+                    return item;
+                }
+
+                function labelFor(item: var): string {
+                    return item;
+                }
+
+                rootParent: root.flickable
+                last: true
+                icon: "font_download"
+                label: qsTr("Monospace font") + ": " + GlobalConfig.appearance.font.mono.family
+                subtext: qsTr("For the terminal and code")
+                header: qsTr("Monospace font")
+                acceptLabel: qsTr("Select")
+                model: root.fontFamilies
+                currentItem: root.fontFamilies.includes(GlobalConfig.appearance.font.mono.family) ? GlobalConfig.appearance.font.mono.family : null
+                searchable: true
+                previewFont: true
+
+                onAccepted: {
+                    if (monospaceFontPicker.selectedItem)
+                        GlobalConfig.appearance.font.mono.family = monospaceFontPicker.selectedItem;
+                }
             }
         }
 

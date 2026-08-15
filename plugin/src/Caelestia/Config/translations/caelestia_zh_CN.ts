@@ -4651,7 +4651,42 @@ Keyboard layout: %1</source>
         <translation>模糊活力</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+13"/>
+        <source>Font</source>
+        <translation>字体</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Font size</source>
+        <translation>字号</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Scale all Shell text</source>
+        <translation>缩放全部界面文字</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Interface font</source>
+        <translation>界面字体</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Apply one family to all Shell text</source>
+        <translation>用一个字体家族统一全部界面文字</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Monospace font</source>
+        <translation>等宽字体</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>For the terminal and code</source>
+        <translation>用于终端和代码</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Dark theme</source>
         <translation>深色主题</translation>
     </message>
