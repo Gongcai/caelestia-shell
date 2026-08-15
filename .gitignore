@@ -4,3 +4,7 @@
 build/
 .cache/
 logs
+
+# Animation/gif scratch files
+assets/*.bak
+assets/frame_*.png
