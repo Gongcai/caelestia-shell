@@ -21,6 +21,7 @@ ProgressBar {
     property color fgColour: Colours.palette.m3primary
     property color bgColour: Colours.palette.m3secondaryContainer
 
+    property bool animate: true
     property bool wavy
     property bool wavePaused
     property int waveFrequency: 6
@@ -117,6 +118,7 @@ ProgressBar {
                 color: root.fgColour
 
                 Behavior on implicitSize {
+                    enabled: root.animate
                     Anim {
                         type: Anim.FastSpatial
                     }
@@ -130,6 +132,7 @@ ProgressBar {
                 Component.onCompleted: implicitWidth = Qt.binding(() => parent.width * root.visualPosition)
 
                 Behavior on implicitWidth {
+                    enabled: root.animate
                     Anim {}
                 }
             }

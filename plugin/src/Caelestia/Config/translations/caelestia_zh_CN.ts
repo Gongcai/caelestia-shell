@@ -1613,6 +1613,67 @@
         <source>Use the contrasting theme colour set</source>
         <translation>使用对比主题色组</translation>
     </message>
+    <message>
+        <location line="+7"/>
+        <location line="+5"/>
+        <source>Memory widget</source>
+        <translation>内存小组件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show memory usage and the top processes on the desktop</source>
+        <translation>在桌面上显示内存占用及占用最高的进程</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Widget placement on the desktop</source>
+        <translation>小组件在桌面上的位置</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Widget size</source>
+        <translation>小组件大小</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Positive values move the widget right</source>
+        <translation>正值向右移动小组件</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Positive values move the widget down</source>
+        <translation>正值向下移动小组件</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Memory widget background</source>
+        <translation>内存小组件底板</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Add a surface behind the memory widget</source>
+        <translation>在内存小组件后方添加底板</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Blur behind memory widget</source>
+        <translation>内存小组件背景模糊</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Soften the wallpaper beneath the memory widget surface</source>
+        <translation>模糊内存小组件底板下方的壁纸</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Animate progress bar</source>
+        <translation>进度条动画</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Smoothly animate memory usage updates</source>
+        <translation>平滑动画显示内存占用更新</translation>
+    </message>
 </context>
 <context>
     <name>Details</name>
@@ -2675,6 +2736,14 @@
         <location line="+35"/>
         <source>Used</source>
         <translation>已使用</translation>
+    </message>
+</context>
+<context>
+    <name>MemoryWidget</name>
+    <message>
+        <location filename="../../../../../modules/background/MemoryWidget.qml" line="+114"/>
+        <source>Memory</source>
+        <translation>内存</translation>
     </message>
 </context>
 <context>

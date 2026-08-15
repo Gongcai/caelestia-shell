@@ -26,7 +26,11 @@ Variants {
         surfaceFormat.opaque: false
 
         mask: Region {
-            item: widgets.interactionTarget
+            item: widgets.clockInteractionTarget
+
+            Region {
+                item: widgets.memoryInteractionTarget
+            }
         }
 
         anchors.top: true

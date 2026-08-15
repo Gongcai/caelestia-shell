@@ -15,6 +15,7 @@ PageBase {
     readonly property bool editingGlobalWidgets: nState.selectedWidgetScreen === "*"
     readonly property string widgetScreenName: editingGlobalWidgets ? "" : (nState.selectedWidgetScreen || nState.screen.name)
     readonly property var widgetConfig: editingGlobalWidgets ? GlobalConfig.background.desktopClock : GlobalConfig.forScreen(widgetScreenName).background.desktopClock
+    readonly property var memoryConfig: editingGlobalWidgets ? GlobalConfig.background.desktopMemory : GlobalConfig.forScreen(widgetScreenName).background.desktopMemory
     readonly property var widgetScreen: Screens.screens.find(screen => screen.name === (widgetScreenName || nState.screen.name)) ?? nState.screen
     readonly property int widgetOffsetLimitX: Math.max(2000, widgetScreen.width ?? 2000)
     readonly property int widgetOffsetLimitY: Math.max(2000, widgetScreen.height ?? 2000)
@@ -71,6 +72,7 @@ PageBase {
 
         const screenConfig = GlobalConfig.forScreen(widgetScreenName);
         screenConfig.background.resetOption("desktopClock");
+        screenConfig.background.resetOption("desktopMemory");
         screenConfig.save();
     }
 
@@ -216,6 +218,85 @@ PageBase {
             checked: root.widgetConfig.invertColors
             disabled: !root.widgetConfig.enabled
             onToggled: root.widgetConfig.invertColors = checked
+        }
+
+        SectionHeader {
+            text: qsTr("Memory widget")
+        }
+
+        ToggleRow {
+            first: true
+            text: qsTr("Memory widget")
+            subtext: qsTr("Show memory usage and the top processes on the desktop")
+            checked: root.memoryConfig.enabled
+            onToggled: root.memoryConfig.enabled = checked
+        }
+
+        SelectRow {
+            label: qsTr("Position")
+            subtext: qsTr("Widget placement on the desktop")
+            menuItems: root.widgetPositionItems
+            active: root.widgetPositionItems.find(item => item.value === root.memoryConfig.position) ?? root.widgetPositionItems[8]
+            disabled: !root.memoryConfig.enabled
+            onSelected: item => root.memoryConfig.position = item.value
+        }
+
+        StepperRow {
+            label: qsTr("Widget size")
+            subtext: qsTr("Scale relative to the default size")
+            value: Math.round(root.memoryConfig.scale * 100)
+            from: 50
+            to: 200
+            stepSize: 5
+            enabled: root.memoryConfig.enabled
+            onMoved: v => root.memoryConfig.scale = v / 100
+        }
+
+        StepperRow {
+            label: qsTr("Horizontal offset")
+            subtext: qsTr("Positive values move the widget right")
+            value: root.memoryConfig.offsetX
+            from: -root.widgetOffsetLimitX
+            to: root.widgetOffsetLimitX
+            stepSize: 10
+            enabled: root.memoryConfig.enabled
+            onMoved: v => root.memoryConfig.offsetX = Math.round(v)
+        }
+
+        StepperRow {
+            label: qsTr("Vertical offset")
+            subtext: qsTr("Positive values move the widget down")
+            value: root.memoryConfig.offsetY
+            from: -root.widgetOffsetLimitY
+            to: root.widgetOffsetLimitY
+            stepSize: 10
+            enabled: root.memoryConfig.enabled
+            onMoved: v => root.memoryConfig.offsetY = Math.round(v)
+        }
+
+        ToggleRow {
+            text: qsTr("Memory widget background")
+            subtext: qsTr("Add a surface behind the memory widget")
+            checked: root.memoryConfig.background.enabled
+            disabled: !root.memoryConfig.enabled
+            onToggled: root.memoryConfig.background.enabled = checked
+        }
+
+        ToggleRow {
+            text: qsTr("Blur behind memory widget")
+            subtext: qsTr("Soften the wallpaper beneath the memory widget surface")
+            checked: root.memoryConfig.background.blur
+            disabled: !root.memoryConfig.enabled || !root.memoryConfig.background.enabled
+            onToggled: root.memoryConfig.background.blur = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Animate progress bar")
+            subtext: qsTr("Smoothly animate memory usage updates")
+            checked: root.memoryConfig.animate
+            disabled: !root.memoryConfig.enabled
+            onToggled: root.memoryConfig.animate = checked
         }
     }
 }

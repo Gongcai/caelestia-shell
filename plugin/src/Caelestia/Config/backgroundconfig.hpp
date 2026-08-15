@@ -52,6 +52,37 @@ public:
         , m_shadow(new DesktopClockShadow(this)) {}
 };
 
+class DesktopMemoryBackground : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, true)
+    CONFIG_PROPERTY(qreal, opacity, 0.7)
+    CONFIG_PROPERTY(bool, blur, true)
+
+public:
+    explicit DesktopMemoryBackground(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class DesktopMemory : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, false)
+    CONFIG_PROPERTY(QString, position, QStringLiteral("bottom-left"))
+    CONFIG_PROPERTY(qreal, scale, 1.0)
+    CONFIG_PROPERTY(int, offsetX, 0)
+    CONFIG_PROPERTY(int, offsetY, 0)
+    CONFIG_PROPERTY(bool, animate, false)
+    CONFIG_SUBOBJECT(DesktopMemoryBackground, background)
+
+public:
+    explicit DesktopMemory(QObject* parent = nullptr)
+        : ConfigObject(parent)
+        , m_background(new DesktopMemoryBackground(this)) {}
+};
+
 class BackgroundVisualiser : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -76,12 +107,14 @@ class BackgroundConfig : public ConfigObject {
     // Empty means inherit the global wallpaper selection.
     CONFIG_PROPERTY(QString, wallpaperPath, QString())
     CONFIG_SUBOBJECT(DesktopClock, desktopClock)
+    CONFIG_SUBOBJECT(DesktopMemory, desktopMemory)
     CONFIG_SUBOBJECT(BackgroundVisualiser, visualiser)
 
 public:
     explicit BackgroundConfig(QObject* parent = nullptr)
         : ConfigObject(parent)
         , m_desktopClock(new DesktopClock(this))
+        , m_desktopMemory(new DesktopMemory(this))
         , m_visualiser(new BackgroundVisualiser(this)) {}
 };
 
