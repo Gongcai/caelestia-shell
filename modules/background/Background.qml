@@ -31,6 +31,10 @@ Variants {
             Region {
                 item: widgets.memoryInteractionTarget
             }
+
+            Region {
+                item: widgets.visualiserInteractionTarget
+            }
         }
 
         anchors.top: true

@@ -17,6 +17,9 @@ class VisualiserBars : public QQuickPaintedItem {
     Q_PROPERTY(QColor secondaryColor READ secondaryColor WRITE setSecondaryColor NOTIFY secondaryColorChanged)
     Q_PROPERTY(qreal rounding READ rounding WRITE setRounding NOTIFY roundingChanged)
     Q_PROPERTY(qreal spacing READ spacing WRITE setSpacing NOTIFY spacingChanged)
+    Q_PROPERTY(bool mirrored READ mirrored WRITE setMirrored NOTIFY mirroredChanged)
+    Q_PROPERTY(int maximumBarCount READ maximumBarCount WRITE setMaximumBarCount NOTIFY maximumBarCountChanged)
+    Q_PROPERTY(qreal barHeightRatio READ barHeightRatio WRITE setBarHeightRatio NOTIFY barHeightRatioChanged)
     Q_PROPERTY(int animationDuration READ animationDuration WRITE setAnimationDuration NOTIFY animationDurationChanged)
     Q_PROPERTY(bool settled READ settled NOTIFY settledChanged)
 
@@ -42,6 +45,15 @@ public:
     [[nodiscard]] qreal spacing() const;
     void setSpacing(qreal spacing);
 
+    [[nodiscard]] bool mirrored() const;
+    void setMirrored(bool mirrored);
+
+    [[nodiscard]] int maximumBarCount() const;
+    void setMaximumBarCount(int count);
+
+    [[nodiscard]] qreal barHeightRatio() const;
+    void setBarHeightRatio(qreal ratio);
+
     [[nodiscard]] int animationDuration() const;
     void setAnimationDuration(int duration);
 
@@ -53,11 +65,15 @@ signals:
     void secondaryColorChanged();
     void roundingChanged();
     void spacingChanged();
+    void mirroredChanged();
+    void maximumBarCountChanged();
+    void barHeightRatioChanged();
     void animationDurationChanged();
     void settledChanged();
 
 private:
-    void drawSide(QPainter* painter, bool rightSide);
+    void drawBars(QPainter* painter, qreal xOffset, qreal width, bool reverse);
+    [[nodiscard]] double sampledValue(qsizetype index, qsizetype count) const;
 
     QVector<double> m_targetValues;
     QVector<double> m_displayValues;
@@ -65,6 +81,9 @@ private:
     QColor m_secondaryColor;
     qreal m_rounding = 0.0;
     qreal m_spacing = 0.0;
+    bool m_mirrored = true;
+    int m_maximumBarCount = 0;
+    qreal m_barHeightRatio = 0.4;
     int m_animationDuration = 200;
     bool m_settled = true;
 };

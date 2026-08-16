@@ -425,6 +425,19 @@ For example, to disable the bar on DP-1:
                 "blur": 0.4
             }
         },
+        "desktopVisualiser": {
+            "enabled": false,
+            "position": "bottom-center",
+            "scale": 1.0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "bars": 24,
+            "background": {
+                "enabled": true,
+                "opacity": 0.7,
+                "blur": false
+            }
+        },
         "visualiser": {
             "enabled": false,
             "autoHide": true,

@@ -52,44 +52,47 @@ void VisualiserBars::paint(QPainter* painter) {
     painter->setPen(Qt::NoPen);
 
     const qreal h = height();
-    const qreal maxBarHeight = h * 0.4;
+    const qreal maxBarHeight = h * m_barHeightRatio;
 
     QLinearGradient gradient(0, h - maxBarHeight, 0, h);
     gradient.setColorAt(0, m_primaryColor);
     gradient.setColorAt(1, m_secondaryColor);
     painter->setBrush(gradient);
 
-    drawSide(painter, false);
-    drawSide(painter, true);
+    if (m_mirrored) {
+        drawBars(painter, 0, width() * 0.4, true);
+        drawBars(painter, width() * 0.6, width() * 0.4, false);
+    } else {
+        drawBars(painter, 0, width(), false);
+    }
 }
 
-void VisualiserBars::drawSide(QPainter* painter, bool rightSide) {
-    const qreal w = width();
+void VisualiserBars::drawBars(QPainter* painter, qreal xOffset, qreal rangeWidth, bool reverse) {
     const qreal h = height();
-    const auto count = m_displayValues.size();
+    const qsizetype count = m_maximumBarCount > 0
+        ? std::min(m_displayValues.size(), static_cast<qsizetype>(m_maximumBarCount))
+        : m_displayValues.size();
 
     if (count == 0)
         return;
 
-    const qreal sideWidth = w * 0.4;
-    const qreal slotWidth = sideWidth / static_cast<qreal>(count);
+    const qreal slotWidth = rangeWidth / static_cast<qreal>(count);
     const qreal barWidth = slotWidth - m_spacing;
 
     if (barWidth <= 0)
         return;
 
-    const qreal sideOffset = rightSide ? w * 0.6 : 0;
-    const qreal maxBarHeight = h * 0.4;
+    const qreal maxBarHeight = h * m_barHeightRatio;
 
     for (qsizetype i = 0; i < count; ++i) {
-        const qsizetype valueIndex = rightSide ? i : (count - i - 1);
-        const qreal value = std::clamp(m_displayValues[valueIndex], 0.0, 1.0);
+        const qsizetype valueIndex = reverse ? (count - i - 1) : i;
+        const qreal value = std::clamp(sampledValue(valueIndex, count), 0.0, 1.0);
         const qreal barHeight = value * maxBarHeight;
 
         if (barHeight <= 0)
             continue;
 
-        const qreal x = static_cast<qreal>(i) * slotWidth + sideOffset;
+        const qreal x = static_cast<qreal>(i) * slotWidth + xOffset;
         const qreal y = h - barHeight;
         const qreal r = std::min({ m_rounding, barWidth / 2.0, barHeight });
 
@@ -111,6 +114,18 @@ void VisualiserBars::drawSide(QPainter* painter, bool rightSide) {
 
         painter->drawPath(path);
     }
+}
+
+double VisualiserBars::sampledValue(qsizetype index, qsizetype count) const {
+    if (count == m_displayValues.size())
+        return m_displayValues[index];
+
+    const qsizetype begin = index * m_displayValues.size() / count;
+    const qsizetype end = (index + 1) * m_displayValues.size() / count;
+    double value = 0.0;
+    for (qsizetype i = begin; i < end; ++i)
+        value = std::max(value, m_displayValues[i]);
+    return value;
 }
 
 QVector<double> VisualiserBars::values() const {
@@ -181,6 +196,44 @@ void VisualiserBars::setSpacing(qreal spacing) {
         return;
     m_spacing = spacing;
     emit spacingChanged();
+    update();
+}
+
+bool VisualiserBars::mirrored() const {
+    return m_mirrored;
+}
+
+void VisualiserBars::setMirrored(bool mirrored) {
+    if (m_mirrored == mirrored)
+        return;
+    m_mirrored = mirrored;
+    emit mirroredChanged();
+    update();
+}
+
+int VisualiserBars::maximumBarCount() const {
+    return m_maximumBarCount;
+}
+
+void VisualiserBars::setMaximumBarCount(int count) {
+    count = std::max(0, count);
+    if (m_maximumBarCount == count)
+        return;
+    m_maximumBarCount = count;
+    emit maximumBarCountChanged();
+    update();
+}
+
+qreal VisualiserBars::barHeightRatio() const {
+    return m_barHeightRatio;
+}
+
+void VisualiserBars::setBarHeightRatio(qreal ratio) {
+    ratio = std::clamp(ratio, 0.0, 1.0);
+    if (qFuzzyCompare(m_barHeightRatio, ratio))
+        return;
+    m_barHeightRatio = ratio;
+    emit barHeightRatioChanged();
     update();
 }
 

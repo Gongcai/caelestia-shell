@@ -83,6 +83,37 @@ public:
         , m_background(new DesktopMemoryBackground(this)) {}
 };
 
+class DesktopVisualiserBackground : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, true)
+    CONFIG_PROPERTY(qreal, opacity, 0.7)
+    CONFIG_PROPERTY(bool, blur, false)
+
+public:
+    explicit DesktopVisualiserBackground(QObject* parent = nullptr)
+        : ConfigObject(parent) {}
+};
+
+class DesktopVisualiser : public ConfigObject {
+    Q_OBJECT
+    QML_ANONYMOUS
+
+    CONFIG_PROPERTY(bool, enabled, false)
+    CONFIG_PROPERTY(QString, position, QStringLiteral("bottom-center"))
+    CONFIG_PROPERTY(qreal, scale, 1.0)
+    CONFIG_PROPERTY(int, offsetX, 0)
+    CONFIG_PROPERTY(int, offsetY, 0)
+    CONFIG_PROPERTY(int, bars, 24)
+    CONFIG_SUBOBJECT(DesktopVisualiserBackground, background)
+
+public:
+    explicit DesktopVisualiser(QObject* parent = nullptr)
+        : ConfigObject(parent)
+        , m_background(new DesktopVisualiserBackground(this)) {}
+};
+
 class BackgroundVisualiser : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -108,6 +139,7 @@ class BackgroundConfig : public ConfigObject {
     CONFIG_PROPERTY(QString, wallpaperPath, QString())
     CONFIG_SUBOBJECT(DesktopClock, desktopClock)
     CONFIG_SUBOBJECT(DesktopMemory, desktopMemory)
+    CONFIG_SUBOBJECT(DesktopVisualiser, desktopVisualiser)
     CONFIG_SUBOBJECT(BackgroundVisualiser, visualiser)
 
 public:
@@ -115,6 +147,7 @@ public:
         : ConfigObject(parent)
         , m_desktopClock(new DesktopClock(this))
         , m_desktopMemory(new DesktopMemory(this))
+        , m_desktopVisualiser(new DesktopVisualiser(this))
         , m_visualiser(new BackgroundVisualiser(this)) {}
 };
 

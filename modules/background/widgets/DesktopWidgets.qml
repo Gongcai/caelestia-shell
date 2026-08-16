@@ -13,8 +13,10 @@ Item {
     required property Item wallpaper
     readonly property Item clockInteractionTarget: clockLoader.interactionTarget
     readonly property Item memoryInteractionTarget: memoryLoader.interactionTarget
+    readonly property Item visualiserInteractionTarget: visualiserLoader.interactionTarget
     readonly property var editableClockConfig: GlobalConfig.forScreen(screen.name).background.desktopClock
     readonly property var editableMemoryConfig: GlobalConfig.forScreen(screen.name).background.desktopMemory
+    readonly property var editableVisualiserConfig: GlobalConfig.forScreen(screen.name).background.desktopVisualiser
 
     function commitClockMove(deltaX: real, deltaY: real): void {
         const padding = Tokens.padding.small;
@@ -40,6 +42,19 @@ Item {
 
         editableMemoryConfig.offsetX = Math.round(editableMemoryConfig.offsetX + targetX - memoryLoader.x);
         editableMemoryConfig.offsetY = Math.round(editableMemoryConfig.offsetY + targetY - memoryLoader.y);
+    }
+
+    function commitVisualiserMove(deltaX: real, deltaY: real): void {
+        const padding = Tokens.padding.small;
+        const minX = Tokens.sizes.bar.innerWidth + Math.max(padding, Config.border.thickness);
+        const maxX = Math.max(minX, width - visualiserLoader.width - padding);
+        const minY = padding;
+        const maxY = Math.max(minY, height - visualiserLoader.height - padding);
+        const targetX = Math.max(minX, Math.min(maxX, visualiserLoader.x + deltaX));
+        const targetY = Math.max(minY, Math.min(maxY, visualiserLoader.y + deltaY));
+
+        editableVisualiserConfig.offsetX = Math.round(editableVisualiserConfig.offsetX + targetX - visualiserLoader.x);
+        editableVisualiserConfig.offsetY = Math.round(editableVisualiserConfig.offsetY + targetY - visualiserLoader.y);
     }
 
     // Each desktop widget gets its own loader so future widget types can share
@@ -79,6 +94,25 @@ Item {
             wallpaper: root.wallpaper
             absX: memoryLoader.x + memoryLoader.visualOffsetX
             absY: memoryLoader.y + memoryLoader.visualOffsetY
+        }
+    }
+
+    WidgetLoader {
+        id: visualiserLoader
+
+        asynchronous: true
+        active: Config.background.desktopVisualiser.enabled
+        position: Config.background.desktopVisualiser.position
+        horizontalOffset: Config.background.desktopVisualiser.offsetX
+        verticalOffset: Config.background.desktopVisualiser.offsetY
+        edgeMargin: Tokens.padding.extraLargeIncreased
+        leftEdgeMargin: Tokens.padding.extraLargeIncreased + Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness)
+        onMoveRequested: (deltaX, deltaY) => root.commitVisualiserMove(deltaX, deltaY)
+
+        sourceComponent: MusicVisualiserWidget {
+            wallpaper: root.wallpaper
+            absX: visualiserLoader.x + visualiserLoader.visualOffsetX
+            absY: visualiserLoader.y + visualiserLoader.visualOffsetY
         }
     }
 }

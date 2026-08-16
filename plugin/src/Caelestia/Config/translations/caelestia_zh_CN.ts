@@ -88,30 +88,6 @@
     </message>
 </context>
 <context>
-    <name>SearchItem</name>
-    <message>
-        <location filename="../../../../../modules/launcher/items/SearchItem.qml" line="+49"/>
-        <source>Search Bing for &quot;%1&quot;</source>
-        <translation>使用 Bing 搜索“%1”</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Type a web search query</source>
-        <translation>输入网页搜索内容</translation>
-    </message>
-</context>
-<context>
-    <name>LauncherActions</name>
-    <message>
-        <source>Web Search</source>
-        <translation>网页搜索</translation>
-    </message>
-    <message>
-        <source>Search with Bing in Microsoft Edge</source>
-        <translation>使用 Microsoft Edge 和 Bing 搜索</translation>
-    </message>
-</context>
-<context>
     <name>ActiveWindow</name>
     <message>
         <location filename="../../../../../modules/bar/components/ActiveWindow.qml" line="+19"/>
@@ -1259,35 +1235,6 @@
     </message>
 </context>
 <context>
-    <name>ControlCenter</name>
-    <message><source>Control Centre</source><translation>控制中心</translation></message>
-    <message><source>Ethernet</source><translation>以太网</translation></message>
-    <message><source>Wi-Fi</source><translation>Wi-Fi</translation></message>
-    <message><source>Connected</source><translation>已连接</translation></message>
-    <message><source>Not connected</source><translation>未连接</translation></message>
-    <message><source>Off</source><translation>关闭</translation></message>
-    <message><source>Bluetooth</source><translation>蓝牙</translation></message>
-    <message><source>%1 connected</source><translation>已连接 %1 台设备</translation></message>
-    <message><source>VPN</source><translation>VPN</translation></message>
-    <message><source>Connecting...</source><translation>正在连接...</translation></message>
-    <message><source>Do Not Disturb</source><translation>勿扰模式</translation></message>
-    <message><source>On</source><translation>开启</translation></message>
-    <message><source>Game Mode</source><translation>游戏模式</translation></message>
-    <message><source>Keep Awake</source><translation>保持唤醒</translation></message>
-    <message><source>Microphone</source><translation>麦克风</translation></message>
-    <message><source>Muted</source><translation>已静音</translation></message>
-    <message><source>Display</source><translation>显示器</translation></message>
-    <message><source>Sound</source><translation>声音</translation></message>
-    <message><source>Screen Recording</source><translation>屏幕录制</translation></message>
-    <message><source>Paused</source><translation>已暂停</translation></message>
-    <message><source>Recording for %1</source><translation>已录制 %1</translation></message>
-    <message><source>Modes and recordings</source><translation>录制模式与历史</translation></message>
-</context>
-<context>
-    <name>RecorderPage</name>
-    <message><source>Screen Recording</source><translation>屏幕录制</translation></message>
-</context>
-<context>
     <name>Content</name>
     <message>
         <location filename="../../../../../modules/dashboard/Content.qml" line="+24"/>
@@ -1341,6 +1288,129 @@
         <location line="+0"/>
         <source>Try searching for something else</source>
         <translation>尝试搜索其他内容</translation>
+    </message>
+</context>
+<context>
+    <name>ControlCenter</name>
+    <message>
+        <location filename="../../../../../modules/utilities/ControlCenter.qml" line="+40"/>
+        <source>Control Centre</source>
+        <translation>控制中心</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Ethernet</source>
+        <translation>以太网</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Wi-Fi</source>
+        <translation>Wi-Fi</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+33"/>
+        <source>Connected</source>
+        <translation>已连接</translation>
+    </message>
+    <message>
+        <location line="-33"/>
+        <location line="+17"/>
+        <location line="+16"/>
+        <source>Not connected</source>
+        <translation>未连接</translation>
+    </message>
+    <message>
+        <location line="-33"/>
+        <location line="+12"/>
+        <location line="+39"/>
+        <location line="+8"/>
+        <location line="+9"/>
+        <source>Off</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location line="-59"/>
+        <source>Bluetooth</source>
+        <translation>蓝牙</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>%1 connected</source>
+        <translation>已连接 %1 台设备</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>VPN</source>
+        <translation>VPN</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Connecting...</source>
+        <translation>正在连接...</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Do Not Disturb</source>
+        <translation>勿扰模式</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+8"/>
+        <location line="+9"/>
+        <location line="+8"/>
+        <source>On</source>
+        <translation>开启</translation>
+    </message>
+    <message>
+        <location line="-18"/>
+        <source>Game Mode</source>
+        <translation>游戏模式</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Keep Awake</source>
+        <translation>保持唤醒</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Microphone</source>
+        <translation>麦克风</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Muted</source>
+        <translation>已静音</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Display</source>
+        <translation>显示器</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Sound</source>
+        <translation>声音</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>Screen Recording</source>
+        <translation>屏幕录制</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Paused</source>
+        <translation>已暂停</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Recording for %1</source>
+        <translation>已录制 %1</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Modes and recordings</source>
+        <translation>录制模式与历史</translation>
     </message>
 </context>
 <context>
@@ -1463,7 +1533,7 @@
 <context>
     <name>DesktopWidgetsPage</name>
     <message>
-        <location filename="../../../../../modules/nexus/pages/wallandstyle/DesktopWidgetsPage.qml" line="+24"/>
+        <location filename="../../../../../modules/nexus/pages/wallandstyle/DesktopWidgetsPage.qml" line="+26"/>
         <source>Top left</source>
         <translation>左上</translation>
     </message>
@@ -1513,7 +1583,7 @@
         <translation>桌面小组件</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+27"/>
         <source>Target display</source>
         <translation>目标显示器</translation>
     </message>
@@ -1540,11 +1610,13 @@
     </message>
     <message>
         <location line="+6"/>
+        <location line="+86"/>
+        <location line="+79"/>
         <source>Position</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-164"/>
         <source>Clock placement on the desktop</source>
         <translation>时钟在桌面上的位置</translation>
     </message>
@@ -1555,26 +1627,32 @@
     </message>
     <message>
         <location line="+1"/>
+        <location line="+86"/>
+        <location line="+79"/>
         <source>Scale relative to the default size</source>
         <translation>相对于默认大小的缩放比例</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-155"/>
+        <location line="+86"/>
+        <location line="+90"/>
         <source>Horizontal offset</source>
         <translation>水平偏移</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-175"/>
         <source>Positive values move the clock right</source>
         <translation>正值向右移动时钟</translation>
     </message>
     <message>
         <location line="+10"/>
+        <location line="+86"/>
+        <location line="+90"/>
         <source>Vertical offset</source>
         <translation>垂直偏移</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-175"/>
         <source>Positive values move the clock down</source>
         <translation>正值向下移动时钟</translation>
     </message>
@@ -1626,26 +1704,30 @@
     </message>
     <message>
         <location line="+7"/>
+        <location line="+79"/>
         <source>Widget placement on the desktop</source>
         <translation>小组件在桌面上的位置</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-71"/>
+        <location line="+79"/>
         <source>Widget size</source>
         <translation>小组件大小</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-67"/>
+        <location line="+90"/>
         <source>Positive values move the widget right</source>
         <translation>正值向右移动小组件</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-79"/>
+        <location line="+90"/>
         <source>Positive values move the widget down</source>
         <translation>正值向下移动小组件</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-80"/>
         <source>Memory widget background</source>
         <translation>内存小组件底板</translation>
     </message>
@@ -1655,7 +1737,7 @@
         <translation>在内存小组件后方添加底板</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Blur behind memory widget</source>
         <translation>内存小组件背景模糊</translation>
     </message>
@@ -1673,6 +1755,47 @@
         <location line="+1"/>
         <source>Smoothly animate memory usage updates</source>
         <translation>平滑动画显示内存占用更新</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+5"/>
+        <source>Music visualiser</source>
+        <translation>音乐可视化</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show a spectrum that moves with the music</source>
+        <translation>显示随音乐律动的频谱</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Spectrum bars</source>
+        <translation>频谱柱数量</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fewer bars use slightly less rendering time</source>
+        <translation>减少频谱柱可略微降低渲染开销</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Visualiser background</source>
+        <translation>可视化底板</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Add a surface behind the music visualiser</source>
+        <translation>在音乐可视化后方添加底板</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Blur behind visualiser</source>
+        <translation>可视化背景模糊</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Soften the wallpaper beneath the visualiser surface</source>
+        <translation>模糊可视化底板下方的壁纸</translation>
     </message>
 </context>
 <context>
@@ -1785,7 +1908,7 @@
 <context>
     <name>DialogRowButton</name>
     <message>
-        <location filename="../../../../../modules/nexus/common/DialogRowButton.qml" line="+224"/>
+        <location filename="../../../../../modules/nexus/common/DialogRowButton.qml" line="+229"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -2347,6 +2470,17 @@
     </message>
 </context>
 <context>
+    <name>LauncherActions</name>
+    <message>
+        <source>Web Search</source>
+        <translation type="vanished">网页搜索</translation>
+    </message>
+    <message>
+        <source>Search with Bing in Microsoft Edge</source>
+        <translation type="vanished">使用 Microsoft Edge 和 Bing 搜索</translation>
+    </message>
+</context>
+<context>
     <name>LauncherPanel</name>
     <message>
         <location filename="../../../../../modules/nexus/pages/panels/LauncherPanel.qml" line="+11"/>
@@ -2498,12 +2632,12 @@
 <context>
     <name>LyricsAndSelector</name>
     <message>
-        <location filename="../../../../../modules/dashboard/media/LyricsAndSelector.qml" line="+31"/>
+        <location filename="../../../../../modules/dashboard/media/LyricsAndSelector.qml" line="+36"/>
         <source>Lyrics</source>
         <translation>歌词</translation>
     </message>
     <message>
-        <location filename="../../../../../modules/dashboard/media/LyricsAndSelector.qml" line="+11"/>
+        <location line="+11"/>
         <source>Hide lyrics drawer</source>
         <translation>隐藏歌词抽屉</translation>
     </message>
@@ -2541,7 +2675,7 @@
 <context>
     <name>LyricsDrawer</name>
     <message>
-        <location filename="../../../../../modules/dashboard/LyricsDrawer.qml" line="+116"/>
+        <location filename="../../../../../modules/dashboard/LyricsDrawer.qml" line="+157"/>
         <source>Nothing playing</source>
         <translation>当前没有播放媒体</translation>
     </message>
@@ -2556,7 +2690,7 @@
         <translation>没有找到歌词</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Instrumental</source>
         <translation>纯音乐</translation>
     </message>
@@ -2741,9 +2875,27 @@
 <context>
     <name>MemoryWidget</name>
     <message>
-        <location filename="../../../../../modules/background/MemoryWidget.qml" line="+114"/>
+        <location filename="../../../../../modules/background/MemoryWidget.qml" line="+148"/>
         <source>Memory</source>
         <translation>内存</translation>
+    </message>
+</context>
+<context>
+    <name>MusicVisualiserWidget</name>
+    <message>
+        <location filename="../../../../../modules/background/MusicVisualiserWidget.qml" line="+93"/>
+        <source>No music playing</source>
+        <translation>暂无音乐播放</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Unknown title</source>
+        <translation>未知标题</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Unknown artist</source>
+        <translation>未知艺术家</translation>
     </message>
 </context>
 <context>
@@ -3650,6 +3802,14 @@
     </message>
 </context>
 <context>
+    <name>RecorderPage</name>
+    <message>
+        <location filename="../../../../../modules/utilities/RecorderPage.qml" line="+33"/>
+        <source>Screen Recording</source>
+        <translation>屏幕录制</translation>
+    </message>
+</context>
+<context>
     <name>RecordingDeleteModal</name>
     <message>
         <location filename="../../../../../modules/utilities/RecordingDeleteModal.qml" line="+170"/>
@@ -3716,6 +3876,19 @@
         <location line="+2"/>
         <source>Connected • %1</source>
         <translation>已连接 • %1</translation>
+    </message>
+</context>
+<context>
+    <name>SearchItem</name>
+    <message>
+        <location filename="../../../../../modules/launcher/items/SearchItem.qml" line="+52"/>
+        <source>Search Bing for &quot;%1&quot;</source>
+        <translation>使用 Bing 搜索“%1”</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Type a web search query</source>
+        <translation>输入网页搜索内容</translation>
     </message>
 </context>
 <context>
@@ -4464,7 +4637,7 @@ Keyboard layout: %1</source>
         <translation type="vanished">右下</translation>
     </message>
     <message>
-        <location filename="../../../../../modules/nexus/pages/WallpaperAndStyle.qml" line="+19"/>
+        <location filename="../../../../../modules/nexus/pages/WallpaperAndStyle.qml" line="+30"/>
         <source>Wallpaper &amp; style</source>
         <translation>壁纸和风格</translation>
     </message>
@@ -4579,9 +4752,13 @@ Keyboard layout: %1</source>
         <translation type="vanished">使用对比主题色组</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Clock and per-display placement</source>
-        <translation>时钟和分显示器布局</translation>
+        <translation type="vanished">时钟和分显示器布局</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clock, memory and music visualiser</source>
+        <translation>时钟、内存与音乐可视化</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4666,27 +4843,35 @@ Keyboard layout: %1</source>
         <translation>缩放全部界面文字</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+21"/>
+        <location line="+2"/>
         <source>Interface font</source>
         <translation>界面字体</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1"/>
         <source>Apply one family to all Shell text</source>
         <translation>用一个字体家族统一全部界面文字</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+2"/>
+        <location line="+30"/>
+        <source>Select</source>
+        <translation type="unfinished">选择</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <location line="+2"/>
         <source>Monospace font</source>
         <translation>等宽字体</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1"/>
         <source>For the terminal and code</source>
         <translation>用于终端和代码</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+17"/>
         <source>Dark theme</source>
         <translation>深色主题</translation>
     </message>

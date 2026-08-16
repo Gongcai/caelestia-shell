@@ -216,7 +216,7 @@ PageBase {
                 last: true
                 icon: "widgets"
                 text: qsTr("Desktop widgets")
-                subtext: qsTr("Clock and per-display placement")
+                subtext: qsTr("Clock, memory and music visualiser")
                 onClicked: root.nState.openSubPage(4)
             }
         }

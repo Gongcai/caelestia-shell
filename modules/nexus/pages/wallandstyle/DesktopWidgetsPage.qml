@@ -16,6 +16,7 @@ PageBase {
     readonly property string widgetScreenName: editingGlobalWidgets ? "" : (nState.selectedWidgetScreen || nState.screen.name)
     readonly property var widgetConfig: editingGlobalWidgets ? GlobalConfig.background.desktopClock : GlobalConfig.forScreen(widgetScreenName).background.desktopClock
     readonly property var memoryConfig: editingGlobalWidgets ? GlobalConfig.background.desktopMemory : GlobalConfig.forScreen(widgetScreenName).background.desktopMemory
+    readonly property var visualiserConfig: editingGlobalWidgets ? GlobalConfig.background.desktopVisualiser : GlobalConfig.forScreen(widgetScreenName).background.desktopVisualiser
     readonly property var widgetScreen: Screens.screens.find(screen => screen.name === (widgetScreenName || nState.screen.name)) ?? nState.screen
     readonly property int widgetOffsetLimitX: Math.max(2000, widgetScreen.width ?? 2000)
     readonly property int widgetOffsetLimitY: Math.max(2000, widgetScreen.height ?? 2000)
@@ -73,6 +74,7 @@ PageBase {
         const screenConfig = GlobalConfig.forScreen(widgetScreenName);
         screenConfig.background.resetOption("desktopClock");
         screenConfig.background.resetOption("desktopMemory");
+        screenConfig.background.resetOption("desktopVisualiser");
         screenConfig.save();
     }
 
@@ -297,6 +299,88 @@ PageBase {
             checked: root.memoryConfig.animate
             disabled: !root.memoryConfig.enabled
             onToggled: root.memoryConfig.animate = checked
+        }
+
+        SectionHeader {
+            text: qsTr("Music visualiser")
+        }
+
+        ToggleRow {
+            first: true
+            text: qsTr("Music visualiser")
+            subtext: qsTr("Show a spectrum that moves with the music")
+            checked: root.visualiserConfig.enabled
+            onToggled: root.visualiserConfig.enabled = checked
+        }
+
+        SelectRow {
+            label: qsTr("Position")
+            subtext: qsTr("Widget placement on the desktop")
+            menuItems: root.widgetPositionItems
+            active: root.widgetPositionItems.find(item => item.value === root.visualiserConfig.position) ?? root.widgetPositionItems[7]
+            disabled: !root.visualiserConfig.enabled
+            onSelected: item => root.visualiserConfig.position = item.value
+        }
+
+        StepperRow {
+            label: qsTr("Widget size")
+            subtext: qsTr("Scale relative to the default size")
+            value: Math.round(root.visualiserConfig.scale * 100)
+            from: 50
+            to: 200
+            stepSize: 5
+            enabled: root.visualiserConfig.enabled
+            onMoved: v => root.visualiserConfig.scale = v / 100
+        }
+
+        StepperRow {
+            label: qsTr("Spectrum bars")
+            subtext: qsTr("Fewer bars use slightly less rendering time")
+            value: root.visualiserConfig.bars
+            from: 8
+            to: 48
+            stepSize: 2
+            enabled: root.visualiserConfig.enabled
+            onMoved: v => root.visualiserConfig.bars = Math.round(v)
+        }
+
+        StepperRow {
+            label: qsTr("Horizontal offset")
+            subtext: qsTr("Positive values move the widget right")
+            value: root.visualiserConfig.offsetX
+            from: -root.widgetOffsetLimitX
+            to: root.widgetOffsetLimitX
+            stepSize: 10
+            enabled: root.visualiserConfig.enabled
+            onMoved: v => root.visualiserConfig.offsetX = Math.round(v)
+        }
+
+        StepperRow {
+            label: qsTr("Vertical offset")
+            subtext: qsTr("Positive values move the widget down")
+            value: root.visualiserConfig.offsetY
+            from: -root.widgetOffsetLimitY
+            to: root.widgetOffsetLimitY
+            stepSize: 10
+            enabled: root.visualiserConfig.enabled
+            onMoved: v => root.visualiserConfig.offsetY = Math.round(v)
+        }
+
+        ToggleRow {
+            text: qsTr("Visualiser background")
+            subtext: qsTr("Add a surface behind the music visualiser")
+            checked: root.visualiserConfig.background.enabled
+            disabled: !root.visualiserConfig.enabled
+            onToggled: root.visualiserConfig.background.enabled = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("Blur behind visualiser")
+            subtext: qsTr("Soften the wallpaper beneath the visualiser surface")
+            checked: root.visualiserConfig.background.blur
+            disabled: !root.visualiserConfig.enabled || !root.visualiserConfig.background.enabled
+            onToggled: root.visualiserConfig.background.blur = checked
         }
     }
 }
