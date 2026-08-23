@@ -7,6 +7,7 @@ import qs.modules.dashboard as Dashboard
 import qs.modules.launcher as Launcher
 import qs.modules.notifications as Notifications
 import qs.modules.osd as Osd
+import qs.modules.quickpanel as Quickpanel
 import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
 import qs.modules.utilities as Utilities
@@ -34,6 +35,7 @@ Item {
     readonly property alias utilities: utilities
     readonly property alias toasts: toasts
     readonly property alias sidebar: sidebar
+    readonly property alias quickpanel: quickpanel
 
     anchors.fill: parent
     anchors.margins: borderThickness
@@ -114,6 +116,15 @@ Item {
         screenState: root.screenState
 
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+    }
+
+    Quickpanel.Wrapper {
+        id: quickpanel
+
+        screenState: root.screenState
+
+        anchors.right: parent.right
         anchors.top: parent.top
     }
 

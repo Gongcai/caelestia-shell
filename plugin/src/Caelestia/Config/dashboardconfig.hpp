@@ -4,6 +4,8 @@
 
 namespace caelestia::config {
 
+using Qt::StringLiterals::operator""_s;
+
 class DashboardPerformance : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -31,7 +33,10 @@ class DashboardConfig : public ConfigObject {
     CONFIG_PROPERTY(bool, showPerformance, true)
     CONFIG_PROPERTY(bool, showWeather, true)
     CONFIG_PROPERTY(bool, showKdeConnect, true)
-    CONFIG_GLOBAL_PROPERTY(int, mediaUpdateInterval, 500)
+    CONFIG_PROPERTY(bool, showGithub, true)
+    CONFIG_GLOBAL_PROPERTY(QString, githubUsername, u""_s)
+    CONFIG_GLOBAL_PROPERTY(QString, githubClientId, u""_s)
+    CONFIG_GLOBAL_PROPERTY(QString, githubToken, u""_s)    CONFIG_GLOBAL_PROPERTY(int, mediaUpdateInterval, 500)
     CONFIG_GLOBAL_PROPERTY(int, resourceUpdateInterval, 1000)
     CONFIG_PROPERTY(int, dragThreshold, 50)
     CONFIG_SUBOBJECT(DashboardPerformance, performance)

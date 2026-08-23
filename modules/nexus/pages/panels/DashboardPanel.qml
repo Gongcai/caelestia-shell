@@ -69,11 +69,36 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: qsTr("KDE Connect")
             subtext: qsTr("Phone and device controls in the dashboard")
             checked: Config.dashboard.showKdeConnect
             onToggled: GlobalConfig.dashboard.showKdeConnect = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: qsTr("GitHub")
+            subtext: qsTr("Profile, contributions and repositories in the dashboard")
+            checked: Config.dashboard.showGithub
+            onToggled: GlobalConfig.dashboard.showGithub = checked
+        }
+
+        TextFieldRow {
+            visible: Config.dashboard.showGithub
+            label: qsTr("GitHub username")
+            subtext: qsTr("Optional: view public data without signing in")
+            value: GlobalConfig.dashboard.githubUsername
+            placeholderText: qsTr("e.g. octocat")
+            onEditingFinished: value => GlobalConfig.dashboard.githubUsername = value.trim()
+        }
+
+        TextFieldRow {
+            visible: Config.dashboard.showGithub
+            label: qsTr("GitHub OAuth client ID")
+            subtext: qsTr("Create an OAuth App on GitHub and paste its client ID to enable sign-in")
+            value: GlobalConfig.dashboard.githubClientId
+            placeholderText: qsTr("e.g. Iv1.1234567890abcdef")
+            onEditingFinished: value => GlobalConfig.dashboard.githubClientId = value.trim()
         }
 
         // Performance widgets

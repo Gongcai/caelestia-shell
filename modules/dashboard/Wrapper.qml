@@ -27,7 +27,9 @@ Item {
         title: qsTr("Send a file")
         filterLabel: qsTr("Files")
     }
-    readonly property bool modalActive: facePicker.opened || kdeConnectFilePicker.opened
+    readonly property bool modalActive: facePicker.opened || kdeConnectFilePicker.opened || screenState.dashboardGithubLogin
+
+    Component.onCompleted: screenState.dashboardGithubLogin = false // Reset stale persisted state, login cannot survive a restart
 
     readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
     readonly property bool shouldBeActive: screenState.dashboard && Config.dashboard.enabled

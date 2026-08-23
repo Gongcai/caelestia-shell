@@ -58,7 +58,7 @@ Item {
         topPadding: Math.round((Tokens.padding.medium + Tokens.padding.large) / 2)
         bottomPadding: Math.round((Tokens.padding.medium + Tokens.padding.large) / 2)
 
-        placeholderText: qsTr("Type \"%1\" for commands").arg(GlobalConfig.launcher.actionPrefix)
+        placeholderText: qsTr("Search commands or type \"%1\" for modes").arg(GlobalConfig.launcher.actionPrefix)
 
         onAccepted: {
             const currentItem = list.currentList?.currentItem;
@@ -68,14 +68,11 @@ Item {
                         Wallpapers.previewColourLock = true;
                     Wallpapers.setWallpaper(currentItem.modelData.path);
                     root.screenState.launcher = false;
-                } else if (text.startsWith(GlobalConfig.launcher.actionPrefix)) {
+                } else {
                     if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}calc `) || text.startsWith(`${GlobalConfig.launcher.actionPrefix}search `))
                         currentItem.onClicked();
                     else
                         currentItem.modelData.onClicked(list.currentList);
-                } else {
-                    Apps.launch(currentItem.modelData);
-                    root.screenState.launcher = false;
                 }
             }
         }

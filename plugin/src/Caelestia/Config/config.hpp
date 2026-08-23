@@ -17,6 +17,7 @@ class LockConfig;
 class NexusConfig;
 class NotifsConfig;
 class OsdConfig;
+class QuickpanelConfig;
 class ServiceConfig;
 class SessionConfig;
 class SidebarConfig;
@@ -39,6 +40,7 @@ class GlobalConfig : public RootConfig {
     Q_MOC_INCLUDE("nexusconfig.hpp")
     Q_MOC_INCLUDE("notifsconfig.hpp")
     Q_MOC_INCLUDE("osdconfig.hpp")
+    Q_MOC_INCLUDE("quickpanelconfig.hpp")
     Q_MOC_INCLUDE("serviceconfig.hpp")
     Q_MOC_INCLUDE("sessionconfig.hpp")
     Q_MOC_INCLUDE("sidebarconfig.hpp")
@@ -58,6 +60,7 @@ class GlobalConfig : public RootConfig {
     CONFIG_SUBOBJECT(NexusConfig, nexus)
     CONFIG_SUBOBJECT(NotifsConfig, notifs)
     CONFIG_SUBOBJECT(OsdConfig, osd)
+    CONFIG_SUBOBJECT(QuickpanelConfig, quickpanel)
     CONFIG_SUBOBJECT(ServiceConfig, services)
     CONFIG_SUBOBJECT(SessionConfig, session)
     CONFIG_SUBOBJECT(SidebarConfig, sidebar)

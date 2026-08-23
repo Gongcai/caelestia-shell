@@ -26,6 +26,7 @@ qml_module(caelestia-config
         nexusconfig.hpp
         notifsconfig.hpp
         osdconfig.hpp
+        quickpanelconfig.hpp
         serviceconfig.hpp
         sessionconfig.hpp
         sidebarconfig.hpp

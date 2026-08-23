@@ -22,6 +22,7 @@ CustomMouseArea {
     property bool dashboardShortcutActive
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
+    property bool quickpanelShortcutActive
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
@@ -74,6 +75,9 @@ CustomMouseArea {
 
             if (!dashboardShortcutActive && !panels.dashboard.modalActive)
                 screenState.dashboard = false;
+
+            if (!quickpanelShortcutActive)
+                screenState.quickpanel = false;
 
             if (!utilitiesShortcutActive)
                 screenState.utilities = false;
@@ -226,6 +230,23 @@ CustomMouseArea {
                 screenState.dashboard = false;
         }
 
+        // Show quickpanel on hover
+        const showQuickpanel = Config.quickpanel.showOnHover && inTopPanel(panels.quickpanel, x, y);
+
+        if (!quickpanelShortcutActive) {
+            screenState.quickpanel = showQuickpanel;
+        } else if (showQuickpanel) {
+            quickpanelShortcutActive = false;
+        }
+
+        // Show/hide quickpanel on drag (for touchscreen devices)
+        if (pressed && inTopPanel(panels.quickpanel, dragStart.x, dragStart.y) && withinPanelWidth(panels.quickpanel, x, y)) {
+            if (dragY > Config.quickpanel.dragThreshold)
+                screenState.quickpanel = true;
+            else if (dragY < -Config.quickpanel.dragThreshold)
+                screenState.quickpanel = false;
+        }
+
         // Show utilities on hover
         const showUtilities = inBottomPanel(panels.utilities, x, y, true);
 
@@ -254,10 +275,12 @@ CustomMouseArea {
                 root.dashboardShortcutActive = false;
                 root.osdShortcutActive = false;
                 root.utilitiesShortcutActive = false;
+                root.quickpanelShortcutActive = false;
 
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
                 const inOsdArea = root.inRightPanel(root.panels.osdWrapper, root.mouseX, root.mouseY);
+                const inQuickpanelArea = root.inTopPanel(root.panels.quickpanel, root.mouseX, root.mouseY);
 
                 if (!inDashboardArea && !root.panels.dashboard.modalActive) {
                     root.screenState.dashboard = false;
@@ -265,6 +288,9 @@ CustomMouseArea {
                 if (!inOsdArea) {
                     root.screenState.osd = false;
                     root.panels.osd.hovered = false;
+                }
+                if (!inQuickpanelArea) {
+                    root.screenState.quickpanel = false;
                 }
             }
         }
@@ -305,6 +331,17 @@ CustomMouseArea {
             } else {
                 // Utilities hidden, clear shortcut flag
                 root.utilitiesShortcutActive = false;
+            }
+        }
+
+        function onQuickpanelChanged() {
+            if (root.screenState.quickpanel) {
+                const inQuickpanelArea = root.inTopPanel(root.panels.quickpanel, root.mouseX, root.mouseY);
+                if (!inQuickpanelArea) {
+                    root.quickpanelShortcutActive = true;
+                }
+            } else {
+                root.quickpanelShortcutActive = false;
             }
         }
 

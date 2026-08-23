@@ -12,6 +12,7 @@ import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.bar
+import qs.modules.launchpad as Launchpad
 
 StyledWindow {
     id: root
@@ -52,7 +53,7 @@ StyledWindow {
             return 0;
 
         const thresholds = [];
-        for (const panel of ["dashboard", "launcher", "session", "sidebar"])
+        for (const panel of ["dashboard", "quickpanel", "launcher", "session", "sidebar"])
             if (contentItem.Config[panel].enabled)
                 thresholds.push(contentItem.Config[panel].dragThreshold);
         return Math.max(...thresholds);
@@ -63,15 +64,17 @@ StyledWindow {
         screenState.session = false;
         screenState.dashboard = false;
         screenState.dashboardLyrics = false;
+        screenState.quickpanel = false;
+        screenState.launchpad = false;
         panels.popouts.close();
     }
 
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session || screenState.launchpad ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
-    mask: hasFullscreen ? emptyRegion : regions
+    mask: screenState.launchpad ? null : hasFullscreen ? emptyRegion : regions
 
     anchors.top: true
     anchors.bottom: true
@@ -116,7 +119,7 @@ StyledWindow {
         active: {
             const s = root.screenState;
             const conf = root.contentItem.Config;
-            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
+            if (s.launchpad || (s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
                 return true;
             if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
                 return true;
@@ -129,6 +132,7 @@ StyledWindow {
         windows: [root]
         onCleared: {
             root.screenState.launcher = false;
+            root.screenState.launchpad = false;
             root.screenState.session = false;
             root.screenState.sidebar = false;
             if (!panels.dashboard.modalActive)
@@ -184,6 +188,13 @@ StyledWindow {
             id: dashBg
 
             panel: panels.dashboard
+            deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: quickpanelBg
+
+            panel: panels.quickpanel
             deformAmount: 0.1
         }
 
@@ -286,6 +297,9 @@ StyledWindow {
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
             }
+            quickpanel.transform: Matrix4x4 {
+                matrix: quickpanelBg.deformMatrix
+            }
             dashboardLyrics.transform: Matrix4x4 {
                 matrix: dashLyricsBg.deformMatrix
             }
@@ -324,6 +338,12 @@ StyledWindow {
 
             fullscreen: root.hasFullscreen
         }
+    }
+
+    Launchpad.Wrapper {
+        anchors.fill: parent
+        screen: root.screen
+        screenState: root.screenState
     }
 
     ShellState.ComponentRef {

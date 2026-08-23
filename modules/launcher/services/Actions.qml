@@ -12,7 +12,7 @@ Searcher {
     id: root
 
     function transformSearch(search: string): string {
-        return search.slice(GlobalConfig.launcher.actionPrefix.length);
+        return search.startsWith(GlobalConfig.launcher.actionPrefix) ? search.slice(GlobalConfig.launcher.actionPrefix.length) : search;
     }
 
     list: variants.instances
@@ -41,6 +41,9 @@ Searcher {
 
             if (command[0] === "autocomplete" && command.length > 1) {
                 list.search.text = `${GlobalConfig.launcher.actionPrefix}${command[1]} `;
+            } else if (command[0] === "openLaunchpad") {
+                list.screenState.launcher = false;
+                list.screenState.launchpad = true;
             } else if (command[0] === "setMode" && command.length > 1) {
                 list.screenState.launcher = false;
                 Colours.setMode(command[1]);

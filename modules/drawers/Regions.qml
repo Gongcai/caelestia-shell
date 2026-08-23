@@ -28,6 +28,12 @@ Region {
     }
 
     R {
+        panel: root.panels.quickpanel
+        y: 0
+        height: panel.height * (1 - root.panels.quickpanel.offsetScale) + root.borderThickness
+    }
+
+    R {
         panel: root.panels.dashboardLyrics
         y: 0
         height: panel.height * (1 - (panel.offsetScale ?? 0)) + root.borderThickness

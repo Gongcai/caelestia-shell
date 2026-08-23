@@ -49,6 +49,19 @@ Scope {
     // qmllint disable unresolved-type
     CustomShortcut {
         // qmllint enable unresolved-type
+        name: "quickpanel"
+        description: "Toggle quickpanel"
+        onPressed: {
+            if (root.hasFullscreen)
+                return;
+            const screenState = ShellState.forActive();
+            screenState.quickpanel = !screenState.quickpanel;
+        }
+    }
+
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
         name: "lyrics"
         description: "Toggle lyrics drawer"
         onPressed: {
@@ -90,6 +103,19 @@ Scope {
     // qmllint disable unresolved-type
     CustomShortcut {
         // qmllint enable unresolved-type
+        name: "launchpad"
+        description: "Toggle application launchpad"
+        onPressed: {
+            if (root.hasFullscreen)
+                return;
+            const screenState = ShellState.forActive();
+            screenState.launchpad = !screenState.launchpad;
+        }
+    }
+
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
         name: "launcherInterrupt"
         description: "Interrupt launcher keybind"
         onPressed: root.launcherInterrupted = true
@@ -124,7 +150,7 @@ Scope {
     IpcHandler {
         function toggle(drawer: string): void {
             if (list().split("\n").includes(drawer)) {
-                if (root.hasFullscreen && ["launcher", "session", "dashboard"].includes(drawer))
+                if (root.hasFullscreen && ["launcher", "launchpad", "session", "dashboard", "quickpanel"].includes(drawer))
                     return;
                 const screenState = ShellState.forActive();
                 screenState[drawer] = !screenState[drawer];

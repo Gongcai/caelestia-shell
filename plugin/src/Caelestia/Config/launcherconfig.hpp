@@ -44,6 +44,12 @@ class LauncherConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(QVariantList, actions,
         {
             vmap({
+                { u"name"_s, u"Applications"_s },
+                { u"icon"_s, u"apps"_s },
+                { u"description"_s, u"Open the full-screen application launchpad"_s },
+                { u"command"_s, QStringList{ u"openLaunchpad"_s } },
+            }),
+            vmap({
                 { u"name"_s, u"Calculator"_s },
                 { u"icon"_s, u"calculate"_s },
                 { u"description"_s, u"Do simple math equations (powered by Qalc)"_s },

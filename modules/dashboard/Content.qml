@@ -47,6 +47,12 @@ Item {
                 iconName: "devices_other",
                 text: qsTr("KDE Connect"),
                 enabled: Config.dashboard.showKdeConnect
+            },
+            {
+                component: githubComponent,
+                iconName: "code_blocks",
+                text: qsTr("GitHub"),
+                enabled: Config.dashboard.showGithub
             }
         ];
         return allTabs.filter(tab => tab.enabled);
@@ -193,6 +199,14 @@ Item {
 
                 KdeConnect {
                     filePicker: root.kdeConnectFilePicker
+                }
+            }
+
+            Component {
+                id: githubComponent
+
+                GithubTab {
+                    screenState: root.screenState
                 }
             }
 

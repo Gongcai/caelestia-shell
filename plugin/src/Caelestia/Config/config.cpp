@@ -11,6 +11,7 @@
 #include "nexusconfig.hpp"
 #include "notifsconfig.hpp"
 #include "osdconfig.hpp"
+#include "quickpanelconfig.hpp"
 #include "serviceconfig.hpp"
 #include "sessionconfig.hpp"
 #include "sidebarconfig.hpp"
@@ -45,6 +46,7 @@ GlobalConfig::GlobalConfig(QObject* parent)
     , m_nexus(new NexusConfig(this))
     , m_notifs(new NotifsConfig(this))
     , m_osd(new OsdConfig(this))
+    , m_quickpanel(new QuickpanelConfig(this))
     , m_services(new ServiceConfig(this))
     , m_session(new SessionConfig(this))
     , m_sidebar(new SidebarConfig(this))
@@ -67,6 +69,7 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, cons
     , m_nexus(new NexusConfig(this))
     , m_notifs(new NotifsConfig(this))
     , m_osd(new OsdConfig(this))
+    , m_quickpanel(new QuickpanelConfig(this))
     , m_services(new ServiceConfig(this))
     , m_session(new SessionConfig(this))
     , m_sidebar(new SidebarConfig(this))

@@ -28,15 +28,11 @@ StyledListView {
 
     function stateForText(text: string): string {
         const prefix = GlobalConfig.launcher.actionPrefix;
-        if (text.startsWith(prefix)) {
-            for (const action of ["calc", "search", "scheme", "variant"])
-                if (text.startsWith(`${prefix}${action} `))
-                    return action;
+        for (const action of ["calc", "search", "scheme", "variant"])
+            if (text.startsWith(`${prefix}${action} `))
+                return action;
 
-            return "actions";
-        }
-
-        return "apps";
+        return "actions";
     }
 
     function resultsForText(text: string): var {
@@ -51,7 +47,7 @@ StyledListView {
         case "variant":
             return M3Variants.query(text);
         default:
-            return Apps.search(text);
+            return Actions.query(text);
         }
     }
 
@@ -93,13 +89,6 @@ StyledListView {
     Component.onCompleted: displayText = search.text
 
     states: [
-        State {
-            name: "apps"
-
-            PropertyChanges {
-                root.delegate: appItem
-            }
-        },
         State {
             name: "actions"
 
@@ -252,14 +241,6 @@ StyledListView {
             type: Anim.DefaultEffects
             property: "opacity"
             to: 1
-        }
-    }
-
-    Component {
-        id: appItem
-
-        AppItem {
-            screenState: root.screenState
         }
     }
 

@@ -441,38 +441,8 @@
 <context>
     <name>Audio</name>
     <message>
-        <location filename="../../../../../services/Audio.qml" line="+103"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Unknown Application</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <location line="+12"/>
-        <location line="+12"/>
-        <location line="+1"/>
-        <source>Unknown Device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-22"/>
-        <source>Audio output changed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <location line="+12"/>
-        <source>Now using: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Audio input changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">未知</translation>
     </message>
 </context>
 <context>
@@ -1262,6 +1232,11 @@
         <translation>KDE Connect</translation>
     </message>
     <message>
+        <location line="+6"/>
+        <source>GitHub</source>
+        <translation>GitHub</translation>
+    </message>
+    <message>
         <location filename="../../../../../modules/launcher/Content.qml" line="+61"/>
         <source>Type &quot;%1&quot; for commands</source>
         <translation>输入“%1”以获取命令</translation>
@@ -1470,7 +1445,7 @@
         <translation>天气</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>KDE Connect</source>
         <translation>KDE Connect</translation>
     </message>
@@ -1481,6 +1456,50 @@
     </message>
     <message>
         <location line="+7"/>
+        <source>GitHub</source>
+        <translation>GitHub</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Profile, contributions and repositories in the dashboard</source>
+        <translation>在仪表盘中显示 GitHub 资料、贡献和仓库</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>GitHub username</source>
+        <translation>GitHub 用户名</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Optional: view public data without signing in</source>
+        <translation>可选：不登录也可查看公开数据</translation>
+    </message>
+    <message>
+        <source>Public profile data is fetched without authentication</source>
+        <translation type="vanished">公开资料数据无需认证即可获取</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>e.g. octocat</source>
+        <translation>例如 octocat</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>GitHub OAuth client ID</source>
+        <translation>GitHub OAuth client ID</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create an OAuth App on GitHub and paste its client ID to enable sign-in</source>
+        <translation>在 GitHub 上创建一个 OAuth 应用并粘贴其 client ID 以启用登录</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>e.g. Iv1.1234567890abcdef</source>
+        <translation>例如 Iv1.1234567890abcdef</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Performance widgets</source>
         <translation>性能小部件</translation>
     </message>
@@ -2132,26 +2151,177 @@
     </message>
 </context>
 <context>
-    <name>GameMode</name>
+    <name>GithubTab</name>
     <message>
-        <location filename="../../../../../services/GameMode.qml" line="+32"/>
-        <source>Game mode enabled</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../../../modules/dashboard/GithubTab.qml" line="+122"/>
+        <location line="+114"/>
+        <source>Failed to parse profile data</source>
+        <translation>解析个人资料数据失败</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Disabled Hyprland animations, blur, gaps and shadows</source>
-        <translation type="unfinished"></translation>
+        <location line="-111"/>
+        <source>User not found</source>
+        <translation>未找到该用户</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>GitHub API rate limit reached, try again later</source>
+        <translation>已达到 GitHub API 速率限制，请稍后再试</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+68"/>
+        <source>Failed to load profile (HTTP %1)</source>
+        <translation>加载个人资料失败（HTTP %1）</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>GitHub session expired, please sign in again</source>
+        <translation>GitHub 会话已过期，请重新登录</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>GitHub API error</source>
+        <translation>GitHub API 错误</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Set your GitHub OAuth client ID in Dashboard settings first</source>
+        <translation>请先在仪表盘设置中填写 GitHub OAuth client ID</translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>Failed to start sign-in (HTTP %1)</source>
+        <translation>启动登录失败（HTTP %1）</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>Device flow is disabled for this app, enable it in the app&apos;s settings on GitHub</source>
+        <translation>此应用未启用设备流程，请在 GitHub 的应用设置中开启</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to start sign-in (HTTP %1): %2</source>
+        <translation>启动登录失败（HTTP %1）：%2</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Failed to start sign-in</source>
+        <translation>启动登录失败</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Sign-in timed out, please try again</source>
+        <translation>登录超时，请重试</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Sign-in code expired, please try again</source>
+        <translation>登录代码已过期，请重试</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Sign-in failed</source>
+        <translation>登录失败</translation>
+    </message>
+    <message>
+        <location line="+100"/>
+        <source>GitHub</source>
+        <translation>GitHub</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Loading...</source>
+        <translation>正在加载…</translation>
     </message>
     <message>
         <location line="+4"/>
-        <source>Game mode disabled</source>
-        <translation type="unfinished"></translation>
+        <source>%1 repositories · %2 followers</source>
+        <translation>%1 个仓库 · %2 个关注者</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Hyprland settings restored</source>
-        <translation type="unfinished"></translation>
+        <location line="+1"/>
+        <source>%1 followers</source>
+        <translation>%1 个关注者</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No data yet</source>
+        <translation>暂无数据</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Not signed in</source>
+        <translation>未登录</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>%1 contributions in the last year</source>
+        <translation>过去一年 %1 次贡献</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>%1 active days</source>
+        <translation>%1 个活跃天数</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Sign in to GitHub</source>
+        <translation>登录 GitHub</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Enter this code on %1</source>
+        <translation>在 %1 输入此代码</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Open verification page</source>
+        <translation>打开验证页面</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>No GitHub account connected</source>
+        <translation>未连接 GitHub 账户</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Sign in to see your contributions, or set a username in Dashboard settings to view public data</source>
+        <translation>登录以查看你的贡献，或在仪表盘设置中填写用户名以查看公开数据</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Sign in with GitHub</source>
+        <translation>使用 GitHub 登录</translation>
+    </message>
+    <message>
+        <location line="+112"/>
+        <source>%1 contributions</source>
+        <translation>%1 次贡献</translation>
+    </message>
+    <message>
+        <source>Set your GitHub username in Dashboard settings</source>
+        <translation type="vanished">在仪表盘设置中填写你的 GitHub 用户名</translation>
+    </message>
+    <message>
+        <location line="-84"/>
+        <source>Contributions</source>
+        <translation>贡献</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Less</source>
+        <translation>少</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>More</source>
+        <translation>多</translation>
     </message>
 </context>
 <context>
@@ -2160,59 +2330,6 @@
         <location filename="../../../../../modules/dashboard/performance/HeroCard.qml" line="+136"/>
         <source>Usage</source>
         <translation>使用率</translation>
-    </message>
-</context>
-<context>
-    <name>Hypr</name>
-    <message>
-        <location filename="../../../../../services/Hypr.qml" line="+105"/>
-        <source>Caps lock enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Caps lock is currently enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Caps lock disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Caps lock is currently disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Num lock enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Num lock is currently enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Num lock disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Num lock is currently disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Keyboard layout changed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Layout changed to: %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3255,19 +3372,8 @@
 <context>
     <name>Nmcli</name>
     <message>
-        <location filename="../../../../../services/Nmcli.qml" line="+602"/>
         <source>Open</source>
-        <translation type="unfinished">打开</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Enterprise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Enhanced Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">打开</translation>
     </message>
 </context>
 <context>
@@ -3276,15 +3382,6 @@
         <location filename="../../../../../modules/sidebar/Notif.qml" line="+138"/>
         <source>No body here! :/</source>
         <translation>这里没有尸体！ :/</translation>
-    </message>
-</context>
-<context>
-    <name>NotifData</name>
-    <message>
-        <location filename="../../../../../services/NotifData.qml" line="+19"/>
-        <location line="+157"/>
-        <source>now</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3471,29 +3568,6 @@
         <location line="+7"/>
         <source>Now playing</source>
         <translation>正在播放</translation>
-    </message>
-</context>
-<context>
-    <name>Notifs</name>
-    <message>
-        <location filename="../../../../../services/Notifs.qml" line="+63"/>
-        <source>Do not disturb enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Popup notifications are now disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Do not disturb disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Popup notifications are now enabled</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3707,19 +3781,6 @@
         <location line="+19"/>
         <source>GPU</source>
         <translation>GPU</translation>
-    </message>
-</context>
-<context>
-    <name>Players</name>
-    <message>
-        <location filename="../../../../../services/Players.qml" line="+64"/>
-        <source>Now Playing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>%1 - %2</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4516,66 +4577,6 @@ Keyboard layout: %1</source>
     </message>
 </context>
 <context>
-    <name>VPN</name>
-    <message>
-        <location filename="../../../../../services/VPN.qml" line="+272"/>
-        <source>VPN connection failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>VPN disconnection failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+250"/>
-        <source>VPN connected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Connected to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>VPN disconnected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Disconnected from %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>VPN authentication required</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <location line="+5"/>
-        <source>%1: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>VPN error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+225"/>
-        <location line="+69"/>
-        <source>Could not start %1. Is it installed?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-55"/>
-        <source>Could not connect to %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Wallpaper</name>
     <message>
         <location filename="../../../../../modules/background/Wallpaper.qml" line="+61"/>
@@ -4942,21 +4943,6 @@ Keyboard layout: %1</source>
         <location line="+95"/>
         <source>No local wallpapers found</source>
         <translation>找不到本地壁纸</translation>
-    </message>
-</context>
-<context>
-    <name>Weather</name>
-    <message>
-        <location filename="../../../../../services/Weather.qml" line="+25"/>
-        <source>No weather</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+174"/>
-        <location line="+14"/>
-        <location line="+3"/>
-        <source>Unknown City</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
