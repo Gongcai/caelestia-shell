@@ -4,6 +4,7 @@
 build/
 .cache/
 logs
+.qoder/
 
 # Animation/gif scratch files
 assets/*.bak

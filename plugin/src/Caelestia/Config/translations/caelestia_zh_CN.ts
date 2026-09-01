@@ -4448,6 +4448,81 @@ Keyboard layout: %1</source>
     </message>
 </context>
 <context>
+    <name>UpdatesPage</name>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="32"/>
+        <source>Checking for updates...</source>
+        <translation>正在检查更新…</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="34"/>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="353"/>
+        <source>Install pacman-contrib to see pending updates</source>
+        <translation>安装 pacman-contrib 后即可查看待更新包</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="36"/>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="353"/>
+        <source>System is up to date</source>
+        <translation>系统已是最新</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="37"/>
+        <source>%1 package updates available</source>
+        <translation>%1 个软件包可更新</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="88"/>
+        <source>Failed to load news (HTTP %1)</source>
+        <translation>加载新闻失败（HTTP %1）</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="93"/>
+        <source>Failed to parse the news feed</source>
+        <translation>解析新闻源失败</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="156"/>
+        <source>Updates</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="231"/>
+        <source>Last checked: %1</source>
+        <translation>上次检查：%1</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="240"/>
+        <source>Check</source>
+        <translation>检查</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="250"/>
+        <source>Arch news</source>
+        <translation>Arch 新闻</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="261"/>
+        <source>Loading news...</source>
+        <translation>正在加载新闻…</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="261"/>
+        <source>No news</source>
+        <translation>暂无新闻</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="342"/>
+        <source>Pending updates (%1)</source>
+        <translation>待更新（%1）</translation>
+    </message>
+    <message>
+        <location filename="../../../../../modules/nexus/pages/UpdatesPage.qml" line="353"/>
+        <source>Checking...</source>
+        <translation>检查中…</translation>
+    </message>
+</context>
+<context>
     <name>UtilitiesPanel</name>
     <message>
         <location filename="../../../../../modules/nexus/pages/panels/UtilitiesPanel.qml" line="+30"/>
