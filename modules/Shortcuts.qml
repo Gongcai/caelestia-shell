@@ -175,6 +175,20 @@ Scope {
     }
 
     IpcHandler {
+        // The clipboard lives in the quickpanel, which can also be dragged out with the
+        // mouse. Only take focus when it is opened from here.
+        function toggle(): void {
+            if (root.hasFullscreen)
+                return;
+            const screenState = ShellState.forActive();
+            Clipboard.focusOnOpen = !screenState.quickpanel;
+            screenState.quickpanel = !screenState.quickpanel;
+        }
+
+        target: "clipboard"
+    }
+
+    IpcHandler {
         function open(): void {
             WindowFactory.create();
         }
