@@ -31,18 +31,15 @@ PersistentProperties {
             launchpad = false;
     }
 
-    // Dashboard and quickpanel share the top edge; keep their drawers mutually exclusive.
+    // Dashboard and quickpanel sit on different edges, so they can coexist;
+    // each still closes the launchpad when opened.
     onDashboardChanged: {
-        if (dashboard) {
-            quickpanel = false;
+        if (dashboard)
             launchpad = false;
-        }
     }
     onQuickpanelChanged: {
-        if (quickpanel) {
-            dashboard = false;
+        if (quickpanel)
             launchpad = false;
-        }
     }
     onLaunchpadChanged: {
         if (launchpad) {

@@ -124,8 +124,8 @@ Item {
 
         screenState: root.screenState
 
-        anchors.right: parent.right
-        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
     }
 
     Dashboard.LyricsDrawer {

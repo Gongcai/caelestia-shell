@@ -9,7 +9,7 @@ class QuickpanelConfig : public ConfigObject {
     QML_ANONYMOUS
 
     CONFIG_PROPERTY(bool, enabled, true)
-    CONFIG_PROPERTY(bool, showOnHover, true)
+    CONFIG_PROPERTY(bool, showOnHover, false)
     CONFIG_PROPERTY(int, dragThreshold, 50)
 
 public:

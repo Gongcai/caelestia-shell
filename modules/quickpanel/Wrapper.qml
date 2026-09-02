@@ -14,7 +14,7 @@ Item {
     property real offsetScale: shouldBeActive ? 0 : 1
 
     visible: offsetScale < 1
-    anchors.topMargin: (-implicitHeight - 5) * offsetScale
+    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 400
     opacity: 1 - offsetScale
@@ -26,8 +26,8 @@ Item {
     Loader {
         id: content
 
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.top: parent.top
 
         active: root.shouldBeActive || root.visible
 

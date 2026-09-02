@@ -123,6 +123,8 @@ StyledWindow {
                 return true;
             if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
                 return true;
+            if (!conf.quickpanel.showOnHover && s.quickpanel && conf.quickpanel.enabled)
+                return true;
             if (s.dashboardLyrics && !s.dashboardLyricsPinned && conf.dashboard.enabled)
                 return true;
             if (panels.popouts.currentName.startsWith("traymenu") && (panels.popouts.current as StackView)?.depth > 1)
@@ -137,6 +139,7 @@ StyledWindow {
             root.screenState.sidebar = false;
             if (!panels.dashboard.modalActive)
                 root.screenState.dashboard = false;
+            root.screenState.quickpanel = false;
             if (!root.screenState.dashboardLyricsPinned)
                 root.screenState.dashboardLyrics = false;
             panels.popouts.hasCurrent = false;

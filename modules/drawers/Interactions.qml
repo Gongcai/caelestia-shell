@@ -231,7 +231,7 @@ CustomMouseArea {
         }
 
         // Show quickpanel on hover
-        const showQuickpanel = Config.quickpanel.showOnHover && inTopPanel(panels.quickpanel, x, y);
+        const showQuickpanel = Config.quickpanel.showOnHover && inBottomPanel(panels.quickpanel, x, y);
 
         if (!quickpanelShortcutActive) {
             screenState.quickpanel = showQuickpanel;
@@ -240,10 +240,10 @@ CustomMouseArea {
         }
 
         // Show/hide quickpanel on drag (for touchscreen devices)
-        if (pressed && inTopPanel(panels.quickpanel, dragStart.x, dragStart.y) && withinPanelWidth(panels.quickpanel, x, y)) {
-            if (dragY > Config.quickpanel.dragThreshold)
+        if (pressed && inBottomPanel(panels.quickpanel, dragStart.x, dragStart.y) && withinPanelWidth(panels.quickpanel, x, y)) {
+            if (dragY < -Config.quickpanel.dragThreshold)
                 screenState.quickpanel = true;
-            else if (dragY < -Config.quickpanel.dragThreshold)
+            else if (dragY > Config.quickpanel.dragThreshold)
                 screenState.quickpanel = false;
         }
 
@@ -280,7 +280,7 @@ CustomMouseArea {
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
                 const inOsdArea = root.inRightPanel(root.panels.osdWrapper, root.mouseX, root.mouseY);
-                const inQuickpanelArea = root.inTopPanel(root.panels.quickpanel, root.mouseX, root.mouseY);
+                const inQuickpanelArea = root.inBottomPanel(root.panels.quickpanel, root.mouseX, root.mouseY);
 
                 if (!inDashboardArea && !root.panels.dashboard.modalActive) {
                     root.screenState.dashboard = false;
@@ -336,7 +336,7 @@ CustomMouseArea {
 
         function onQuickpanelChanged() {
             if (root.screenState.quickpanel) {
-                const inQuickpanelArea = root.inTopPanel(root.panels.quickpanel, root.mouseX, root.mouseY);
+                const inQuickpanelArea = root.inBottomPanel(root.panels.quickpanel, root.mouseX, root.mouseY);
                 if (!inQuickpanelArea) {
                     root.quickpanelShortcutActive = true;
                 }

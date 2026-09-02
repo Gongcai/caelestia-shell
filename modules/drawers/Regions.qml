@@ -29,7 +29,7 @@ Region {
 
     R {
         panel: root.panels.quickpanel
-        y: 0
+        y: root.win.height - height
         height: panel.height * (1 - root.panels.quickpanel.offsetScale) + root.borderThickness
     }
 
