@@ -22,6 +22,7 @@ Singleton {
     property bool reloadPending: false
     property int revision: 0
     property var list: []
+    property string lastRaw: ""
 
     function query(search: string): var {
         const normalized = search.trim().replace(/\s+/g, " ").toLowerCase();
@@ -144,6 +145,12 @@ Singleton {
         command: ["cliphist", "list"]
         stdout: StdioCollector {
             onStreamFinished: {
+                // The panel polls while open; identical output must not touch list/revision
+                // or the ScriptModel reset would snap the selection back to the top.
+                if (text === root.lastRaw)
+                    return;
+
+                root.lastRaw = text;
                 root.list = root.parse(text);
                 root.revision++;
             }
