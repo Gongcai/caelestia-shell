@@ -134,7 +134,10 @@ Item {
                 clip: true
 
                 model: ScriptModel {
-                    values: Clipboard.query(search.text)
+                    values: {
+                        Clipboard.revision;
+                        return Clipboard.query(search.text);
+                    }
                     onValuesChanged: list.currentIndex = 0
                 }
 

@@ -185,6 +185,10 @@ Scope {
             screenState.quickpanel = !screenState.quickpanel;
         }
 
+        function reload(): void {
+            Clipboard.reload();
+        }
+
         target: "clipboard"
     }
 

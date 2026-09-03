@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.services
 
 Item {
     id: root
@@ -12,6 +13,18 @@ Item {
     readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
     readonly property bool shouldBeActive: screenState.quickpanel && Config.quickpanel.enabled
     property real offsetScale: shouldBeActive ? 0 : 1
+
+    onShouldBeActiveChanged: {
+        if (shouldBeActive)
+            Clipboard.reload();
+    }
+
+    Timer {
+        interval: 750
+        repeat: true
+        running: root.shouldBeActive
+        onTriggered: Clipboard.reload()
+    }
 
     visible: offsetScale < 1
     anchors.bottomMargin: (-implicitHeight - 5) * offsetScale

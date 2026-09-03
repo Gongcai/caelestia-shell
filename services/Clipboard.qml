@@ -6,7 +6,7 @@ import Quickshell.Io
 import Caelestia
 import qs.utils
 
-Searcher {
+Singleton {
     id: root
 
     // Set by the clipboard ipc handler so the panel only takes keyboard focus when it was
@@ -14,14 +14,38 @@ Searcher {
     property bool focusOnOpen: false
 
     readonly property string thumbDir: `${Paths.cache}/clipboard/thumbs`
+    readonly property string copyMarker: `${Paths.cache}/clipboard/copying`
 
     property var readyThumbs: ({})
     property var issuedThumbs: ({})
     property var pendingThumbs: []
+    property bool reloadPending: false
+    property int revision: 0
+    property var list: []
+
+    function query(search: string): var {
+        const normalized = search.trim().replace(/\s+/g, " ").toLowerCase();
+        if (!normalized)
+            return [...root.list];
+        return root.list.filter(item => item.preview.toLowerCase().includes(normalized));
+    }
+
+    // Keep the in-memory model synchronized after copying an existing entry.
+    Timer {
+        id: copyRefreshTimer
+
+        interval: 300
+        onTriggered: root.reload()
+    }
 
     function reload(): void {
-        if (!listProc.running)
-            listProc.running = true;
+        if (listProc.running) {
+            reloadPending = true;
+            return;
+        }
+
+        reloadPending = false;
+        listProc.running = true;
     }
 
     function copy(item: var, screenState: var): void {
@@ -29,7 +53,8 @@ Searcher {
             return;
 
         const type = item.isImage ? ` --type image/${item.mimeType}` : "";
-        Quickshell.execDetached(["sh", "-c", `cliphist decode ${item.id} | wl-copy${type}`]);
+        Quickshell.execDetached(["sh", "-c", `mkdir -p "${Paths.cache}/clipboard" && printf '%s\n' "$$" > "${root.copyMarker}" && trap 'rm -f "${root.copyMarker}"' EXIT; cliphist decode ${item.id} | wl-copy${type}; sleep 0.5`]);
+        copyRefreshTimer.restart();
 
         if (screenState)
             screenState.quickpanel = false;
@@ -99,7 +124,8 @@ Searcher {
                     isImage: true,
                     size: bin[1],
                     format: bin[2],
-                    dimensions: bin[3]
+                    dimensions: bin[3],
+                    mimeType: bin[2] === "jpg" ? "jpeg" : bin[2]
                 });
             else
                 out.push({
@@ -112,22 +138,20 @@ Searcher {
         return out;
     }
 
-    key: "preview"
-    keys: ["preview"]
-    list: entries.instances
-
-    Variants {
-        id: entries
-
-        Entry {}
-    }
-
     Process {
         id: listProc
 
         command: ["cliphist", "list"]
         stdout: StdioCollector {
-            onStreamFinished: entries.model = root.parse(text)
+            onStreamFinished: {
+                root.list = root.parse(text);
+                root.revision++;
+            }
+        }
+
+        onExited: {
+            if (root.reloadPending)
+                Qt.callLater(root.reload);
         }
     }
 
@@ -149,15 +173,4 @@ Searcher {
         }
     }
 
-    component Entry: QtObject {
-        required property var modelData
-
-        readonly property int id: modelData.id
-        readonly property string preview: modelData.preview
-        readonly property bool isImage: modelData.isImage
-        readonly property string size: modelData.size ?? ""
-        readonly property string format: modelData.format ?? ""
-        readonly property string dimensions: modelData.dimensions ?? ""
-        readonly property string mimeType: format === "jpg" ? "jpeg" : format
-    }
 }
