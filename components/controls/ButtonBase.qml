@@ -46,7 +46,7 @@ StyledRect {
 
     property real pressedRadius: Tokens.rounding.small
     property real checkedRadius: Tokens.rounding.medium
-    property real defaultRadius: Tokens.rounding.large
+    property real defaultRadius: Tokens.rounding.medium
 
     signal clicked
 
@@ -76,6 +76,25 @@ StyledRect {
             if (root.isToggle)
                 root.internalChecked = !root.internalChecked;
             root.clicked();
+        }
+    }
+
+    Scale {
+        origin.x: root.width / 2
+        origin.y: root.height / 2
+
+        xScale: root.pressed ? 0.98 : 1
+        yScale: root.pressed ? 0.98 : 1
+
+        Behavior on xScale {
+            Anim {
+                type: Anim.FastEffects
+            }
+        }
+        Behavior on yScale {
+            Anim {
+                type: Anim.FastEffects
+            }
         }
     }
 

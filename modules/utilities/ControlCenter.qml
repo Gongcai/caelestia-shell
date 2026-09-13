@@ -310,10 +310,10 @@ ColumnLayout {
         Layout.preferredWidth: 1
         implicitHeight: 76
         radius: Tokens.rounding.large
-        color: checked ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
+        color: checked ? Colours.selectedSurface : Colours.panelSurface
 
         StateLayer {
-            color: tile.checked ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+            color: tile.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurface
             onClicked: tile.clicked()
         }
 
@@ -325,7 +325,7 @@ ColumnLayout {
             MaterialIcon {
                 text: tile.icon
                 fill: tile.checked ? 1 : 0
-                color: tile.checked ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
+                color: tile.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.medium
             }
 

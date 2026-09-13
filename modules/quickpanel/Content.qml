@@ -150,9 +150,9 @@ Item {
                 highlightFollowsCurrentItem: false
 
                 highlight: StyledRect {
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3onSurface
-                    opacity: 0.08
+                    radius: Tokens.rounding.medium
+                    color: Colours.controlFillStrong
+                    opacity: 1
 
                     y: list.currentItem?.y ?? 0
                     implicitWidth: list.width

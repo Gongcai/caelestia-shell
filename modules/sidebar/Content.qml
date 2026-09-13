@@ -21,7 +21,9 @@ Item {
             Layout.fillHeight: true
 
             radius: Tokens.rounding.large
-            color: Colours.tPalette.m3surfaceContainerLow
+            color: Colours.panelSurface
+            border.width: 1
+            border.color: Colours.panelBorder
 
             NotifDock {
                 objectName: "sidebarNotifications"
@@ -36,7 +38,7 @@ Item {
             Layout.fillWidth: true
             implicitHeight: 1
 
-            color: Colours.tPalette.m3outlineVariant
+            color: Colours.separator
         }
     }
 }

@@ -18,12 +18,34 @@ Singleton {
     readonly property bool light: showPreview ? previewLight : currentLight
     property bool currentLight
     property bool previewLight
-    readonly property M3Palette palette: showPreview ? preview : current
+    // Keep the generated palette as the source of truth, but expose a neutral
+    // macOS-like semantic view to the rest of the shell. This keeps wallpaper
+    // schemes and their dynamic accent available without spreading Material
+    // surface colours through every module.
+    readonly property MacPalette palette: showPreview ? previewStyled : currentStyled
     readonly property M3TPalette tPalette: M3TPalette {}
     readonly property M3Palette current: M3Palette {}
     readonly property M3Palette preview: M3Palette {}
+    readonly property MacPalette currentStyled: MacPalette {
+        source: root.current
+    }
+    readonly property MacPalette previewStyled: MacPalette {
+        source: root.preview
+    }
     readonly property Transparency transparency: Transparency {}
     readonly property alias wallLuminance: analyser.luminance
+
+    readonly property color accent: palette.m3primary
+    readonly property color separator: Qt.alpha(palette.m3outline, light ? 0.24 : 0.32)
+    readonly property color panelBorder: Qt.alpha(palette.m3onSurface, light ? 0.12 : 0.16)
+    readonly property real hoverStateOpacity: 0.06
+    readonly property real pressedStateOpacity: 0.12
+    readonly property real shadowOpacity: light ? 0.18 : 0.38
+    readonly property color panelSurface: palette.m3surfaceContainerLow
+    readonly property color selectedSurface: palette.m3primaryContainer
+    readonly property color selectedOnSurface: palette.m3onPrimaryContainer
+    readonly property color controlFill: Qt.alpha(palette.m3onSurface, light ? 0.08 : 0.12)
+    readonly property color controlFillStrong: Qt.alpha(palette.m3onSurface, light ? 0.12 : 0.18)
 
     property bool cooldownPending
     property real lastBaseTransparency
@@ -32,6 +54,14 @@ Singleton {
         if (c.r == 0 && c.g == 0 && c.b == 0)
             return 0;
         return Math.sqrt(0.299 * (c.r ** 2) + 0.587 * (c.g ** 2) + 0.114 * (c.b ** 2));
+    }
+
+    function blendColours(base: color, overlay: color, amount: real): color {
+        const t = Math.max(0, Math.min(1, amount));
+        return Qt.rgba(base.r * (1 - t) + overlay.r * t,
+                       base.g * (1 - t) + overlay.g * t,
+                       base.b * (1 - t) + overlay.b * t,
+                       base.a * (1 - t) + overlay.a * t);
     }
 
     function alterColour(c: color, a: real, layer: int): color {
@@ -232,6 +262,99 @@ Singleton {
                 cAnimCompleteTimer.start();
             root.lastBaseTransparency = base;
         }
+    }
+
+    component MacPalette: QtObject {
+        required property QtObject source
+
+        readonly property bool wallpaperAccent: root.scheme === "dynamic"
+        readonly property color accent: wallpaperAccent ? source.m3primary : (root.light ? "#007AFF" : "#0A84FF")
+        readonly property color accentOn: wallpaperAccent ? source.m3onPrimary : "#FFFFFF"
+        readonly property color accentContainer: root.light ? root.blendColours("#E8E8ED", accent, 0.2) : root.blendColours("#363638", accent, 0.3)
+
+        readonly property color m3primary_paletteKeyColor: accent
+        readonly property color m3secondary_paletteKeyColor: m3secondary
+        readonly property color m3tertiary_paletteKeyColor: m3tertiary
+        readonly property color m3neutral_paletteKeyColor: m3surface
+        readonly property color m3neutral_variant_paletteKeyColor: m3surfaceVariant
+
+        readonly property color m3background: root.light ? "#F5F5F7" : "#1C1C1E"
+        readonly property color m3onBackground: root.light ? "#1D1D1F" : "#F5F5F7"
+        readonly property color m3surface: m3background
+        readonly property color m3surfaceDim: root.light ? "#E5E5EA" : "#18181A"
+        readonly property color m3surfaceBright: root.light ? "#FFFFFF" : "#3A3A3C"
+        readonly property color m3surfaceContainerLowest: root.light ? "#FFFFFF" : "#18181A"
+        readonly property color m3surfaceContainerLow: root.light ? "#F2F2F7" : "#242426"
+        readonly property color m3surfaceContainer: root.light ? "#EBEBF0" : "#2C2C2E"
+        readonly property color m3surfaceContainerHigh: root.light ? "#E5E5EA" : "#3A3A3C"
+        readonly property color m3surfaceContainerHighest: root.light ? "#D1D1D6" : "#48484A"
+        readonly property color m3onSurface: root.light ? "#1D1D1F" : "#F5F5F7"
+        readonly property color m3surfaceVariant: root.light ? "#E5E5EA" : "#3A3A3C"
+        readonly property color m3onSurfaceVariant: root.light ? "#6E6E73" : "#98989D"
+        readonly property color m3inverseSurface: root.light ? "#1D1D1F" : "#F5F5F7"
+        readonly property color m3inverseOnSurface: root.light ? "#F5F5F7" : "#1D1D1F"
+        readonly property color m3outline: root.light ? "#8E8E93" : "#636366"
+        readonly property color m3outlineVariant: root.light ? "#C7C7CC" : "#48484A"
+        readonly property color m3shadow: "#000000"
+        readonly property color m3scrim: "#000000"
+        readonly property color m3surfaceTint: accent
+
+        readonly property color m3primary: accent
+        readonly property color m3onPrimary: accentOn
+        readonly property color m3primaryContainer: accentContainer
+        readonly property color m3onPrimaryContainer: root.light ? "#1D1D1F" : "#F5F5F7"
+        readonly property color m3inversePrimary: wallpaperAccent ? source.m3inversePrimary : (root.light ? "#0056B3" : "#66B5FF")
+
+        readonly property color m3secondary: root.light ? "#8E8E93" : "#98989D"
+        readonly property color m3onSecondary: "#FFFFFF"
+        readonly property color m3secondaryContainer: root.light ? "#E5E5EA" : "#3A3A3C"
+        readonly property color m3onSecondaryContainer: root.light ? "#1D1D1F" : "#F5F5F7"
+
+        readonly property color m3tertiary: root.light ? "#34C759" : "#30D158"
+        readonly property color m3onTertiary: "#FFFFFF"
+        readonly property color m3tertiaryContainer: root.light ? "#DFF7E6" : "#1F4D2D"
+        readonly property color m3onTertiaryContainer: root.light ? "#0D3B18" : "#C6F4D0"
+
+        readonly property color m3error: root.light ? "#FF3B30" : "#FF453A"
+        readonly property color m3onError: "#FFFFFF"
+        readonly property color m3errorContainer: root.light ? "#FFE5E3" : "#5C1B1A"
+        readonly property color m3onErrorContainer: root.light ? "#6F0D08" : "#FFDAD7"
+        readonly property color m3success: root.light ? "#34C759" : "#30D158"
+        readonly property color m3onSuccess: "#FFFFFF"
+        readonly property color m3successContainer: root.light ? "#DFF7E6" : "#1F4D2D"
+        readonly property color m3onSuccessContainer: root.light ? "#0D3B18" : "#C6F4D0"
+
+        readonly property color m3primaryFixed: root.light ? root.blendColours("#DCEBFF", accent, 0.18) : "#DCEBFF"
+        readonly property color m3primaryFixedDim: root.light ? root.blendColours("#B8D7FF", accent, 0.18) : "#B8D7FF"
+        readonly property color m3onPrimaryFixed: "#09213D"
+        readonly property color m3onPrimaryFixedVariant: "#1B4B7A"
+        readonly property color m3secondaryFixed: root.light ? "#E5E5EA" : "#E5E5EA"
+        readonly property color m3secondaryFixedDim: root.light ? "#D1D1D6" : "#D1D1D6"
+        readonly property color m3onSecondaryFixed: "#1D1D1F"
+        readonly property color m3onSecondaryFixedVariant: "#48484A"
+        readonly property color m3tertiaryFixed: root.light ? "#DFF7E6" : "#DFF7E6"
+        readonly property color m3tertiaryFixedDim: root.light ? "#B8EBC5" : "#B8EBC5"
+        readonly property color m3onTertiaryFixed: "#0D3B18"
+        readonly property color m3onTertiaryFixedVariant: "#1F4D2D"
+
+        readonly property color m3cpu: root.light ? "#5E5CE6" : "#BF5AF2"
+
+        readonly property color term0: source.term0
+        readonly property color term1: source.term1
+        readonly property color term2: source.term2
+        readonly property color term3: source.term3
+        readonly property color term4: source.term4
+        readonly property color term5: source.term5
+        readonly property color term6: source.term6
+        readonly property color term7: source.term7
+        readonly property color term8: source.term8
+        readonly property color term9: source.term9
+        readonly property color term10: source.term10
+        readonly property color term11: source.term11
+        readonly property color term12: source.term12
+        readonly property color term13: source.term13
+        readonly property color term14: source.term14
+        readonly property color term15: source.term15
     }
 
     component M3TPalette: QtObject {

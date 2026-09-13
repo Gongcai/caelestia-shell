@@ -24,7 +24,7 @@ ColumnLayout {
 
     Label {
         text: root.client?.lastIpcObject.class ?? qsTr("No active client")
-        color: Colours.palette.m3tertiary
+        color: Colours.palette.m3onSurfaceVariant
 
         font: Tokens.font.body.large
     }
@@ -37,7 +37,7 @@ ColumnLayout {
         Layout.topMargin: Tokens.spacing.medium
         Layout.bottomMargin: Tokens.spacing.largeIncreased
 
-        color: Colours.palette.m3secondary
+        color: Colours.separator
     }
 
     Detail {
@@ -54,13 +54,13 @@ ColumnLayout {
     Detail {
         icon: "resize"
         text: qsTr("Size: %1 x %2").arg(root.client?.lastIpcObject.size[0] ?? -1).arg(root.client?.lastIpcObject.size[1] ?? -1)
-        color: Colours.palette.m3tertiary
+        color: Colours.palette.m3onSurfaceVariant
     }
 
     Detail {
         icon: "workspaces"
         text: qsTr("Workspace: %1 (%2)").arg(root.client?.workspace.name ?? -1).arg(root.client?.workspace.id ?? -1)
-        color: Colours.palette.m3secondary
+        color: Colours.palette.m3onSurfaceVariant
     }
 
     Detail {
@@ -76,7 +76,7 @@ ColumnLayout {
     Detail {
         icon: "page_header"
         text: qsTr("Initial title: %1").arg(root.client?.lastIpcObject.initialTitle ?? "unknown")
-        color: Colours.palette.m3tertiary
+        color: Colours.palette.m3onSurfaceVariant
     }
 
     Detail {
@@ -87,13 +87,13 @@ ColumnLayout {
     Detail {
         icon: "account_tree"
         text: qsTr("Process id: %1").arg(String(root.client?.lastIpcObject.pid ?? -1))
-        color: Colours.palette.m3primary
+        color: Colours.accent
     }
 
     Detail {
         icon: "picture_in_picture_center"
         text: qsTr("Floating: %1").arg(root.client?.lastIpcObject.floating ? "yes" : "no")
-        color: Colours.palette.m3secondary
+        color: Colours.palette.m3onSurfaceVariant
     }
 
     Detail {
@@ -104,7 +104,7 @@ ColumnLayout {
     Detail {
         icon: "keep"
         text: qsTr("Pinned: %1").arg(root.client?.lastIpcObject.pinned ? "yes" : "no")
-        color: Colours.palette.m3secondary
+        color: Colours.palette.m3onSurfaceVariant
     }
 
     Detail {
@@ -115,7 +115,7 @@ ColumnLayout {
                 return qsTr("Fullscreen state: %1").arg(fs == 0 ? "off" : fs == 1 ? "maximised" : "on");
             return qsTr("Fullscreen state: unknown");
         }
-        color: Colours.palette.m3tertiary
+        color: Colours.palette.m3onSurfaceVariant
     }
 
     Item {

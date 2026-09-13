@@ -17,7 +17,7 @@ ButtonBase {
     horizontalPadding: Tokens.padding.medium
     verticalPadding: Tokens.padding.small
 
-    activeColour: type === TextButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
+    activeColour: type === TextButton.Filled || type === TextButton.Tonal ? Colours.palette.m3primary : Colours.palette.m3secondary
     inactiveColour: {
         if (!isToggle && type === TextButton.Filled)
             return Colours.palette.m3primary;
@@ -26,7 +26,7 @@ ButtonBase {
     activeOnColour: {
         if (type === TextButton.Text)
             return Colours.palette.m3primary;
-        return type === TextButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondary;
+        return Colours.palette.m3onPrimary;
     }
     inactiveOnColour: {
         if (!isToggle && type === TextButton.Filled)

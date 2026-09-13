@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -120,13 +119,12 @@ StyledRect {
                 return h % 2 === 0 ? h : h + 1;
             }
 
-            MaterialShape {
+            StyledRect {
                 anchors.fill: parent
 
                 color: root.lock.pam.buffer ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-                shape: root.lock.pam.buffer ? MaterialShape.Arrow : MaterialShape.Circle
-                scale: !root.lock.pam.buffer ? 1 : mouse.pressed ? 0.6 : mouse.containsMouse ? 0.8 : 0.7
-                rotation: 90
+                radius: Tokens.rounding.full
+                scale: mouse.pressed ? 0.92 : mouse.containsMouse ? 0.98 : 1
 
                 Behavior on scale {
                     Anim {
@@ -153,9 +151,9 @@ StyledRect {
 
                 anchors.centerIn: parent
                 text: "arrow_forward"
-                color: Colours.palette.m3onSurfaceVariant
+                color: root.lock.pam.buffer ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale * 1.2).build()
-                opacity: root.lock.pam.buffer ? 0 : 1
+                opacity: root.lock.pam.buffer ? 1 : 0.72
 
                 Behavior on opacity {
                     Anim {

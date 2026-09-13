@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -218,7 +217,7 @@ CustomMouseArea {
                 }
             }
 
-            MaterialShape {
+            StyledRect {
                 id: todayIndicator
 
                 readonly property Item todayItem: grid.contentItem.children.find(c => c.model.today) ?? null
@@ -232,8 +231,9 @@ CustomMouseArea {
                 x: today ? today.x + (today.width - implicitWidth) / 2 : 0
                 y: today ? today.y - Tokens.padding.extraSmall - 1 : 0
 
-                implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
-                shape: MaterialShape.Sunny
+                implicitWidth: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
+                implicitHeight: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
+                radius: Tokens.rounding.full
 
                 clip: true
                 color: Colours.palette.m3primary

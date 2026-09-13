@@ -19,7 +19,7 @@ ProgressBar {
     }
 
     property color fgColour: Colours.palette.m3primary
-    property color bgColour: Colours.palette.m3secondaryContainer
+    property color bgColour: Qt.alpha(Colours.palette.m3onSurface, 0.14)
 
     property bool animate: true
     property bool wavy

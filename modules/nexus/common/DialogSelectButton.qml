@@ -76,7 +76,7 @@ DialogRowButton {
                     implicitHeight: label.implicitHeight + Tokens.padding.medium * 2
 
                     radius: stateLayer.pressed ? Tokens.rounding.extraSmall : selected ? Tokens.rounding.largeIncreased : Tokens.rounding.medium
-                    color: Qt.alpha(Colours.palette.m3tertiaryContainer, selected ? 1 : 0)
+                    color: Qt.alpha(Colours.selectedSurface, selected ? 1 : 0)
 
                     Behavior on radius {
                         Anim {
@@ -100,7 +100,7 @@ DialogRowButton {
                         anchors.rightMargin: item.selected ? Tokens.spacing.medium : anchors.margins
 
                         text: root.labelFor(item.modelData)
-                        color: item.selected ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
+                        color: item.selected ? Colours.selectedOnSurface : Colours.palette.m3onSurface
                         font: root.previewFont ? Tokens.font.body.builders.small.family(root.keyFor(item.modelData)).build() : Tokens.font.body.small
                         elide: Text.ElideRight
                     }
@@ -113,7 +113,7 @@ DialogRowButton {
                         anchors.margins: Tokens.padding.large
 
                         text: "check"
-                        color: Colours.palette.m3onTertiaryContainer
+                        color: Colours.selectedOnSurface
                         fontStyle: Tokens.font.icon.medium
                         opacity: item.selected ? 1 : 0
 

@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import M3Shapes
 import Caelestia.Config
 import Caelestia.Services
 import qs.components
@@ -50,18 +49,18 @@ StyledRect {
             colour: Colours.palette.m3primary
             shapeColour: Colours.palette.m3primaryContainer
             fillColour: Qt.alpha(Colours.palette.m3secondary, 0.3)
-            shape: MaterialShape.Pentagon
 
-            MaterialShape {
-                x: cpu.mShape.pointAtAngle(45).x - implicitSize / 2 + Tokens.padding.medium
-                y: cpu.mShape.pointAtAngle(45).y - implicitSize / 2
+            StyledRect {
+                x: cpu.width - implicitWidth - Tokens.padding.medium
+                y: Tokens.padding.medium
 
-                shape: Cpu.temperature > 90 ? MaterialShape.SoftBurst : MaterialShape.Circle
+                radius: Tokens.rounding.full
                 color: Cpu.temperature > 90 ? Colours.palette.m3errorContainer : Colours.palette.m3secondaryContainer
-                implicitSize: {
+                implicitWidth: {
                     const size = Math.round(tempLabel.implicitHeight * 2);
                     return size % 2 === 0 ? size : size + 1; // Ensure even size so center works properly
                 }
+                implicitHeight: implicitWidth
 
                 Behavior on color {
                     CAnim {}
@@ -91,7 +90,6 @@ StyledRect {
             colour: Colours.palette.m3tertiary
             shapeColour: Colours.palette.m3onTertiary
             fillColour: Qt.alpha(Colours.palette.m3tertiary, 0.3)
-            shape: MaterialShape.Slanted
         }
 
         Resource {
@@ -101,7 +99,6 @@ StyledRect {
             colour: Colours.palette.m3secondary
             shapeColour: Colours.palette.m3secondaryContainer
             fillColour: Qt.alpha(Colours.palette.m3secondary, 0.4)
-            shape: MaterialShape.Gem
         }
     }
 
@@ -114,8 +111,6 @@ StyledRect {
         required property color shapeColour
         property color fillColour
         property real fillValue: -1
-        property alias shape: shape.shape
-        readonly property alias mShape: shape
 
         Layout.fillWidth: true
         implicitHeight: width
@@ -124,10 +119,12 @@ StyledRect {
             CAnim {}
         }
 
-        MaterialShape {
+        StyledRect {
             id: shape
 
-            implicitSize: res.width
+            implicitWidth: res.width
+            implicitHeight: res.width
+            radius: Tokens.rounding.full
             color: Qt.alpha(res.shapeColour, 1)
             opacity: res.shapeColour.a
             layer.enabled: true
@@ -151,7 +148,7 @@ StyledRect {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
 
-                    implicitHeight: shape.implicitSize * res.fillValue
+                    implicitHeight: shape.height * res.fillValue
                     color: res.fillColour
                 }
             }

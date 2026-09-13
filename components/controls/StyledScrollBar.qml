@@ -62,7 +62,7 @@ ScrollBar {
             return 0;
         }
         radius: Tokens.rounding.full
-        color: Colours.palette.m3secondary
+        color: Qt.alpha(Colours.palette.m3onSurface, Colours.light ? 0.32 : 0.42)
 
         MouseArea {
             id: mouse

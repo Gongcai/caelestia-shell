@@ -22,8 +22,8 @@ ColumnLayout {
         placeholderText: qsTr("Search settings")
         font: Tokens.font.body.large
 
-        bg.color: Colours.tPalette.m3surfaceContainerLowest
-        bg.border.color: Colours.palette.m3outlineVariant
+        bg.color: Colours.controlFillStrong
+        bg.border.color: Colours.panelBorder
         searchIcon.fontStyle: Tokens.font.icon.medium
         searchIcon.anchors.leftMargin: Tokens.padding.largeIncreased
         clearIcon.font: Tokens.font.icon.medium

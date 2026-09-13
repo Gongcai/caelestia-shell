@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.effects
@@ -34,12 +33,13 @@ Item {
         anchors.leftMargin: -(Tokens.padding.largeIncreased + Tokens.padding.extraLarge) / 2
         implicitWidth: height
 
-        MaterialShape {
+        StyledRect {
             id: shape
 
             anchors.centerIn: parent
-            implicitSize: parent.height
-            shape: MaterialShape.Pill
+            implicitWidth: parent.height
+            implicitHeight: parent.height
+            radius: Tokens.rounding.full
             color: Qt.alpha(root.pfpFallbackColour, 1)
             opacity: root.pfpFallbackColour.a
             layer.enabled: true
@@ -49,7 +49,16 @@ Item {
 
                 containmentMask: QtObject {
                     function contains(pt: point): bool {
-                        return shape.contains(pt) && !logoShape.contains(mouse.mapToItem(logoShape, pt)) && !uptimeShape.contains(mouse.mapToItem(uptimeShape, pt));
+                        const dx = pt.x - shape.width / 2;
+                        const dy = pt.y - shape.height / 2;
+                        if (dx * dx + dy * dy > (shape.width / 2) ** 2)
+                            return false;
+
+                        const logoPt = mouse.mapToItem(logoShape, pt);
+                        const inLogo = logoPt.x >= 0 && logoPt.y >= 0 && logoPt.x <= logoShape.width && logoPt.y <= logoShape.height;
+                        const uptimePt = mouse.mapToItem(uptimeShape, pt);
+                        const inUptime = uptimePt.x >= 0 && uptimePt.y >= 0 && uptimePt.x <= uptimeShape.width && uptimePt.y <= uptimeShape.height;
+                        return !inLogo && !inUptime;
                     }
                 }
 
@@ -103,10 +112,11 @@ Item {
                     }
                 }
 
-                MaterialShape {
+                StyledRect {
                     anchors.centerIn: parent
-                    implicitSize: parent.height * 0.7
-                    shape: MaterialShape.Diamond
+                    implicitWidth: parent.height * 0.7
+                    implicitHeight: parent.height * 0.7
+                    radius: Tokens.rounding.full
                     color: Colours.palette.m3primary
                     scale: mouse.pressed ? 0.9 : mouse.containsMouse ? 1 : 0.7
 
@@ -131,12 +141,13 @@ Item {
         }
     }
 
-    MaterialShape {
+    StyledRect {
         id: logoShape
 
         x: Tokens.padding.extraSmall
-        implicitSize: Tokens.sizes.dashboard.logoSize + Tokens.padding.small * 2
-        shape: MaterialShape.Gem
+        implicitWidth: Tokens.sizes.dashboard.logoSize + Tokens.padding.small * 2
+        implicitHeight: Tokens.sizes.dashboard.logoSize + Tokens.padding.small * 2
+        radius: Tokens.rounding.large
         color: Colours.palette.m3primaryContainer
 
         Behavior on color {
@@ -172,15 +183,16 @@ Item {
         }
     }
 
-    MaterialShape {
+    StyledRect {
         id: uptimeShape
 
         anchors.bottom: parent.bottom
         anchors.left: pfpContainer.right
-        anchors.bottomMargin: -Tokens.padding.small // Clamshell is taller than what it is visually
+        anchors.bottomMargin: -Tokens.padding.small
         anchors.leftMargin: -Tokens.padding.extraLargeIncreased
-        implicitSize: Tokens.sizes.dashboard.uptimeSize + Tokens.padding.small * 2
-        shape: MaterialShape.ClamShell
+        implicitWidth: Tokens.sizes.dashboard.uptimeSize + Tokens.padding.small * 2
+        implicitHeight: Tokens.sizes.dashboard.uptimeSize + Tokens.padding.small * 2
+        radius: Tokens.rounding.full
         color: Colours.palette.m3tertiaryContainer
 
         Behavior on color {

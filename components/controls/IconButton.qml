@@ -12,13 +12,13 @@ ButtonBase {
     font: Tokens.font.icon.medium
     padding: type === IconButton.Text ? Tokens.padding.extraSmall / 2 : Tokens.padding.small
 
-    activeColour: type === IconButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
+    activeColour: type === IconButton.Filled || type === IconButton.Tonal ? Colours.palette.m3primary : Colours.palette.m3secondary
     inactiveColour: {
         if (!isToggle && type === IconButton.Filled)
             return Colours.palette.m3primary;
         return type === IconButton.Filled ? Colours.tPalette.m3surfaceContainer : Colours.palette.m3secondaryContainer;
     }
-    activeOnColour: type === IconButton.Filled ? Colours.palette.m3onPrimary : type === IconButton.Tonal ? Colours.palette.m3onSecondary : Colours.palette.m3primary
+    activeOnColour: type === IconButton.Filled || type === IconButton.Tonal ? Colours.palette.m3onPrimary : Colours.palette.m3primary
     inactiveOnColour: {
         if (!isToggle && type === IconButton.Filled)
             return Colours.palette.m3onPrimary;

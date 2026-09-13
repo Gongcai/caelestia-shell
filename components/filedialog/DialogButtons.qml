@@ -42,7 +42,7 @@ StyledRect {
         }
 
         StyledRect {
-            color: Colours.tPalette.m3surfaceContainerHigh
+            color: root.dialog.selectionValid ? Colours.selectedSurface : Colours.tPalette.m3surfaceContainerHigh
             radius: Tokens.rounding.medium
 
             implicitWidth: cancelText.implicitWidth + Tokens.padding.medium * 2
@@ -60,7 +60,7 @@ StyledRect {
                 anchors.margins: Tokens.padding.medium
 
                 text: qsTr("Select")
-                color: root.dialog.selectionValid ? Colours.palette.m3onSurface : Colours.palette.m3outline
+                color: root.dialog.selectionValid ? Colours.selectedOnSurface : Colours.palette.m3outline
             }
         }
 

@@ -53,8 +53,8 @@ DoubleSpinBox {
         horizontalAlignment: TextField.AlignHCenter
 
         background: StyledRect {
-            radius: Tokens.rounding.extraSmall
-            color: Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
+            radius: Tokens.rounding.small
+            color: Colours.layer(Colours.palette.m3surfaceContainerHigh, root.cLayer)
         }
     }
 
@@ -65,8 +65,8 @@ DoubleSpinBox {
         bottomRightRadius: pressed ? Tokens.rounding.small : Tokens.rounding.extraSmall
 
         icon: "remove"
-        disabledColour: Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.4)
-        color: disabled ? disabledColour : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
+        disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.08)
+        color: disabled ? disabledColour : Colours.layer(Colours.palette.m3surfaceContainerHigh, root.cLayer)
         type: IconButton.Text
         padding: Tokens.padding.extraSmall
         isRound: true
@@ -101,8 +101,8 @@ DoubleSpinBox {
         bottomLeftRadius: pressed ? Tokens.rounding.small : Tokens.rounding.extraSmall
 
         icon: "add"
-        disabledColour: Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.4)
-        color: disabled ? disabledColour : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
+        disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.08)
+        color: disabled ? disabledColour : Colours.layer(Colours.palette.m3surfaceContainerHigh, root.cLayer)
         type: IconButton.Text
         padding: Tokens.padding.extraSmall
         isRound: true

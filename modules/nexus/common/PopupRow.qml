@@ -114,7 +114,7 @@ ConnectedRect {
                     content: root.content
                     pressOverride: stateLayer.pressed
                     hoverOverride: stateLayer.containsMouse
-                    color: open || hovered || stateLayer.containsMouse ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+                    color: open ? Colours.selectedSurface : hovered || stateLayer.containsMouse ? Colours.controlFillStrong : Colours.palette.m3surfaceContainerHighest
                 }
             }
         }

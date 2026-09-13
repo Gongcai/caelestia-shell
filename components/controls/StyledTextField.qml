@@ -21,7 +21,7 @@ TextFieldBase {
 
     property int verticalPadding: Tokens.padding.large
     property int horizontalPadding: Tokens.padding.large
-    property int radius: Tokens.rounding.small
+    property int radius: Tokens.rounding.medium
     readonly property int clampedRadius: Math.min(horizontalPadding, Math.min(width, height) / 2, radius)
 
     property string leadingIcon
@@ -69,7 +69,7 @@ TextFieldBase {
 
             topLeftRadius: root.clampedRadius
             topRightRadius: root.clampedRadius
-            radius: root.type === StyledTextField.Outlined ? root.clampedRadius : 0
+            radius: root.clampedRadius
 
             cursorShape: Qt.IBeamCursor
             disabled: root.activeFocus
@@ -282,6 +282,8 @@ TextFieldBase {
         StyledRect {
             topLeftRadius: root.clampedRadius
             topRightRadius: root.clampedRadius
+            bottomLeftRadius: root.clampedRadius
+            bottomRightRadius: root.clampedRadius
             color: root.activeFocus ? Colours.tPalette.m3surfaceContainerHighest : Colours.tPalette.m3surfaceContainerHigh
 
             StyledRect {

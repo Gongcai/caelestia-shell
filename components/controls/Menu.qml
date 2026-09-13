@@ -81,7 +81,7 @@ MouseArea {
             return item.mapToItem(root.parent, 0, off).y + root.marginY;
         }
 
-        radius: Tokens.rounding.large
+        radius: Tokens.rounding.medium
         level: 2
 
         implicitWidth: Math.max(200, column.implicitWidth + column.anchors.margins * 2)
@@ -106,6 +106,8 @@ MouseArea {
             anchors.fill: parent
             radius: parent.radius
             color: Colours.palette.m3surfaceContainerLow
+            border.width: 1
+            border.color: Colours.panelBorder
 
             ColumnLayout {
                 id: column
@@ -130,13 +132,13 @@ MouseArea {
                         implicitWidth: menuOptionRow.implicitWidth + Tokens.padding.medium * 2
                         implicitHeight: menuOptionRow.implicitHeight + Tokens.padding.medium * 2
 
-                        radius: active ? Tokens.rounding.medium : Tokens.rounding.extraSmall
-                        topLeftRadius: index === 0 ? Tokens.rounding.medium : radius
-                        topRightRadius: index === 0 ? Tokens.rounding.medium : radius
-                        bottomLeftRadius: index === repeater?.count - 1 ? Tokens.rounding.medium : radius
-                        bottomRightRadius: index === repeater?.count - 1 ? Tokens.rounding.medium : radius
+                        radius: active ? Tokens.rounding.small : Tokens.rounding.extraSmall
+                        topLeftRadius: index === 0 ? Tokens.rounding.small : radius
+                        topRightRadius: index === 0 ? Tokens.rounding.small : radius
+                        bottomLeftRadius: index === repeater?.count - 1 ? Tokens.rounding.small : radius
+                        bottomRightRadius: index === repeater?.count - 1 ? Tokens.rounding.small : radius
 
-                        color: Qt.alpha(Colours.palette.m3tertiaryContainer, active ? 1 : 0)
+                        color: Qt.alpha(Colours.palette.m3primaryContainer, active ? 1 : 0)
 
                         Behavior on radius {
                             Anim {}
@@ -148,7 +150,7 @@ MouseArea {
                             bottomLeftRadius: parent.bottomLeftRadius
                             bottomRightRadius: parent.bottomRightRadius
 
-                            color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
+                            color: item.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                             disabled: !root.expanded
                             onClicked: {
                                 root.itemSelected(item.modelData);
@@ -168,14 +170,14 @@ MouseArea {
                             MaterialIcon {
                                 Layout.alignment: Qt.AlignVCenter
                                 text: item.modelData?.icon ?? ""
-                                color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
+                                color: item.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
                             }
 
                             StyledText {
                                 Layout.alignment: Qt.AlignVCenter
                                 Layout.fillWidth: true
                                 text: item.modelData?.text ?? ""
-                                color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
+                                color: item.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                             }
 
                             Loader {
@@ -186,7 +188,7 @@ MouseArea {
 
                                 sourceComponent: MaterialIcon {
                                     text: item.modelData.trailingIcon
-                                    color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
+                                    color: item.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
                                 }
                             }
                         }

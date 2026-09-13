@@ -98,8 +98,8 @@ ColumnLayout {
                     Hypr.dispatch(Hypr.usingLua ? `hl.dsp.window.move({ window = "address:0x${root.client?.address}", workspace = "${wsId}", follow = true })` : `movetoworkspace ${wsId},address:0x${root.client?.address}`);
                 }
 
-                color: isCurrent ? Colours.tPalette.m3surfaceContainerHighest : Colours.palette.m3tertiaryContainer
-                onColor: isCurrent ? Colours.palette.m3onSurface : Colours.palette.m3onTertiaryContainer
+                color: isCurrent ? Colours.selectedSurface : Colours.tPalette.m3surfaceContainerHighest
+                onColor: isCurrent ? Colours.selectedOnSurface : Colours.palette.m3onSurface
                 text: wsId
                 disabled: isCurrent
             }

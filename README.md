@@ -292,28 +292,28 @@ For example, to disable the bar on DP-1:
             "clock": "Rubik",
             "workspaces": "Rubik",
             "headline": {
-                "family": "GoogleSansFlex",
-                "large": { "size": 32, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } },
-                "medium": { "size": 28, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } },
-                "small": { "size": 24, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } }
+                "family": "Inter",
+                "large": { "size": 32, "weight": 500, "italic": false, "vaxes": {} },
+                "medium": { "size": 28, "weight": 500, "italic": false, "vaxes": {} },
+                "small": { "size": 24, "weight": 500, "italic": false, "vaxes": {} }
             },
             "title": {
-                "family": "GoogleSansFlex",
-                "large": { "size": 22, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } },
-                "medium": { "size": 16, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } },
-                "small": { "size": 14, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } }
+                "family": "Inter",
+                "large": { "size": 22, "weight": 500, "italic": false, "vaxes": {} },
+                "medium": { "size": 16, "weight": 500, "italic": false, "vaxes": {} },
+                "small": { "size": 14, "weight": 500, "italic": false, "vaxes": {} }
             },
             "body": {
-                "family": "GoogleSansFlex",
-                "large": { "size": 16, "weight": 400, "italic": false, "vaxes": { "ROND": 25 } },
-                "medium": { "size": 14, "weight": 400, "italic": false, "vaxes": { "ROND": 25 } },
-                "small": { "size": 12, "weight": 400, "italic": false, "vaxes": { "ROND": 25 } }
+                "family": "Inter",
+                "large": { "size": 16, "weight": 400, "italic": false, "vaxes": {} },
+                "medium": { "size": 14, "weight": 400, "italic": false, "vaxes": {} },
+                "small": { "size": 12, "weight": 400, "italic": false, "vaxes": {} }
             },
             "label": {
-                "family": "GoogleSansFlex",
-                "large": { "size": 14, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } },
-                "medium": { "size": 12, "weight": 500, "italic": false, "vaxes": { "ROND": 25 } },
-                "small": { "size": 11, "weight": 400, "italic": false, "vaxes": { "ROND": 25 } }
+                "family": "Inter",
+                "large": { "size": 14, "weight": 500, "italic": false, "vaxes": {} },
+                "medium": { "size": 12, "weight": 500, "italic": false, "vaxes": {} },
+                "small": { "size": 11, "weight": 400, "italic": false, "vaxes": {} }
             },
             "mono": {
                 "family": "CaskaydiaCove NF",

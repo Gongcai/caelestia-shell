@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.effects
@@ -16,18 +15,15 @@ Item {
     readonly property color bgColour: Colours.tPalette.m3surfaceContainerHighest
 
     implicitWidth: Math.round(centerWidth * 0.7)
-    implicitHeight: {
-        shape.height; // Force update when shape height changes
-        return shape.pathBounds().height;
-    }
+    implicitHeight: implicitWidth
 
-    MaterialShape {
+    StyledRect {
         id: shape
 
         anchors.centerIn: parent
-        implicitSize: root.implicitWidth
-
-        shape: MaterialShape.ClamShell
+        implicitWidth: root.implicitWidth
+        implicitHeight: root.implicitHeight
+        radius: Tokens.rounding.full
         color: Qt.alpha(root.bgColour, 1)
         opacity: root.bgColour.a
         layer.enabled: true

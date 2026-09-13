@@ -106,7 +106,7 @@ Item {
         anchors.right: parent.right
 
         implicitHeight: 1
-        color: Colours.palette.m3outlineVariant
+        color: Colours.separator
     }
 
     component Tab: TabButton {

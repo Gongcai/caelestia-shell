@@ -51,9 +51,9 @@ class RoundingTokens : public ConfigObject {
     CONFIG_PROPERTY(int, medium, 12)
     CONFIG_PROPERTY(int, large, 16)
     CONFIG_PROPERTY(int, largeIncreased, 20)
-    CONFIG_PROPERTY(int, extraLarge, 28)
-    CONFIG_PROPERTY(int, extraLargeIncreased, 32)
-    CONFIG_PROPERTY(int, extraExtraLarge, 48)
+    CONFIG_PROPERTY(int, extraLarge, 24)
+    CONFIG_PROPERTY(int, extraLargeIncreased, 28)
+    CONFIG_PROPERTY(int, extraExtraLarge, 36)
     CONFIG_PROPERTY(int, full, std::numeric_limits<int>::max())
 
 public:

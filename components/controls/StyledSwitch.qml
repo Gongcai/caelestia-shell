@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Shapes
 import QtQuick.Templates
 import Caelestia.Config
 import qs.components
@@ -27,6 +26,10 @@ Switch {
         implicitWidth: implicitHeight * 1.7
         implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.small * 2
 
+        Behavior on color {
+            CAnim {}
+        }
+
         StyledRect {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.2 : implicitHeight
 
@@ -42,106 +45,24 @@ Switch {
             implicitHeight: parent.implicitHeight - Tokens.padding.extraSmall
             anchors.verticalCenter: parent.verticalCenter
 
+            border.width: root.checked ? 0 : 1
+            border.color: root.disabled ? Qt.alpha(Colours.palette.m3onSurface, 0.1) : Colours.panelBorder
+
+            Behavior on color {
+                CAnim {}
+            }
+
             StyledRect {
                 anchors.fill: parent
                 radius: parent.radius
 
                 color: root.checked ? Colours.palette.m3primary : Colours.palette.m3onSurface
-                opacity: root.pressed ? 0.1 : root.hovered ? 0.08 : 0
+                opacity: root.pressed ? Colours.pressedStateOpacity : root.hovered ? Colours.hoverStateOpacity : 0
 
                 Behavior on opacity {
                     Anim {
                         type: Anim.DefaultEffects
                     }
-                }
-            }
-
-            Shape {
-                id: icon
-
-                property point start1: {
-                    if (root.pressed)
-                        return Qt.point(width * 0.2, height / 2);
-                    if (root.checked)
-                        return Qt.point(width * 0.15, height / 2);
-                    return Qt.point(width * 0.15, height * 0.15);
-                }
-                property point end1: {
-                    if (root.pressed) {
-                        if (root.checked)
-                            return Qt.point(width * 0.4, height / 2);
-                        return Qt.point(width * 0.8, height / 2);
-                    }
-                    if (root.checked)
-                        return Qt.point(width * 0.4, height * 0.7);
-                    return Qt.point(width * 0.85, height * 0.85);
-                }
-                property point start2: {
-                    if (root.pressed) {
-                        if (root.checked)
-                            return Qt.point(width * 0.4, height / 2);
-                        return Qt.point(width * 0.2, height / 2);
-                    }
-                    if (root.checked)
-                        return Qt.point(width * 0.4, height * 0.7);
-                    return Qt.point(width * 0.15, height * 0.85);
-                }
-                property point end2: {
-                    if (root.pressed)
-                        return Qt.point(width * 0.8, height / 2);
-                    if (root.checked)
-                        return Qt.point(width * 0.85, height * 0.2);
-                    return Qt.point(width * 0.85, height * 0.15);
-                }
-
-                anchors.centerIn: parent
-                width: height
-                height: parent.implicitHeight - Tokens.padding.medium
-                preferredRendererType: Shape.CurveRenderer
-                asynchronous: true
-
-                ShapePath {
-                    strokeWidth: root.Tokens.font.body.large.pointSize * 0.15
-                    strokeColor: {
-                        if (root.disabled)
-                            return root.checked ? Colours.palette.m3outline : Colours.palette.m3surfaceContainer;
-                        return root.checked ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHighest;
-                    }
-                    fillColor: "transparent"
-                    capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-
-                    startX: icon.start1.x
-                    startY: icon.start1.y
-
-                    PathLine {
-                        x: icon.end1.x
-                        y: icon.end1.y
-                    }
-                    PathMove {
-                        x: icon.start2.x
-                        y: icon.start2.y
-                    }
-                    PathLine {
-                        x: icon.end2.x
-                        y: icon.end2.y
-                    }
-
-                    Behavior on strokeColor {
-                        CAnim {}
-                    }
-                }
-
-                Behavior on start1 {
-                    PropAnim {}
-                }
-                Behavior on end1 {
-                    PropAnim {}
-                }
-                Behavior on start2 {
-                    PropAnim {}
-                }
-                Behavior on end2 {
-                    PropAnim {}
                 }
             }
 
@@ -163,10 +84,5 @@ Switch {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         enabled: false
-    }
-
-    component PropAnim: PropertyAnimation {
-        duration: Tokens.anim.durations.expressiveFastSpatial
-        easing: Tokens.anim.expressiveFastSpatial
     }
 }

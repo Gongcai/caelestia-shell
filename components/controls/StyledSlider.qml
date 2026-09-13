@@ -15,7 +15,7 @@ Slider {
     property bool animateWave
     property real waveFrequency: 6
     property int waveDuration: 1000
-    property int radius: Tokens.rounding.medium
+    property int radius: Tokens.rounding.full
     property bool interactionOnMove: true
     readonly property bool dragging: mouse.pressed
 
@@ -43,7 +43,7 @@ Slider {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Tokens.spacing.extraSmall
 
-            implicitHeight: parent.height * (parent.height <= 12 ? opacity : Math.min(opacity * 2, 1))
+            implicitHeight: Math.max(4, Math.min(parent.height, 4 * opacity))
             opacity: Math.min(width, 12) / 12
 
             radius: root.radius
@@ -72,17 +72,19 @@ Slider {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: Tokens.spacing.extraSmall
 
-            implicitWidth: 4
-            implicitHeight: {
-                const t = CUtils.clamp((parent.height - 12) / 16, 0, 1);
-                const lerp = (a, b) => a + (b - a) * t;
-                return parent.height * (mouse.pressed ? lerp(3.5, 1.5) : lerp(3, 1.2));
-            }
+            implicitWidth: mouse.pressed ? 18 : 16
+            implicitHeight: mouse.pressed ? 18 : 16
 
             radius: Tokens.rounding.full
             color: root.fgColour
 
             Behavior on implicitHeight {
+                Anim {
+                    type: Anim.FastSpatial
+                }
+            }
+
+            Behavior on implicitWidth {
                 Anim {
                     type: Anim.FastSpatial
                 }
@@ -104,7 +106,8 @@ Slider {
 
             StyledRect {
                 implicitWidth: root.filledWidth
-                implicitHeight: root.height
+                implicitHeight: Math.max(4, Math.min(root.height, 4 * remaining.opacity))
+                anchors.verticalCenter: parent.verticalCenter
 
                 radius: root.radius
                 topRightRadius: Tokens.rounding.extraSmall / 2

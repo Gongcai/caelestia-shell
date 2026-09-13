@@ -12,20 +12,21 @@ RadioButton {
     implicitWidth: implicitIndicatorWidth + implicitContentWidth + contentItem.anchors.leftMargin
     implicitHeight: Math.max(implicitIndicatorHeight, implicitContentHeight)
 
-    indicator: Rectangle {
+    indicator: StyledRect {
         id: outerCircle
 
         implicitWidth: 20
         implicitHeight: 20
         radius: Tokens.rounding.full
         color: "transparent"
-        border.color: root.checked ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+        border.color: !root.enabled ? Qt.alpha(Colours.palette.m3onSurface, 0.25) : root.checked ? Colours.palette.m3primary : Colours.palette.m3outline
         border.width: 2
         anchors.verticalCenter: parent.verticalCenter
 
         StateLayer {
             anchors.margins: -Tokens.padding.small
-            color: root.checked ? Colours.palette.m3onSurface : Colours.palette.m3primary
+            color: Colours.palette.m3primary
+            disabled: !root.enabled
             z: -1
             onClicked: root.click()
         }
@@ -36,7 +37,20 @@ RadioButton {
             implicitHeight: 8
 
             radius: Tokens.rounding.full
-            color: Qt.alpha(Colours.palette.m3primary, root.checked ? 1 : 0)
+            color: root.checked ? Colours.palette.m3primary : "transparent"
+            opacity: root.enabled ? 1 : 0.38
+            scale: root.checked ? 1 : 0
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
+            Behavior on scale {
+                Anim {
+                    type: Anim.FastSpatial
+                }
+            }
         }
 
         Behavior on border.color {

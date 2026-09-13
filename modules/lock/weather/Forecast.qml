@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import M3Shapes
 import Caelestia
 import Caelestia.Config
 import qs.components
@@ -59,10 +58,11 @@ StyledRect {
                 Layout.fillWidth: true
                 spacing: Tokens.spacing.extraSmall
 
-                MaterialShape {
+                StyledRect {
                     Layout.alignment: Qt.AlignHCenter
-                    implicitSize: temp.implicitHeight + Tokens.padding.medium * 2
-                    shape: MaterialShape.Cookie4Sided
+                    implicitWidth: temp.implicitWidth + Tokens.padding.medium * 2
+                    implicitHeight: temp.implicitHeight + Tokens.padding.medium * 2
+                    radius: Tokens.rounding.full
                     color: Qt.alpha(Colours.palette.m3primary, hour.index === 0 ? 1 : 0)
 
                     Behavior on color {

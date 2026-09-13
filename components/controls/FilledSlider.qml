@@ -11,11 +11,15 @@ Slider {
     required property string icon
     property real oldValue
     property bool initialized
+    property color fgColour: Colours.palette.m3primary
+    property color bgColour: Qt.alpha(Colours.palette.m3onSurface, 0.12)
+    property color handleColour: Colours.palette.m3surfaceBright
+    property color handleOnColour: Colours.palette.m3onSurface
 
     orientation: Qt.Vertical
 
     background: StyledRect {
-        color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+        color: root.bgColour
         radius: Tokens.rounding.full
 
         StyledRect {
@@ -25,7 +29,7 @@ Slider {
             y: root.handle.y
             implicitHeight: parent.height - y
 
-            color: Colours.palette.m3secondary
+            color: root.fgColour
             radius: parent.radius
         }
     }
@@ -50,7 +54,7 @@ Slider {
 
             anchors.fill: parent
 
-            color: Colours.palette.m3inverseSurface
+            color: root.handleColour
             radius: Tokens.rounding.full
 
             MouseArea {
@@ -70,7 +74,7 @@ Slider {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: 1
                 text: moving ? Math.round(root.value * 100) : root.icon
-                color: Colours.palette.m3inverseOnSurface
+                color: root.handleOnColour
                 font: moving ? Tokens.font.body.small : Tokens.font.icon.medium
 
                 Behavior on moving {

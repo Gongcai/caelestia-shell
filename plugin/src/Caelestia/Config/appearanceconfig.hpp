@@ -149,7 +149,7 @@ class FontStyleConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(QString, family, QStringLiteral("GoogleSansFlex"))
+    CONFIG_PROPERTY(QString, family, QStringLiteral("Inter"))
     CONFIG_SUBOBJECT(FontConfig, large)
     CONFIG_SUBOBJECT(FontConfig, medium)
     CONFIG_SUBOBJECT(FontConfig, small)
@@ -200,10 +200,12 @@ public:
         , m_label(new FontStyleConfig(this))
         , m_mono(new FontStyleConfig(this))
         , m_icon(new IconFontStyleConfig(this)) {
-        const auto sans = QStringLiteral("GoogleSansFlex");
+        // Inter is a neutral, redistributable default. QFont falls back to the
+        // platform sans-serif family when it is not installed.
+        const auto sans = QStringLiteral("Inter");
         const auto mono = QStringLiteral("CaskaydiaCove NF");
         const auto icons = QStringLiteral("Material Symbols Rounded");
-        const QVariantMap vaxes = { { "ROND", 25 } };
+        const QVariantMap vaxes = {};
 
         m_headline->setDefaultFamily(sans);
         m_headline->large()->setDefaults(32, QFont::Medium, vaxes);

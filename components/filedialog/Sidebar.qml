@@ -48,10 +48,10 @@ StyledRect {
                 implicitHeight: placeInner.implicitHeight + Tokens.padding.medium * 2
 
                 radius: Tokens.rounding.full
-                color: Qt.alpha(Colours.palette.m3secondaryContainer, selected ? 1 : 0)
+                color: Qt.alpha(Colours.selectedSurface, selected ? 1 : 0)
 
                 StateLayer {
-                    color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                    color: place.selected ? Colours.selectedOnSurface : Colours.palette.m3onSurface
                     onClicked: {
                         if (place.modelData === "Home")
                             root.dialog.cwd = ["Home"];
@@ -89,7 +89,7 @@ StyledRect {
                                 return "video_library";
                             return "folder";
                         }
-                        color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                        color: place.selected ? Colours.selectedOnSurface : Colours.palette.m3onSurface
                         fontStyle: Tokens.font.icon.medium
                         fill: place.selected ? 1 : 0
 
@@ -103,7 +103,7 @@ StyledRect {
                     StyledText {
                         Layout.fillWidth: true
                         text: place.modelData
-                        color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                        color: place.selected ? Colours.selectedOnSurface : Colours.palette.m3onSurface
                         font: Tokens.font.body.small
                         elide: Text.ElideRight
                     }

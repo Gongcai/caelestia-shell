@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.services
@@ -16,14 +15,6 @@ Item {
     readonly property alias placeholder: placeholder
     readonly property alias placeholderWidth: nonAnimPlaceholder.width
     property string buffer
-    readonly property list<int> shapeQueue: {
-        const shapes = [MaterialShape.Slanted, MaterialShape.Arch, MaterialShape.Fan, MaterialShape.Arrow, MaterialShape.SemiCircle, MaterialShape.Triangle, MaterialShape.Diamond, MaterialShape.ClamShell, MaterialShape.Pentagon, MaterialShape.Gem, MaterialShape.Sunny, MaterialShape.VerySunny, MaterialShape.Cookie4Sided, MaterialShape.Ghostish, MaterialShape.SoftBurst];
-        for (let i = shapes.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shapes[i], shapes[j]] = [shapes[j], shapes[i]];
-        }
-        return shapes;
-    }
 
     clip: true
 
@@ -130,12 +121,13 @@ Item {
             removeAnim.start();
         }
 
-        MaterialShape {
+        StyledRect {
             id: charShape
 
             anchors.centerIn: parent
-            implicitSize: charList.implicitHeight * 1.5
-            shape: root.shapeQueue[char.index % root.shapeQueue.length] ?? MaterialShape.Circle
+            implicitWidth: charList.implicitHeight * 1.5
+            implicitHeight: charList.implicitHeight * 1.5
+            radius: Tokens.rounding.full
             color: Colours.palette.m3onSurface
 
             Behavior on color {
@@ -177,11 +169,6 @@ Item {
                 }
                 PauseAnimation {
                     duration: 180 * Tokens.anim.durations.scale
-                }
-                PropertyAction {
-                    target: charShape
-                    property: "shape"
-                    value: MaterialShape.Circle
                 }
                 ParallelAnimation {
                     Anim {

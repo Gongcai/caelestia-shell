@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -106,22 +105,17 @@ StyledRect {
         }
     }
 
-    MaterialShape {
+    StyledRect {
         id: usageShape
 
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: Tokens.padding.medium
 
-        implicitSize: Tokens.sizes.dashboard.perfUsageShapeSize
+        implicitWidth: Tokens.sizes.dashboard.perfUsageShapeSize
+        implicitHeight: Tokens.sizes.dashboard.perfUsageShapeSize
+        radius: Tokens.rounding.large
         color: Colours.palette.m3secondaryContainer
-        shape: {
-            if (root.usage >= 0.8)
-                return MaterialShape.SoftBurst;
-            if (root.usage >= 0.4)
-                return MaterialShape.Sunny;
-            return MaterialShape.Cookie4Sided;
-        }
 
         Behavior on color {
             CAnim {}
