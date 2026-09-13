@@ -170,6 +170,7 @@ ColumnLayout {
     component PanelCard: StyledRect {
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
+        materialBlur: true
         border.width: 1
         border.color: Colours.panelBorder
     }

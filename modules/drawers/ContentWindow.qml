@@ -82,6 +82,10 @@ StyledWindow {
     anchors.left: true
     anchors.right: true
 
+    MaterialBlurRegions {
+        targetWindow: root
+    }
+
     Behavior on fsTransitionProg {
         Anim {}
     }

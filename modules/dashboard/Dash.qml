@@ -5,6 +5,7 @@ import Caelestia.Blobs
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
+import qs.components.effects
 import qs.services
 
 GridLayout {
@@ -117,6 +118,10 @@ GridLayout {
             anchors.fill: parent
             group: cardBlobs
             opacity: cardBlobs.color.a
+        }
+
+        MaterialSurface {
+            target: background
         }
     }
 }

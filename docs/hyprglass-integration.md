@@ -122,6 +122,40 @@ and `~/.config/hypr/hyprglass.lua` values together when comparing revisions.
 
 ## Installed Files
 
+### Internal Card Blur
+
+Control Center cards and the main Dashboard cards opt into a stronger Gaussian
+background sample through `MaterialSurface` (`StyledRect.materialBlur` for
+rectangle controls). `MaterialBlurRegions` publishes their window-local bounds
+through `BackgroundEffect.blurRegion`. Hyprglass retains `mask_mode = "alpha"`
+for the unified outer contour and uses these protocol regions only to select
+the material sample. The rendered surface alpha gates that sample at rounded
+card edges. This samples wallpaper/application content in the compositor;
+it does not blur the control's text or icons with a Qt effect.
+
+The additional options for `hg.layer("caelestia-drawers", {...})` are:
+
+```lua
+material_blur_strength = 0.85,
+material_blur_iterations = 1,
+material_alpha_threshold = 0.06,
+```
+
+`Region.item` observes the target's own geometry but does not observe ancestor
+movement or transforms. Publishing it directly left card regions at their
+opening-animation coordinates until a later layout update. The shell now maps
+card bounds to the window in `QQuickWindow.afterAnimating`, before polish and
+commit. Integer region properties change only when those bounds change; there
+is no idle animation timer or per-frame region allocation. Hidden cards publish
+empty bounds, and registration includes cards before their first layout.
+
+The unified contour patch includes the material sampler. The current installed
+`hyprglass.so` symlink targets `hyprglass-material-blur.so`. Runtime validation
+confirmed successful QML reload; the visible delay fix was confirmed on the
+Dashboard. The current material shader supports up to 32 region rectangles.
+
+### Paths
+
 - Source: `~/.local/src/hyprglass`, upstream commit
   `77636c5711ed572ca199a84d06146ccac0951786` (v0.8.0).
 - Current source patch: [patches/hyprglass-unified-contour.patch](patches/hyprglass-unified-contour.patch).
