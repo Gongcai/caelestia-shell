@@ -24,7 +24,7 @@ Singleton {
         FloatingWindow {
             id: win
 
-            color: Colours.tPalette.m3surface
+            color: Colours.transparency.enabled ? Qt.alpha(Colours.palette.m3surface, 0.55) : Colours.palette.m3surface
             surfaceFormat.opaque: false
 
             onVisibleChanged: {

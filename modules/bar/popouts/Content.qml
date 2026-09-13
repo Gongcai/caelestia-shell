@@ -202,7 +202,8 @@ Item {
                     }
                     Anim {
                         property: "opacity"
-                        type: Anim.SlowEffects
+                        duration: 120
+                        easing.type: Easing.OutCubic
                     }
                 }
             }

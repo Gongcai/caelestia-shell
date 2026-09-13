@@ -236,8 +236,8 @@ class OsdTokens : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(int, sliderWidth, 30)
-    CONFIG_PROPERTY(int, sliderHeight, 150)
+    CONFIG_PROPERTY(int, sliderWidth, 38)
+    CONFIG_PROPERTY(int, sliderHeight, 164)
 
 public:
     explicit OsdTokens(QObject* parent = nullptr)

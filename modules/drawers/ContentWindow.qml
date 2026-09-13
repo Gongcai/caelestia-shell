@@ -19,6 +19,7 @@ StyledWindow {
 
     readonly property alias bar: bar
     readonly property alias interactionWrapper: interactions
+    readonly property alias panels: panels
 
     readonly property ScreenState screenState: ShellState.forScreen(screen)
 
@@ -72,7 +73,7 @@ StyledWindow {
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session || screenState.launchpad || screenState.quickpanel ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: screenState.launchpad ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     mask: screenState.launchpad ? null : hasFullscreen ? emptyRegion : regions
 
@@ -91,18 +92,6 @@ StyledWindow {
 
     Region {
         id: emptyRegion
-
-        x: panels.notifications.x + bar.implicitWidth
-        y: panels.notifications.y + root.borderThickness
-        width: panels.notifications.width
-        height: panels.notifications.height
-
-        Region {
-            x: root.width - width
-            y: panels.osdWrapper.y + root.borderThickness
-            width: panels.osdWrapper.width * (1 - panels.osd.offsetScale) + root.borderThickness
-            height: panels.osd.height
-        }
     }
 
     Regions {
@@ -131,7 +120,10 @@ StyledWindow {
                 return true;
             return false;
         }
-        windows: [root]
+        windows: [root, bar.window, panels.utilities.window, panels.dashboard.window,
+            panels.quickpanel.window, panels.launcher.window, panels.sidebar.window,
+            panels.session.window, panels.osd.window, panels.notifications.window,
+            panels.dashboardLyrics.window, panels.popoutsWrapper.window]
         onCleared: {
             root.screenState.launcher = false;
             root.screenState.launchpad = false;
@@ -161,6 +153,10 @@ StyledWindow {
 
     Item {
         anchors.fill: parent
+        // Panel surfaces are rendered independently by Hyprglass. The former
+        // full-screen Blob SDF produced a separate Gaussian blur sheet under
+        // them and could remain visible after a drawer closed.
+        visible: false
         opacity: root.surfaceColour.a
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -178,101 +174,82 @@ StyledWindow {
 
         BlobInvertedRect {
             anchors.fill: parent
+            // Keep the global contour subtle. Native panel surfaces carry the
+            // glass material; a fully opaque inverted rect reads as a second
+            // full-screen blur sheet underneath them.
+            opacity: 0.16
             anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
             group: blobGroup
             radius: root.borderRounding
-            borderLeft: bar.implicitWidth - anchors.margins - root.sdfBorderOffset
+            borderLeft: root.borderThickness - anchors.margins - root.sdfBorderOffset
             borderRight: root.borderThickness - anchors.margins - root.sdfBorderOffset
             borderTop: root.borderThickness - anchors.margins - root.sdfBorderOffset
             borderBottom: root.borderThickness - anchors.margins - root.sdfBorderOffset
         }
 
-        PanelBg {
-            id: dashBg
-
-            panel: panels.dashboard
-            deformAmount: 0.1
-        }
-
-        PanelBg {
-            id: quickpanelBg
-
-            panel: panels.quickpanel
-            deformAmount: 0.1
-        }
-
-        PanelBg {
-            id: dashLyricsBg
-
-            panel: panels.dashboardLyrics
-            deformAmount: 0.08
-        }
-
-        PanelBg {
-            id: launcherBg
-
-            panel: panels.launcher
-            deformAmount: 0.1
-        }
-
+        // Keep a shared SDF under the native glass windows. Its overlapping
+        // shapes provide the continuous bulged transitions at adjoining edges.
+        PanelBg { id: dashBg; panel: panels.dashboard; deformAmount: 0.1 }
+        PanelBg { id: quickpanelBg; panel: panels.quickpanel; deformAmount: 0.1 }
+        PanelBg { id: dashLyricsBg; panel: panels.dashboardLyrics; deformAmount: 0.08 }
+        PanelBg { id: launcherBg; panel: panels.launcher; deformAmount: 0.1 }
         PanelBg {
             id: sessionBg
-
             panel: panels.sessionWrapper
             deformAmount: 0.2
             x: panels.sessionWrapper.x + panels.session.x + bar.implicitWidth
             implicitWidth: panels.session.width
         }
-
         PanelBg {
             id: sidebarBg
-
             panel: panels.sidebar
             deformAmount: 0.03
             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
             exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
             bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
         }
-
         PanelBg {
             id: osdBg
-
             panel: panels.osdWrapper
             deformAmount: 0.25
             x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
             implicitWidth: panels.osd.width
         }
-
-        PanelBg {
-            id: notifsBg
-
-            panel: panels.notifications
-        }
-
+        PanelBg { id: notifsBg; panel: panels.notifications }
         PanelBg {
             id: utilsBg
-
             panel: panels.utilities
             deformAmount: panels.sidebar.visible ? 0.1 : 0.15
             exclude: panels.sidebar.offsetScale > 0.08 ? [] : [sidebarBg]
             topLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
         }
-
         PanelBg {
             id: popoutBg
-
-            // Extra width to prevent vertical movement deformation partially detaching panel from bar
             property real extraWidth: panels.popouts.isDetached ? 0 : 0.2
-
             panel: panels.popoutsWrapper
             deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
             x: panels.popoutsWrapper.x + panels.popouts.x + bar.implicitWidth - panels.popouts.width * extraWidth
             implicitWidth: panels.popouts.width * (1 + extraWidth)
-
-            Behavior on extraWidth {
-                Anim {}
-            }
+            Behavior on extraWidth { Anim {} }
         }
+
+    }
+
+    // Border pixels live on the same surface as the drawer composition so
+    // Hyprglass can sample them with the same refraction material.
+    Item {
+        anchors.fill: parent
+        visible: !root.hasFullscreen && !root.screenState.launchpad && root.borderThickness > 0
+        opacity: root.surfaceColour.a
+
+        StyledRect { x: 0; y: 0; width: parent.width; height: root.borderThickness; color: root.surfaceColour }
+        StyledRect { x: 0; y: parent.height - root.borderThickness; width: parent.width; height: root.borderThickness; color: root.surfaceColour }
+        StyledRect { x: 0; y: root.borderThickness; width: root.borderThickness; height: parent.height - 2 * root.borderThickness; color: root.surfaceColour }
+        StyledRect { x: parent.width - root.borderThickness; y: root.borderThickness; width: root.borderThickness; height: parent.height - 2 * root.borderThickness; color: root.surfaceColour }
+    }
+
+    ScreenFrame {
+        hostWindow: root
     }
 
     Interactions {
@@ -292,41 +269,9 @@ StyledWindow {
             screen: root.screen
             screenState: root.screenState
             bar: bar
+            rootWindow: root
             borderThickness: root.borderThickness
 
-            utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
-            utilities.deformMatrix: utilsBg.rawDeformMatrix
-
-            dashboard.transform: Matrix4x4 {
-                matrix: dashBg.deformMatrix
-            }
-            quickpanel.transform: Matrix4x4 {
-                matrix: quickpanelBg.deformMatrix
-            }
-            dashboardLyrics.transform: Matrix4x4 {
-                matrix: dashLyricsBg.deformMatrix
-            }
-            launcher.transform: Matrix4x4 {
-                matrix: launcherBg.deformMatrix
-            }
-            session.transform: Matrix4x4 {
-                matrix: sessionBg.deformMatrix
-            }
-            sidebar.transform: Matrix4x4 {
-                matrix: sidebarBg.deformMatrix
-            }
-            osd.transform: Matrix4x4 {
-                matrix: osdBg.deformMatrix
-            }
-            notifications.transform: Matrix4x4 {
-                matrix: notifsBg.deformMatrix
-            }
-            utilities.transform: Matrix4x4 {
-                matrix: utilsBg.deformMatrix
-            }
-            popouts.transform: Matrix4x4 {
-                matrix: popoutBg.deformMatrix
-            }
         }
 
         BarWrapper {
@@ -376,7 +321,6 @@ StyledWindow {
     component PanelBg: BlobRect {
         required property Item panel
         property real deformAmount: 0.15
-
         group: blobGroup
         x: panel.x + bar.implicitWidth
         y: panel.y + root.borderThickness
@@ -385,4 +329,5 @@ StyledWindow {
         radius: Tokens.rounding.extraLarge
         deformScale: (deformAmount * Config.appearance.deformScale) / 10000
     }
+
 }

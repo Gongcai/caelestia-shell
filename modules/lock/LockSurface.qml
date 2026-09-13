@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Caelestia.Config
 import qs.components
 import qs.components.images
+import qs.components.effects
 import qs.services
 
 WlSessionLockSurface {
@@ -171,6 +172,7 @@ WlSessionLockSurface {
         }
 
         Loader {
+            id: backgroundSource
             anchors.fill: parent
             sourceComponent: Config.lock.useWallpaper ? wallpaperBackground : screencopyBackground
         }
@@ -212,7 +214,7 @@ WlSessionLockSurface {
             anchors.fill: parent
             color: Colours.palette.m3surface
             radius: parent.radius
-            opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+            opacity: Colours.transparency.enabled && lockGlass.status !== ShaderEffect.Error ? 0 : 1
 
             layer.enabled: true
             layer.effect: MultiEffect {
@@ -220,6 +222,16 @@ WlSessionLockSurface {
                 blurMax: 15
                 shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
             }
+        }
+
+        BackdropGlass {
+            id: lockGlass
+            anchors.fill: parent
+            sourceItem: backgroundSource
+            transformItem: lockContent
+            radius: lockBg.radius
+            tint: Qt.alpha(Colours.palette.m3surface, 0.55)
+            visible: Colours.transparency.enabled
         }
 
         MaterialIcon {

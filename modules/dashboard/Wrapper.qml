@@ -5,6 +5,7 @@ import Quickshell
 import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.containers
 import qs.components.filedialog
 import qs.utils
 
@@ -12,6 +13,7 @@ Item {
     id: root
 
     required property ScreenState screenState
+    readonly property alias window: panelWindow
     readonly property FileDialog facePicker: FileDialog {
         title: qsTr("Select a profile picture")
         filterLabel: qsTr("Image files")
@@ -36,18 +38,33 @@ Item {
     property real offsetScale: shouldBeActive ? 0 : 1
 
     visible: offsetScale < 1
-    anchors.topMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 854 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {}
     }
 
+    GlassPanelWindow {
+        id: panelWindow
+
+        name: "dashboard"
+        hostWindow: root.QsWindow.window
+        shown: root.shouldBeActive && content.status === Loader.Ready
+        panelWidth: root.width
+        panelHeight: root.height
+        panelX: hostWindow.bar.implicitWidth + root.x
+        panelY: hostWindow.borderThickness
+        flushToFrame: true
+        acceptsFocus: !root.Config.dashboard.showOnHover
+        keepOpen: hostWindow.interactionWrapper.dashboardShortcutActive || root.modalActive
+        onCloseRequested: root.screenState.dashboard = false
+    }
+
     Loader {
         id: content
 
+        parent: panelWindow.contentItem
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
 

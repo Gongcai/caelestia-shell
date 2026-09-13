@@ -10,7 +10,6 @@ import qs.components.controls
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.nexus
 import qs.services
-import qs.utils
 
 ColumnLayout {
     id: root
@@ -21,6 +20,7 @@ ColumnLayout {
 
     readonly property var brightnessMonitor: Brightness.getMonitorForScreen(screen)
     readonly property var connectedBluetoothDevices: [...Bluetooth.devices.values].filter(device => device.connected) // qmllint disable missing-property
+    readonly property bool twoColumns: width >= 360
 
     signal openRecorder
 
@@ -33,7 +33,7 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.small
+        Layout.bottomMargin: Tokens.spacing.extraSmall
 
         StyledText {
             Layout.fillWidth: true
@@ -52,18 +52,137 @@ ColumnLayout {
         }
     }
 
-    StyledRect {
+    GridLayout {
         Layout.fillWidth: true
-        implicitHeight: connections.implicitHeight + Tokens.padding.large * 2
+        columns: root.twoColumns ? 2 : 1
+        columnSpacing: Tokens.spacing.medium
+        rowSpacing: Tokens.spacing.medium
+
+        ConnectivityCard {
+            Layout.fillWidth: true
+            Layout.preferredWidth: root.twoColumns ? 3 : 1
+        }
+
+        FocusCard {
+            Layout.fillWidth: true
+            Layout.preferredWidth: 2
+        }
+
+        SliderCard {
+            Layout.columnSpan: root.twoColumns ? 2 : 1
+            Layout.fillWidth: true
+            icon: "brightness_6"
+            title: qsTr("Display")
+            value: root.brightnessMonitor?.brightness ?? 0
+            disabled: !root.brightnessMonitor
+            onMoved: value => root.brightnessMonitor?.setBrightness(value)
+        }
+
+        SliderCard {
+            Layout.columnSpan: root.twoColumns ? 2 : 1
+            Layout.fillWidth: true
+            icon: Audio.muted ? "volume_off" : Audio.volume < 0.5 ? "volume_down" : "volume_up"
+            title: qsTr("Sound")
+            value: Audio.volume
+            disabled: !Audio.sink
+            showDetails: true
+            onIconClicked: {
+                const sink = Audio.sink?.audio;
+                if (sink)
+                    sink.muted = !sink.muted;
+            }
+            onMoved: value => Audio.setVolume(value)
+            onOpen: root.openSettings("audio")
+        }
+    }
+
+    MediaCard {
+        Layout.fillWidth: true
+    }
+
+    PanelCard {
+        Layout.fillWidth: true
+        visible: Config.utilities.cards.recorder
+        implicitHeight: visible ? recorderRow.implicitHeight + Tokens.padding.medium * 2 : 0
         radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
+        border.width: 1
+        border.color: Colours.panelBorder
+
+        StateLayer {
+            onClicked: root.openRecorder()
+        }
+
+        RowLayout {
+            id: recorderRow
+
+            anchors.fill: parent
+            anchors.margins: Tokens.padding.medium
+            spacing: Tokens.spacing.medium
+
+            StyledRect {
+                implicitWidth: 38
+                implicitHeight: 38
+                radius: Tokens.rounding.medium
+                color: Recorder.running ? Colours.palette.m3error : Colours.controlFillStrong
+
+                MaterialIcon {
+                    anchors.centerIn: parent
+                    text: Recorder.running ? "stop" : "screen_record"
+                    color: Recorder.running ? Colours.palette.m3onError : Colours.palette.m3onSurface
+                    fontStyle: Tokens.font.icon.medium
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 0
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: qsTr("Screen Recording")
+                    font: Tokens.font.body.medium
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: Recorder.paused ? qsTr("Paused") : Recorder.running ? qsTr("Recording for %1").arg(root.elapsedText(Recorder.elapsed)) : qsTr("Modes and recordings")
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.body.small
+                    elide: Text.ElideRight
+                }
+            }
+
+            MaterialIcon {
+                text: "chevron_right"
+                color: Colours.palette.m3onSurfaceVariant
+            }
+        }
+    }
+
+    function elapsedText(elapsed: real): string {
+        const hours = Math.floor(elapsed / 3600);
+        const mins = Math.floor((elapsed % 3600) / 60);
+        const secs = Math.floor(elapsed % 60).toString().padStart(2, "0");
+        return hours > 0 ? `${hours}:${mins.toString().padStart(2, "0")}:${secs}` : `${mins}:${secs}`;
+    }
+
+    component PanelCard: StyledRect {
+        radius: Tokens.rounding.large
+        color: Colours.tPalette.m3surfaceContainer
+        border.width: 1
+        border.color: Colours.panelBorder
+    }
+
+    component ConnectivityCard: PanelCard {
+        implicitHeight: connections.implicitHeight + Tokens.padding.medium * 2
 
         ColumnLayout {
             id: connections
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.medium
+            anchors.margins: Tokens.padding.medium
+            spacing: Tokens.spacing.small
 
             ConnectionRow {
                 icon: Nmcli.activeEthernet ? "lan" : "wifi"
@@ -110,136 +229,58 @@ ColumnLayout {
         }
     }
 
-    GridLayout {
-        Layout.fillWidth: true
-        columns: 2
-        columnSpacing: Tokens.spacing.medium
-        rowSpacing: Tokens.spacing.medium
+    component FocusCard: PanelCard {
+        implicitHeight: focusLayout.implicitHeight + Tokens.padding.medium * 2
 
-        StatusTile {
-            icon: "notifications_off"
-            title: qsTr("Do Not Disturb")
-            subtitle: Notifs.dnd ? qsTr("On") : qsTr("Off")
-            checked: Notifs.dnd
-            onClicked: Notifs.dnd = !Notifs.dnd
-        }
-
-        StatusTile {
-            icon: "gamepad"
-            title: qsTr("Game Mode")
-            subtitle: GameMode.enabled ? qsTr("On") : qsTr("Off")
-            checked: GameMode.enabled
-            onClicked: GameMode.enabled = !GameMode.enabled
-        }
-
-        StatusTile {
-            visible: Config.utilities.cards.keepAwake
-            icon: "coffee"
-            title: qsTr("Keep Awake")
-            subtitle: IdleInhibitor.enabled ? qsTr("On") : qsTr("Off")
-            checked: IdleInhibitor.enabled
-            onClicked: IdleInhibitor.enabled = !IdleInhibitor.enabled
-        }
-
-        StatusTile {
-            icon: "mic"
-            title: qsTr("Microphone")
-            subtitle: Audio.sourceMuted ? qsTr("Muted") : qsTr("On")
-            checked: !Audio.sourceMuted
-            onClicked: {
-                const source = Audio.source?.audio;
-                if (source)
-                    source.muted = !source.muted;
-            }
-        }
-    }
-
-    SliderCard {
-        icon: "brightness_6"
-        title: qsTr("Display")
-        value: root.brightnessMonitor?.brightness ?? 0
-        disabled: !root.brightnessMonitor
-        onMoved: value => root.brightnessMonitor?.setBrightness(value)
-    }
-
-    SliderCard {
-        icon: Audio.muted ? "volume_off" : Audio.volume < 0.5 ? "volume_down" : "volume_up"
-        title: qsTr("Sound")
-        value: Audio.volume
-        disabled: !Audio.sink
-        showDetails: true
-        onIconClicked: {
-            const sink = Audio.sink?.audio;
-            if (sink)
-                sink.muted = !sink.muted;
-        }
-        onMoved: value => Audio.setVolume(value)
-        onOpen: root.openSettings("audio")
-    }
-
-    StyledRect {
-        Layout.fillWidth: true
-        visible: Config.utilities.cards.recorder
-        implicitHeight: visible ? recorderRow.implicitHeight + Tokens.padding.large * 2 : 0
-        radius: Tokens.rounding.large
-        color: Colours.tPalette.m3surfaceContainer
-
-        StateLayer {
-            onClicked: root.openRecorder()
-        }
-
-        RowLayout {
-            id: recorderRow
+        ColumnLayout {
+            id: focusLayout
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.medium
+            anchors.margins: Tokens.padding.medium
+            spacing: Tokens.spacing.small
 
-            StyledRect {
-                implicitWidth: 46
-                implicitHeight: 46
-                radius: Tokens.rounding.full
-                color: Recorder.running ? Colours.palette.m3error : Colours.palette.m3secondaryContainer
-
-                MaterialIcon {
-                    anchors.centerIn: parent
-                    text: Recorder.running ? "stop_circle" : "screen_record"
-                    color: Recorder.running ? Colours.palette.m3onError : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.large
-                }
-            }
-
-            ColumnLayout {
+            FocusRow {
                 Layout.fillWidth: true
-                spacing: 0
-
-                StyledText {
-                    Layout.fillWidth: true
-                    text: qsTr("Screen Recording")
-                    font: Tokens.font.body.medium
-                }
-
-                StyledText {
-                    Layout.fillWidth: true
-                    text: Recorder.paused ? qsTr("Paused") : Recorder.running ? qsTr("Recording for %1").arg(root.elapsedText(Recorder.elapsed)) : qsTr("Modes and recordings")
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
-                    elide: Text.ElideRight
-                }
+                icon: "do_not_disturb_on"
+                title: qsTr("Focus")
+                subtitle: Notifs.dnd ? qsTr("Do Not Disturb") : qsTr("Off")
+                checked: Notifs.dnd
+                onClicked: Notifs.dnd = !Notifs.dnd
             }
 
-            MaterialIcon {
-                text: "chevron_right"
-                color: Colours.palette.m3onSurfaceVariant
+            GridLayout {
+                Layout.fillWidth: true
+                columns: 3
+                columnSpacing: Tokens.spacing.extraSmall
+
+                QuickAction {
+                    Layout.fillWidth: true
+                    icon: "gamepad"
+                    checked: GameMode.enabled
+                    onClicked: GameMode.enabled = !GameMode.enabled
+                }
+
+                QuickAction {
+                    Layout.fillWidth: true
+                    icon: "mic"
+                    checked: !Audio.sourceMuted
+                    onClicked: {
+                        const source = Audio.source?.audio;
+                        if (source)
+                            source.muted = !source.muted;
+                    }
+                }
+
+                QuickAction {
+                    Layout.fillWidth: true
+                    visible: Config.utilities.cards.keepAwake
+                    Layout.preferredWidth: visible ? 1 : 0
+                    icon: "coffee"
+                    checked: IdleInhibitor.enabled
+                    onClicked: IdleInhibitor.enabled = !IdleInhibitor.enabled
+                }
             }
         }
-    }
-
-    function elapsedText(elapsed: real): string {
-        const hours = Math.floor(elapsed / 3600);
-        const mins = Math.floor((elapsed % 3600) / 60);
-        const secs = Math.floor(elapsed % 60).toString().padStart(2, "0");
-        return hours > 0 ? `${hours}:${mins.toString().padStart(2, "0")}:${secs}` : `${mins}:${secs}`;
     }
 
     component ConnectionRow: RowLayout {
@@ -255,7 +296,8 @@ ColumnLayout {
         signal open
 
         Layout.fillWidth: true
-        spacing: Tokens.spacing.medium
+        implicitHeight: 40
+        spacing: Tokens.spacing.small
 
         IconButton {
             type: IconButton.Tonal
@@ -264,7 +306,6 @@ ColumnLayout {
             checked: connection.checked
             disabled: !connection.toggleEnabled
             icon: connection.icon
-            font: Tokens.font.icon.large
             onClicked: connection.toggle()
         }
 
@@ -275,7 +316,7 @@ ColumnLayout {
             StyledText {
                 Layout.fillWidth: true
                 text: connection.title
-                font: Tokens.font.body.medium
+                font: Tokens.font.body.small
                 elide: Text.ElideRight
             }
 
@@ -283,7 +324,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: connection.subtitle
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.small
+                font: Tokens.font.label.small
                 elide: Text.ElideRight
             }
         }
@@ -296,8 +337,8 @@ ColumnLayout {
         }
     }
 
-    component StatusTile: StyledRect {
-        id: tile
+    component FocusRow: StyledRect {
+        id: focusRow
 
         required property string icon
         required property string title
@@ -306,27 +347,34 @@ ColumnLayout {
 
         signal clicked
 
-        Layout.fillWidth: true
-        Layout.preferredWidth: 1
-        implicitHeight: 76
-        radius: Tokens.rounding.large
-        color: checked ? Colours.selectedSurface : Colours.panelSurface
+        implicitHeight: 50
+        radius: Tokens.rounding.medium
+        color: checked ? Colours.selectedSurface : Colours.controlFill
 
         StateLayer {
-            color: tile.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurface
-            onClicked: tile.clicked()
+            color: focusRow.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurface
+            onClicked: focusRow.clicked()
         }
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: Tokens.padding.medium
+            anchors.leftMargin: Tokens.padding.small
+            anchors.rightMargin: Tokens.padding.medium
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
-                text: tile.icon
-                fill: tile.checked ? 1 : 0
-                color: tile.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.medium
+            StyledRect {
+                implicitWidth: 30
+                implicitHeight: 30
+                radius: Tokens.rounding.full
+                color: focusRow.checked ? Colours.accent : Colours.controlFillStrong
+
+                MaterialIcon {
+                    anchors.centerIn: parent
+                    text: focusRow.icon
+                    fill: focusRow.checked ? 1 : 0
+                    color: focusRow.checked ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    fontStyle: Tokens.font.icon.small
+                }
             }
 
             ColumnLayout {
@@ -335,21 +383,55 @@ ColumnLayout {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: tile.title
+                    text: focusRow.title
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
 
                 StyledText {
-                    text: tile.subtitle
-                    color: tile.checked ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                    Layout.fillWidth: true
+                    text: focusRow.subtitle
+                    color: focusRow.checked ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                     font: Tokens.font.label.small
+                    elide: Text.ElideRight
                 }
+            }
+
+            MaterialIcon {
+                text: "chevron_right"
+                color: Colours.palette.m3onSurfaceVariant
+                fontStyle: Tokens.font.icon.small
             }
         }
     }
 
-    component SliderCard: StyledRect {
+    component QuickAction: StyledRect {
+        id: action
+
+        required property string icon
+        required property bool checked
+
+        signal clicked
+
+        implicitHeight: 38
+        radius: Tokens.rounding.medium
+        color: checked ? Colours.selectedSurface : Colours.controlFill
+
+        StateLayer {
+            color: action.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurface
+            onClicked: action.clicked()
+        }
+
+        MaterialIcon {
+            anchors.centerIn: parent
+            text: action.icon
+            fill: action.checked ? 1 : 0
+            color: action.checked ? Colours.selectedOnSurface : Colours.palette.m3onSurfaceVariant
+            fontStyle: Tokens.font.icon.small
+        }
+    }
+
+    component SliderCard: PanelCard {
         id: sliderCard
 
         required property string icon
@@ -362,62 +444,118 @@ ColumnLayout {
         signal iconClicked
         signal open
 
-        Layout.fillWidth: true
-        implicitHeight: sliderLayout.implicitHeight + Tokens.padding.large * 2
-        radius: Tokens.rounding.large
-        color: Colours.tPalette.m3surfaceContainer
+        implicitHeight: sliderLayout.implicitHeight + Tokens.padding.medium * 2
 
-        RowLayout {
+        ColumnLayout {
             id: sliderLayout
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large
+            anchors.margins: Tokens.padding.medium
+            spacing: Tokens.spacing.extraSmall
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Tokens.spacing.small
+
+                IconButton {
+                    type: IconButton.Text
+                    isRound: true
+                    icon: sliderCard.icon
+                    disabled: sliderCard.disabled
+                    onClicked: sliderCard.iconClicked()
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: sliderCard.title
+                    font: Tokens.font.body.small
+                }
+
+                StyledText {
+                    text: `${Math.round(sliderCard.value * 100)}%`
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.label.small
+                }
+
+                IconButton {
+                    visible: sliderCard.showDetails
+                    Layout.preferredWidth: visible ? implicitWidth : 0
+                    type: IconButton.Text
+                    isRound: true
+                    icon: "chevron_right"
+                    onClicked: sliderCard.open()
+                }
+            }
+
+            StyledSlider {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 18
+                trackHeight: 14
+                enabled: !sliderCard.disabled
+                value: sliderCard.value
+                onInteraction: value => sliderCard.moved(value)
+            }
+        }
+    }
+
+    component MediaCard: PanelCard {
+        implicitHeight: mediaLayout.implicitHeight + Tokens.padding.medium * 2
+
+        RowLayout {
+            id: mediaLayout
+
+            anchors.fill: parent
+            anchors.margins: Tokens.padding.medium
             spacing: Tokens.spacing.medium
 
-            IconButton {
-                type: IconButton.Text
-                isRound: true
-                icon: sliderCard.icon
-                disabled: sliderCard.disabled
-                onClicked: sliderCard.iconClicked()
+            StyledRect {
+                implicitWidth: 42
+                implicitHeight: 42
+                radius: Tokens.rounding.medium
+                color: Players.active ? Colours.accentContainer : Colours.controlFill
+
+                MaterialIcon {
+                    anchors.centerIn: parent
+                    text: Players.active ? "music_note" : "music_off"
+                    color: Players.active ? Colours.selectedOnSurface : Colours.palette.m3onSurfaceVariant
+                    fontStyle: Tokens.font.icon.medium
+                }
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.extraSmall
+                spacing: 0
 
-                RowLayout {
+                StyledText {
                     Layout.fillWidth: true
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: sliderCard.title
-                        font: Tokens.font.body.small
-                    }
-
-                    StyledText {
-                        text: `${Math.round(sliderCard.value * 100)}%`
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.small
-                    }
+                    text: Players.active?.trackTitle || qsTr("No media playing")
+                    font: Tokens.font.body.medium
+                    elide: Text.ElideRight
                 }
 
-                StyledSlider {
+                StyledText {
                     Layout.fillWidth: true
-                    implicitHeight: 12
-                    enabled: !sliderCard.disabled
-                    value: sliderCard.value
-                    onInteraction: value => sliderCard.moved(value)
+                    text: Players.active ? (Players.active.trackArtist || Players.getIdentity(Players.active)) : qsTr("Choose an app to start playback")
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.label.small
+                    elide: Text.ElideRight
                 }
             }
 
             IconButton {
-                visible: sliderCard.showDetails
-                Layout.preferredWidth: visible ? implicitWidth : 0
                 type: IconButton.Text
                 isRound: true
-                icon: "chevron_right"
-                onClicked: sliderCard.open()
+                icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+                disabled: !Players.active?.canTogglePlaying
+                onClicked: Players.active?.togglePlaying()
+            }
+
+            IconButton {
+                type: IconButton.Text
+                isRound: true
+                icon: "skip_next"
+                disabled: !Players.active?.canGoNext
+                onClicked: Players.active?.next()
             }
         }
     }

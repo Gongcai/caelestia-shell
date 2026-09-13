@@ -2,9 +2,15 @@
 
 状态：实施中（阶段 0～3 首批完成，正在做场景回归）
 
-当前进度（2026-09-13）：主题基础层和公共控件换肤已完成，Dashboard、QuickPanel、Sidebar、Control Center、Nexus、Session、通知、文件对话框、WindowInfo 和锁屏已完成首批页面层统一。原始 scheme 仍作为输入保留，页面继续通过原有 `m3...` 属性名取色；Material Symbols 仍作为兼容图标层，OSD 继续复用已换肤的公共滑块，媒体可视化和 LoadingIndicator 等动态装饰形状暂时保留。
+当前进度（2026-09-13）：主题基础层和公共控件换肤已完成，Dashboard、QuickPanel、Sidebar、Control Center、Nexus、Session、通知、文件对话框、WindowInfo 和锁屏已完成首批页面层统一。启动台、搜索框、Control Center 分组卡片和 OSD 几何已完成第二轮 macOS 细节收口；Control Center 当前明确以 macOS Sequoia 15 为参考，已按连接组、Focus 快捷组、Display/Sound 滑块、媒体卡和录制入口重新组织，不引入 Tahoe 26 的 Liquid Glass 视觉；横向滑块已统一为 Sequoia 的厚胶囊轨道与白色圆形拖点。原始 scheme 仍作为输入保留，页面继续通过原有 `m3...` 属性名取色；Material Symbols 仍作为兼容图标层，媒体可视化和 LoadingIndicator 等动态装饰形状暂时保留。
 
 已验证：当前工作树可在运行中的 Hyprland 0.56.2 会话加载，两个显示器、Dashboard、Launchpad、QuickPanel、Sidebar、Nexus 和锁屏相关页面均可渲染并保留现有页面动画。
+
+后续材质调整（2026-09-13）：按用户新要求，控制中心已接入 hyprglass 液态玻璃，取代上述“不引入 Liquid Glass”的早期约束。内容与背景现位于同一个面板尺寸的独立 layer surface，插件按该窗口圆角计算折射；其他面板继续使用原有模糊。用户已确认实际玻璃效果。实现、补丁与本地配置位置见 [hyprglass-integration.md](hyprglass-integration.md)。
+
+液态玻璃第二批（2026-09-13）：Dashboard、搜索启动器、剪贴板、通知历史侧栏、会话菜单、OSD、弹出通知区、歌词面板和 Bar 弹出面板已迁移到独立窗口，并复用 `GlassPanelWindow`。移除了它们在全屏 Drawers 中的旧 Blob 背景，开关动画改由 Hyprland 移动整个窗口。已检查常用面板渲染、Escape 关闭、托盘与 OSD 悬停、通知超时和双屏缩放。Bar 本体、屏幕边框、Launchpad、Toast、独立 Nexus 窗口和锁屏不在此批范围。
+
+液态玻璃第三批（2026-09-13）：Bar 本体及每条 Toast 已迁移为独立原生窗口，独立 Nexus 通过类名与标题组合规则接入 hyprglass。锁屏保留 WlSessionLockSurface 和 PAM，在内部使用 Qt 着色器对现有壁纸或锁前截图做面板边缘折射，采样随旋转与缩放同步。Toast、Nexus 和锁屏增加底色浓度以保证文字对比度。已验证双屏窗口尺寸、提示点击与超时关闭、Bar 弹出面板悬停、锁屏实际进入与退出，以及着色器旋转和尺寸变化。按用户要求，Launchpad 继续使用高斯模糊；屏幕细边框仍留在原 Drawers 表面。
 
 ## 1. 目标
 

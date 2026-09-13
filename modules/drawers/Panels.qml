@@ -20,6 +20,7 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property Bar.BarWrapper bar
+    required property var rootWindow
     required property real borderThickness
 
     readonly property alias osd: osd
@@ -148,6 +149,7 @@ Item {
 
         screen: root.screen
         screenState: root.screenState
+        rootWindow: root.rootWindow
         sidebar: sidebar
         popouts: popoutsWrapper.content
 

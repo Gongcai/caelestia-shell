@@ -56,11 +56,11 @@ Item {
 
     StyledRect {
         anchors.fill: parent
-        color: Colours.tPalette.m3surface
+        color: Colours.tPalette.m3surfaceDim
 
         Rectangle {
             anchors.fill: parent
-            color: Qt.alpha(Colours.palette.m3scrim, Colours.light ? 0.08 : 0.16)
+            color: Qt.alpha(Colours.palette.m3scrim, Colours.light ? 0.12 : 0.2)
         }
     }
 

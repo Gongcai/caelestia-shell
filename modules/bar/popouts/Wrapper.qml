@@ -150,29 +150,13 @@ Item {
         }
     }
 
-    Behavior on implicitWidth {
-        Anim {
-            duration: root.animLength
-            easing: root.animCurve
-        }
-    }
-
-    Behavior on implicitHeight {
-        enabled: root.offsetScale < 1
-
-        Anim {
-            duration: root.animLength
-            easing: root.animCurve
-        }
-    }
-
     component Comp: Loader {
         id: comp
 
         property bool shouldBeActive
 
         active: false
-        opacity: 0
+        opacity: 1
 
         // Makes the loader load on the same frame shouldBeActive becomes true, which ensures size is set
         states: State {
@@ -194,10 +178,6 @@ Item {
                     PropertyAction {
                         property: "active"
                     }
-                    Anim {
-                        type: Anim.DefaultEffects
-                        property: "opacity"
-                    }
                 }
             },
             Transition {
@@ -205,10 +185,6 @@ Item {
                 to: ""
 
                 SequentialAnimation {
-                    Anim {
-                        type: Anim.DefaultEffects
-                        property: "opacity"
-                    }
                     PropertyAction {
                         property: "active"
                     }

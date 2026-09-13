@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.components.containers
 
 Item {
     id: root
@@ -11,6 +12,7 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property var panels
+    readonly property alias window: panelWindow
 
     readonly property bool shouldBeActive: screenState.launcher && Config.launcher.enabled
 
@@ -31,18 +33,30 @@ Item {
     }
 
     visible: offsetScale < 1
-    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {}
     }
 
+    GlassPanelWindow {
+        id: panelWindow
+
+        name: "launcher"
+        hostWindow: root.QsWindow.window
+        shown: root.shouldBeActive && content.status === Loader.Ready
+        panelWidth: root.width
+        panelHeight: root.height
+        panelX: hostWindow.bar.implicitWidth + root.x
+        panelY: hostWindow.height - hostWindow.borderThickness - height
+        acceptsFocus: true
+    }
+
     Loader {
         id: content
 
+        parent: panelWindow.contentItem
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 

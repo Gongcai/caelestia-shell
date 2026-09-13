@@ -69,29 +69,27 @@ CustomMouseArea {
         if (!containsMouse) {
             // Only hide if not activated by shortcut
             if (!osdShortcutActive) {
-                screenState.osd = false;
-                root.panels.osd.hovered = false;
+                panels.osd.window.scheduleHoverClose();
             }
 
             if (!dashboardShortcutActive && !panels.dashboard.modalActive)
-                screenState.dashboard = false;
+                panels.dashboard.window.scheduleHoverClose();
 
             if (!quickpanelShortcutActive)
-                screenState.quickpanel = false;
+                panels.quickpanel.window.scheduleHoverClose();
 
             if (!utilitiesShortcutActive)
-                screenState.utilities = false;
+                panels.utilities.scheduleHoverClose();
 
             if (!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) {
-                popouts.hasCurrent = false;
-                bar.closeTray();
+                panels.popoutsWrapper.window.scheduleHoverClose();
             }
 
             if (Config.bar.showOnHover)
-                bar.isHovered = false;
+                bar.scheduleHoverClose();
 
             if (Config.sidebar.showOnHover)
-                screenState.sidebar = false;
+                panels.sidebar.window.scheduleHoverClose();
         }
     }
 

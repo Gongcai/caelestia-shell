@@ -6,6 +6,7 @@ import Caelestia
 import Caelestia.Components
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 
 Slider {
@@ -16,6 +17,8 @@ Slider {
     property real waveFrequency: 6
     property int waveDuration: 1000
     property int radius: Tokens.rounding.full
+    // Sequoia uses a substantial pill track with a small white thumb.
+    property int trackHeight: 12
     property bool interactionOnMove: true
     readonly property bool dragging: mouse.pressed
 
@@ -23,60 +26,50 @@ Slider {
     property color bgColour: enabled ? Colours.palette.m3secondaryContainer : Qt.alpha(Colours.palette.m3onSurface, 0.1)
 
     property real pos: visualPosition
-    property real filledWidth
+    // Keep the fill endpoint aligned with the thumb center.
+    property real filledWidth: handle.x + handle.width / 2
 
     signal interaction(v: real)
 
-    Component.onCompleted: filledWidth = Qt.binding(() => (width - handle.implicitWidth - handle.anchors.leftMargin) * pos)
-
     implicitWidth: 200
-    implicitHeight: 12
+    // Reserve the thumb diameter so compact rows cannot overlap the slider.
+    implicitHeight: Math.max(trackHeight, 18)
 
     contentItem: Item {
         anchors.fill: parent
 
         StyledRect {
-            id: remaining
+            id: track
 
-            anchors.left: handle.right
+            anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Tokens.spacing.extraSmall
 
-            implicitHeight: Math.max(4, Math.min(parent.height, 4 * opacity))
-            opacity: Math.min(width, 12) / 12
+            implicitHeight: Math.min(parent.height, root.trackHeight)
+            opacity: 1
 
             radius: root.radius
-            topLeftRadius: Tokens.rounding.extraSmall / 2
-            bottomLeftRadius: Tokens.rounding.extraSmall / 2
-            color: root.bgColour
-        }
-
-        StyledRect {
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.rightMargin: 4 * remaining.opacity
-
-            implicitWidth: implicitHeight
-            implicitHeight: 4 * remaining.opacity
-            opacity: remaining.opacity
-
-            radius: Tokens.rounding.full
-            color: root.fgColour
+            color: Qt.alpha(root.bgColour, 0.92)
         }
 
         StyledRect {
             id: handle
 
-            anchors.left: filled.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Tokens.spacing.extraSmall
+            x: root.visualPosition * (root.width - width)
+            z: 1
 
-            implicitWidth: mouse.pressed ? 18 : 16
-            implicitHeight: mouse.pressed ? 18 : 16
+            implicitWidth: mouse.pressed ? 19 : 17
+            implicitHeight: mouse.pressed ? 19 : 17
 
             radius: Tokens.rounding.full
-            color: root.fgColour
+            color: Colours.light ? "#FFFFFF" : "#F5F5F7"
+
+            Elevation {
+                anchors.fill: parent
+                radius: parent.radius
+                level: mouse.pressed ? 2 : 1
+            }
 
             Behavior on implicitHeight {
                 Anim {
@@ -96,6 +89,8 @@ Slider {
 
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
+            width: Math.max(0, root.filledWidth)
+            height: Math.min(parent.height, root.trackHeight)
             asynchronous: true
 
             sourceComponent: root.wavy ? waveComp : lineComp
@@ -105,13 +100,9 @@ Slider {
             id: lineComp
 
             StyledRect {
-                implicitWidth: root.filledWidth
-                implicitHeight: Math.max(4, Math.min(root.height, 4 * remaining.opacity))
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.fill: parent
 
                 radius: root.radius
-                topRightRadius: Tokens.rounding.extraSmall / 2
-                bottomRightRadius: Tokens.rounding.extraSmall / 2
                 color: root.fgColour
             }
         }
@@ -123,11 +114,11 @@ Slider {
                 lineWidth: root.height * 0.7
                 frequency: root.waveFrequency
                 startX: x
-                fullLength: root.width - handle.implicitWidth - handle.anchors.leftMargin
+                fullLength: root.width
                 color: root.fgColour
 
-                implicitWidth: root.filledWidth
-                implicitHeight: lineWidth * amplitudeMultiplier * 2 + lineWidth
+                width: root.filledWidth
+                height: lineWidth * amplitudeMultiplier * 2 + lineWidth
 
                 Anim on waveProgress {
                     running: true

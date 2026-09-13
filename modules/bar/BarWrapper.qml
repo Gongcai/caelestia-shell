@@ -4,6 +4,8 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.components.containers
+import qs.components.controls
 import qs.utils
 import qs.modules.bar.popouts as BarPopouts
 
@@ -15,13 +17,19 @@ Item {
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
 
+    readonly property alias window: panelWindow
+
+    function scheduleHoverClose(): void {
+        hoverClose.restart();
+    }
+
     readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)
 
     readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)
     readonly property int padding: Math.max(Tokens.padding.small, Config.border.thickness)
     readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
     readonly property int exclusiveZone: !disabled && (Config.bar.persistent || screenState.bar) ? contentWidth : Config.border.thickness
-    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || screenState.bar || isHovered)
+    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || screenState.bar || isHovered || panelWindow.hovered || popouts.hasCurrent)
     property bool isHovered
 
     function closeTray(): void {
@@ -71,12 +79,77 @@ Item {
         }
     ]
 
+    Timer {
+        id: hoverClose
+        interval: 120
+        onTriggered: {
+            if (!panelWindow.hovered)
+                root.isHovered = false;
+        }
+    }
+
+    GlassPanelWindow {
+        id: panelWindow
+
+        name: "bar"
+        hostWindow: root.QsWindow.window
+        shown: root.shouldBeVisible && !root.screenState.launchpad
+        panelX: 0
+        panelY: 0
+        panelWidth: root.contentWidth
+        panelHeight: root.height
+
+        onHoveredChanged: {
+            if (!hovered) {
+                root.scheduleHoverClose();
+                hostWindow.panels.popoutsWrapper.window.scheduleHoverClose();
+            }
+        }
+    }
+
+    CustomMouseArea {
+        id: input
+        parent: panelWindow.contentItem
+        anchors.fill: parent
+        acceptedButtons: Qt.AllButtons
+        property real dragStartX
+        onPressed: event => dragStartX = event.x
+        onPositionChanged: event => {
+            if (pressed) {
+                if (event.x - dragStartX > Config.bar.dragThreshold)
+                    root.screenState.bar = true;
+                else if (event.x - dragStartX < -Config.bar.dragThreshold)
+                    root.screenState.bar = false;
+            }
+        }
+        function onWheel(event: WheelEvent): void {
+            root.handleWheel(event.y, event.angleDelta);
+        }
+
+        HoverHandler {
+            id: pointer
+            onPointChanged: popoutCheck.restart()
+            onHoveredChanged: {
+                if (hovered)
+                    popoutCheck.restart();
+            }
+        }
+
+        Timer {
+            id: popoutCheck
+            interval: 0
+            onTriggered: {
+                if (pointer.hovered && !root.popouts.isDetached)
+                    root.checkPopout(pointer.point.position.y);
+            }
+        }
+    }
+
     Loader {
         id: content
 
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        parent: input
+        anchors.fill: parent
 
         active: root.shouldBeVisible
 

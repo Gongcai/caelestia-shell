@@ -5,6 +5,7 @@ import Quickshell
 import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.containers
 import qs.services
 
 Item {
@@ -131,10 +132,29 @@ Item {
             }
         }
 
-        ToastItem {
-            id: toastInner
+        GlassPanelWindow {
+            id: panelWindow
 
-            modelData: toast.modelData
+            name: "toast"
+            surfaceOpacity: 0.6
+            hostWindow: root.QsWindow.window
+            shown: !toast.modelData.closed && !toast.previewHidden
+            allowFullscreen: true
+            panelX: hostWindow.bar.implicitWidth + root.x
+            panelY: hostWindow.borderThickness + root.y + toast.y
+            panelWidth: toast.width
+            panelHeight: toast.implicitHeight
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                onClicked: toast.modelData.close()
+
+                ToastItem {
+                    id: toastInner
+                    modelData: toast.modelData
+                }
+            }
         }
 
         Behavior on opacity {

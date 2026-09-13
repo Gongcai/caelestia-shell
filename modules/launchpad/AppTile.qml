@@ -33,7 +33,9 @@ Item {
         implicitHeight: Math.min(root.height - Tokens.spacing.small, 140)
 
         radius: Tokens.rounding.extraLarge
-        color: root.selected ? Qt.alpha(Colours.palette.m3onSurface, 0.1) : "transparent"
+        color: root.selected ? Colours.accentContainer : Qt.alpha(Colours.palette.m3onSurface, 0.025)
+        border.width: root.selected ? 1 : 0
+        border.color: Qt.alpha(Colours.accent, 0.45)
 
         StateLayer {
             id: stateLayer
