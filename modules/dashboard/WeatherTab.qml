@@ -69,6 +69,7 @@ Item {
 
             radius: Tokens.rounding.extraLarge * 2
             color: Colours.tPalette.m3surfaceContainer
+            materialBlur: true
 
             RowLayout {
                 id: bigInfoRow
@@ -157,6 +158,7 @@ Item {
 
                     radius: Tokens.rounding.large
                     color: Colours.tPalette.m3surfaceContainer
+                    materialBlur: true
 
                     ColumnLayout {
                         id: forecastItemColumn
@@ -215,6 +217,7 @@ Item {
         Layout.preferredHeight: 60
         radius: Tokens.rounding.medium
         color: Colours.tPalette.m3surfaceContainer
+        materialBlur: true
 
         Row {
             anchors.centerIn: parent

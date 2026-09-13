@@ -83,6 +83,7 @@ Item {
             implicitHeight: emptyColumn.implicitHeight + Tokens.padding.extraLarge * 2
             radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
+            materialBlur: true
 
             ColumnLayout {
                 id: emptyColumn
@@ -135,6 +136,7 @@ Item {
                 implicitHeight: deviceColumn.implicitHeight + Tokens.padding.large * 2
                 radius: Tokens.rounding.extraLarge
                 color: Colours.tPalette.m3surfaceContainer
+                materialBlur: true
 
                 ColumnLayout {
                     id: deviceColumn

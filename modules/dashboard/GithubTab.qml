@@ -595,6 +595,7 @@ Item {
             implicitHeight: loginColumn.implicitHeight + Tokens.padding.extraLarge * 2
             radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
+            materialBlur: true
 
             ColumnLayout {
                 id: loginColumn
@@ -654,6 +655,7 @@ Item {
             implicitHeight: setupColumn.implicitHeight + Tokens.padding.extraLarge * 2
             radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
+            materialBlur: true
 
             ColumnLayout {
                 id: setupColumn
@@ -710,6 +712,7 @@ Item {
             implicitHeight: graphColumn.implicitHeight + Tokens.padding.large * 2
             radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
+            materialBlur: true
 
             ColumnLayout {
                 id: graphColumn
@@ -854,6 +857,7 @@ Item {
                     implicitHeight: 260
                     radius: Tokens.rounding.extraLarge
                     color: Colours.tPalette.m3surfaceContainer
+                    materialBlur: true
 
                     Item {
                         anchors.fill: parent

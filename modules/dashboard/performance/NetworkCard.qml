@@ -10,6 +10,7 @@ StyledRect {
     id: root
 
     color: Colours.tPalette.m3surfaceContainer
+    materialBlur: true
     radius: Tokens.rounding.extraLarge
 
     implicitWidth: Tokens.sizes.dashboard.perfNetworkCardWidth
