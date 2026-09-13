@@ -111,7 +111,7 @@ wallpaper visibly bend at panel edges:
 
 ```lua
 refraction_strength = 2.2
-chromatic_aberration = 0.85
+chromatic_aberration = 0.65
 edge_thickness = 0.08
 -- compiled contour width: 20 logical pixels
 -- compiled contour refraction multiplier: 0.95
