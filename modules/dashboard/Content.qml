@@ -211,13 +211,16 @@ Item {
             }
 
             Behavior on contentX {
-                enabled: !view.moving
-                NumberAnimation {
-                    duration: 180
-                    easing.type: Easing.OutCubic
-                }
+                Anim {}
             }
         }
     }
 
+    Behavior on implicitWidth {
+        Anim {}
+    }
+
+    Behavior on implicitHeight {
+        Anim {}
+    }
 }
