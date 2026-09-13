@@ -1,9 +1,15 @@
 # Local Hyprglass Integration
 
-Each migrated panel renders its background and content in one panel-sized layer
-surface. Hyprland animates that surface, so glass and controls share the same
-geometry. `GlassPanelWindow.qml` provides the common background, input region,
-screen placement, keyboard policy, and delayed hover exit.
+The current shell renders each monitor's dashboard, sidebars, control center,
+screen frame, and popouts in one full-output `caelestia-drawers` layer. Its
+alpha mask is used as a contour field, so adjacent panel shapes merge into one
+continuous liquid-glass boundary while controls remain in the same native
+surface as their background. Launchpad remains a separate Gaussian-blurred
+surface by design.
+
+The namespace list below describes the earlier individually mapped panel
+surfaces. It remains useful when checking older revisions, but new drawer work
+must target `caelestia-drawers`.
 
 The following namespaces use the local glass preset:
 
@@ -87,11 +93,39 @@ regions. Internal cards are ordinary translucent controls, not separate glass
 surfaces. Notifications currently share one glass surface for their popup stack;
 individual notification cards are not separate refracting surfaces.
 
+## Unified Surface Contour
+
+The current implementation replaces the panel-sized assumption above for
+drawer content. It builds a half-resolution jump-flood contour from the alpha
+mask of `caelestia-drawers`; the contour normal drives refraction at every
+outer boundary, including joins between dashboard, sidebar, and the frame.
+The effect does not use CPU pixel readback or extra Wayland surfaces.
+
+The reproducible plugin patch is
+[patches/hyprglass-unified-contour.patch](patches/hyprglass-unified-contour.patch).
+It supersedes the older rounding-only patch when applied to the pinned upstream
+source.
+
+The current visual tune is intentionally strong enough to make a changing
+wallpaper visibly bend at panel edges:
+
+```lua
+refraction_strength = 2.2
+chromatic_aberration = 0.85
+edge_thickness = 0.08
+-- compiled contour width: 20 logical pixels
+-- compiled contour refraction multiplier: 0.95
+```
+
+The width is scaled by the output scale before rendering. Keep the source patch
+and `~/.config/hypr/hyprglass.lua` values together when comparing revisions.
+
 ## Installed Files
 
 - Source: `~/.local/src/hyprglass`, upstream commit
   `77636c5711ed572ca199a84d06146ccac0951786` (v0.8.0).
-- Local source patch: [patches/hyprglass-layer-rounding.patch](patches/hyprglass-layer-rounding.patch).
+- Current source patch: [patches/hyprglass-unified-contour.patch](patches/hyprglass-unified-contour.patch).
+- Historical rounding-only patch: [patches/hyprglass-layer-rounding.patch](patches/hyprglass-layer-rounding.patch).
 - Built library: `~/.local/lib/hyprland/hyprglass.so`.
 - Effect settings: `~/.config/hypr/hyprglass.lua`, included by `hyprland.lua`.
 - Startup loader: `~/.local/bin/caelestia-hyprglass`.
@@ -110,7 +144,8 @@ preset and namespace options. Live sampling has no 30 FPS cap. The rules in
 
 This build targets the installed Hyprland 0.56.2 headers and ABI. Rebuild against
 matching headers after updating Hyprland. Do not bypass the plugin ABI check.
-After applying the patch to the pinned upstream source, build with `make -j2`.
+Apply the unified contour patch to the pinned upstream source, then build with
+`make -j2`.
 Unload the plugin before replacing its installed library, then run the startup
 loader to load it and reload the configuration.
 
