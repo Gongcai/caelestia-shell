@@ -112,10 +112,23 @@ wallpaper visibly bend at panel edges:
 ```lua
 refraction_strength = 2.2
 chromatic_aberration = 0.65
+-- candidate plugin: noise_strength = 0.016
 edge_thickness = 0.08
 -- compiled contour width: 20 logical pixels
 -- compiled contour refraction multiplier: 0.95
 ```
+
+`noise_strength` adds a subtle, stable blue-noise-style grain to the sampled
+glass backdrop. It is generated from physical pixel coordinates in the fragment
+shader, so it does not shimmer during panel animations, and it is composited
+before the layer surface content so text and icons remain clean. The value is
+clamped to `0..0.08`; `0` disables the effect. This is a procedural
+blue-noise-style pattern rather than a sampled blue-noise texture.
+
+The active Hyprland session still has the previous library loaded, so the local
+Lua line is kept commented until the new library is installed during a
+controlled compositor restart. The isolated build and source patch are ready;
+uncomment `noise_strength = 0.016` after that replacement.
 
 The width is scaled by the output scale before rendering. Keep the source patch
 and `~/.config/hypr/hyprglass.lua` values together when comparing revisions.
@@ -159,6 +172,8 @@ Dashboard. The current material shader supports up to 32 region rectangles.
 - Source: `~/.local/src/hyprglass`, upstream commit
   `77636c5711ed572ca199a84d06146ccac0951786` (v0.8.0).
 - Current source patch: [patches/hyprglass-unified-contour.patch](patches/hyprglass-unified-contour.patch).
+- The patch also carries the procedural `noise_strength` preset parameter and
+  shader grain stage described above.
 - Historical rounding-only patch: [patches/hyprglass-layer-rounding.patch](patches/hyprglass-layer-rounding.patch).
 - Built library: `~/.local/lib/hyprland/hyprglass.so`.
 - Effect settings: `~/.config/hypr/hyprglass.lua`, included by `hyprland.lua`.
