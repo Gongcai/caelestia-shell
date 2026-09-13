@@ -46,6 +46,47 @@ StyledWindow {
 
     property color surfaceColour: Colours.tPalette.m3surface
 
+    // Keep the Hyprland grab alive for one frame after a drawer closes. This
+    // lets keyboard focus settle before release and prevents a stale clear
+    // event from cancelling a quick reopen.
+    readonly property bool focusGrabWanted: {
+        const s = root.screenState;
+        const conf = root.contentItem.Config;
+        if (s.launchpad || (s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
+            return true;
+        if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
+            return true;
+        if (!conf.quickpanel.showOnHover && s.quickpanel && conf.quickpanel.enabled)
+            return true;
+        if (s.dashboardLyrics && !s.dashboardLyricsPinned && conf.dashboard.enabled)
+            return true;
+        return panels.popouts.currentName.startsWith("traymenu") && (panels.popouts.current as StackView)?.depth > 1;
+    }
+
+    property bool focusGrabHeld
+
+    function syncFocusGrab(): void {
+        if (focusGrabWanted) {
+            focusGrabRelease.stop();
+            focusGrabHeld = true;
+        } else if (focusGrabHeld) {
+            focusGrabRelease.restart();
+        }
+    }
+
+    onFocusGrabWantedChanged: syncFocusGrab()
+    Component.onCompleted: syncFocusGrab()
+
+    Timer {
+        id: focusGrabRelease
+
+        interval: 50
+        onTriggered: {
+            if (!root.focusGrabWanted)
+                root.focusGrabHeld = false;
+        }
+    }
+
     readonly property int dragMaskPadding: {
         if (focusGrab.active || panels.popouts.isDetached)
             return 0;
@@ -121,21 +162,7 @@ StyledWindow {
     HyprlandFocusGrab {
         id: focusGrab
 
-        active: {
-            const s = root.screenState;
-            const conf = root.contentItem.Config;
-            if (s.launchpad || (s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
-                return true;
-            if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
-                return true;
-            if (!conf.quickpanel.showOnHover && s.quickpanel && conf.quickpanel.enabled)
-                return true;
-            if (s.dashboardLyrics && !s.dashboardLyricsPinned && conf.dashboard.enabled)
-                return true;
-            if (panels.popouts.currentName.startsWith("traymenu") && (panels.popouts.current as StackView)?.depth > 1)
-                return true;
-            return false;
-        }
+        active: root.focusGrabHeld
         windows: [root, launchpadWindow]
         onCleared: {
             root.screenState.launcher = false;
@@ -349,7 +376,9 @@ StyledWindow {
         id: launchpadWindow
         name: "launchpad"
         screen: root.screen
-        visible: launchpadContent.visible
+        // Keep the surface mapped for the opening frame even if the content
+        // item is still settling its reveal animation after a prior close.
+        visible: root.screenState.launchpad || launchpadContent.visible
         anchors.top: true
         anchors.bottom: true
         anchors.left: true
