@@ -11,6 +11,20 @@ The namespace list below describes the earlier individually mapped panel
 surfaces. It remains useful when checking older revisions, but new drawer work
 must target `caelestia-drawers`.
 
+## Backdrop Selection
+
+The active compositor effect is selected in `~/.config/hypr/hyprglass.lua`:
+
+```lua
+local backend = "liquid" -- "liquid" or "hyprland"
+```
+
+`liquid` enables Hyprglass refraction, contour merging and glass grain. It also
+turns off Hyprland's native blur rules for the Caelestia surfaces. `hyprland`
+disables Hyprglass layer processing and enables native Gaussian blur for the
+panel, drawer and frame namespaces. Reload Hyprland after changing the value.
+The launchpad remains Gaussian blurred in both modes.
+
 The following namespaces use the local glass preset:
 
 | Namespace suffix (after `caelestia-`) | Content |

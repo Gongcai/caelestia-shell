@@ -26,10 +26,83 @@ index 24c1814..4f93ee8 100644
      inline constexpr float   SPECULAR_STRENGTH    = 0.8f;
      inline constexpr float   GLASS_OPACITY        = 1.0f;
 diff --git a/src/GlassLayerSurface.cpp b/src/GlassLayerSurface.cpp
-index 014464a..477ac2d 100644
+index 014464a..8ebf788 100644
 --- a/src/GlassLayerSurface.cpp
 +++ b/src/GlassLayerSurface.cpp
-@@ -318,6 +318,9 @@ void CGlassLayerSurface::compositeAndRestore(PHLMONITOR monitor, float alpha, EM
+@@ -85,6 +85,29 @@ ELayerMaskMode CGlassLayerSurface::resolveMaskMode() const {
+     return ELayerMaskMode::AUTO;
+ }
+
++std::optional<CGlassLayerSurface::SMaterialBlurConfig> CGlassLayerSurface::resolveMaterialBlur() const {
++    const auto layerSurface = m_layerSurface.lock();
++    if (!layerSurface)
++        return std::nullopt;
++
++    const auto& strengths = g_pGlobalState->layerNamespaceMaterialBlurStrength;
++    const auto strengthIt = strengths.find(layerSurface->m_namespace);
++    if (strengthIt == strengths.end() || strengthIt->second <= 0.0f)
++        return std::nullopt;
++
++    SMaterialBlurConfig material{
++        .strength = strengthIt->second,
++    };
++    if (const auto it = g_pGlobalState->layerNamespaceMaterialBlurIterations.find(layerSurface->m_namespace);
++        it != g_pGlobalState->layerNamespaceMaterialBlurIterations.end())
++        material.iterations = std::clamp(it->second, 1, 5);
++    if (const auto it = g_pGlobalState->layerNamespaceMaterialAlphaThreshold.find(layerSurface->m_namespace);
++        it != g_pGlobalState->layerNamespaceMaterialAlphaThreshold.end())
++        material.alphaThreshold = std::clamp(it->second, 0.0f, 1.0f);
++
++    return material;
++}
++
+ CGlassLayerSurface::EMaskSource CGlassLayerSurface::resolveMaskSource() const {
+     const auto layerSurface = m_layerSurface.lock();
+     const auto wlSurface    = layerSurface ? layerSurface->wlSurface() : nullptr; // root surface only
+@@ -221,12 +244,22 @@ void CGlassLayerSurface::sampleAndRedirect(PHLMONITOR monitor, float alpha) {
+     const bool backgroundChanged = !m_hasCachedSample ||
+                                    currentGeneration != m_lastSceneGeneration ||
+                                    isAnimating || m_backgroundDirty || forceLive;
++    const auto materialBlur = resolveMaterialBlur();
++    const auto wlSurface = layerSurface->wlSurface();
++    const bool materialActive = materialBlur && wlSurface && wlSurface->m_hasBackgroundEffect && !wlSurface->m_blurRegion.empty();
++    if (!materialActive)
++        m_hasMaterialSample = false;
++
++    const bool materialConfigChanged = materialActive &&
++        (!m_hasMaterialSample || m_materialBlurStrength != materialBlur->strength ||
++         m_materialBlurIterations != materialBlur->iterations);
++    const bool sampleChanged = backgroundChanged || materialConfigChanged;
+
+     if (!layerSurface->m_mapped) {
+         // During fade-out, re-sampling captures stale pixels. Reuse cached sample.
+         if (!m_hasCachedSample)
+             return;
+-    } else if (backgroundChanged) {
++    } else if (sampleChanged) {
+         const bool isDark          = resolveThemeIsDark();
+         const std::string preset   = resolvePresetName();
+         const SResolveContext ctx  = {preset, isDark, g_pGlobalState->config, g_pGlobalState->customPresets};
+@@ -240,6 +273,18 @@ void CGlassLayerSurface::sampleAndRedirect(PHLMONITOR monitor, float alpha) {
+         int blurIterations   = std::clamp(static_cast<int>(resolvePresetInt(ctx, &SPresetValues::blurIterations, &SOverridableConfig::blurIterations)), 1, 5);
+         GlassRenderer::blurBackground(m_sampleFramebuffer, blurRadius, blurIterations, source);
+
++        if (materialActive) {
++            const int materialDownscale = materialBlur->strength >= GlassRenderer::BLUR_DOWNSCALE_THRESHOLD
++                ? GlassRenderer::BLUR_DOWNSCALE_MAX
++                : 1;
++            GlassRenderer::sampleBackground(m_materialSampleFramebuffer, source, transformBox, m_samplePaddingRatio, materialDownscale);
++            const float materialRadius = materialBlur->strength * 12.0f / materialDownscale;
++            GlassRenderer::blurBackground(m_materialSampleFramebuffer, materialRadius, materialBlur->iterations, source);
++            m_hasMaterialSample = true;
++            m_materialBlurStrength = materialBlur->strength;
++            m_materialBlurIterations = materialBlur->iterations;
++        }
++
+         m_hasCachedSample      = true;
+         m_lastSceneGeneration  = currentGeneration;
+         m_backgroundDirty      = false;
+@@ -318,6 +363,9 @@ void CGlassLayerSurface::compositeAndRestore(PHLMONITOR monitor, float alpha, EM
 
      float cornerRadius  = 0.0f;
      float roundingPower = 2.0f;
@@ -39,7 +112,7 @@ index 014464a..477ac2d 100644
 
      // Use the temp FBO's rendered alpha as a mask: glass only where the surface
      // has visible content (alpha > 0). The temp FBO is in monitor coordinates,
-@@ -332,6 +335,15 @@ void CGlassLayerSurface::compositeAndRestore(PHLMONITOR monitor, float alpha, EM
+@@ -332,6 +380,15 @@ void CGlassLayerSurface::compositeAndRestore(PHLMONITOR monitor, float alpha, EM
          .uvScale   = {transformBox.w / monitorWidth, transformBox.h / monitorHeight},
      };
 
@@ -55,10 +128,42 @@ index 014464a..477ac2d 100644
      switch (maskSource) {
          case EMaskSource::ALPHA_THRESHOLD: {
              float maskThreshold = 0.001f;
-@@ -388,6 +400,12 @@ void CGlassLayerSurface::compositeAndRestore(PHLMONITOR monitor, float alpha, EM
+@@ -388,6 +445,44 @@ void CGlassLayerSurface::compositeAndRestore(PHLMONITOR monitor, float alpha, EM
              break;
      }
 
++    // Keep the alpha contour as the outer liquid-glass mask. The semantic
++    // protocol region only selects where a stronger Gaussian material sample
++    // can show through a translucent card.
++    if (const auto materialBlur = resolveMaterialBlur(); materialBlur && m_hasMaterialSample) {
++        const auto wlSurface = layerSurface->wlSurface();
++        if (wlSurface && wlSurface->m_hasBackgroundEffect && !wlSurface->m_blurRegion.empty()) {
++            const auto logicalSize = layerSurface->size(Desktop::View::IGeometric::GEOMETRIC_CURRENT);
++            CRegion region = wlSurface->m_blurRegion.copy();
++            region.intersect(0, 0, logicalSize.x, logicalSize.y);
++            region.scale(static_cast<float>(monitor->m_scale));
++            region.translate(rawBox.pos());
++            region.intersect(rawBox.x, rawBox.y, rawBox.w, rawBox.h);
++            region.transform(Math::wlTransformToHyprutils(Math::invertTransform(monitor->m_transform)),
++                             monitor->m_transformedSize.x, monitor->m_transformedSize.y);
++
++            const auto rects = region.getRects();
++            const size_t count = std::min(rects.size(), static_cast<size_t>(GlassRenderer::MAX_MATERIAL_REGION_RECTS));
++            for (size_t i = 0; i < count; i++) {
++                const auto& r = rects[i];
++                maskInfo.materialRegionRects[i] = {static_cast<float>(r.x1 - transformBox.x), static_cast<float>(r.y1 - transformBox.y),
++                                                    static_cast<float>(r.x2 - r.x1), static_cast<float>(r.y2 - r.y1)};
++            }
++            if (count > 0) {
++                const float layerAlpha = std::clamp(alpha, 0.0f, 1.0f);
++                maskInfo.materialTexture = m_materialSampleFramebuffer->getTexture()->m_texID;
++                maskInfo.materialRegionRectCount = static_cast<int>(count);
++                maskInfo.materialAlphaThreshold = materialBlur->alphaThreshold * layerAlpha;
++                maskInfo.materialAlphaFeather = std::max(0.002f, 0.015f * layerAlpha);
++            }
++        }
++    }
++
 +    if (g_pGlobalState->layerNamespaceContour.contains(layerSurface->m_namespace)) {
 +        maskInfo.contourTexture = GlassRenderer::buildContour(m_surfaceTempFramebuffer, m_contourBuffers,
 +                                                              target, std::max(maskInfo.alphaThreshold, 0.025f));
@@ -69,30 +174,48 @@ index 014464a..477ac2d 100644
      // in a single pass: glass behind, surface on top, using the temp FBO alpha.
      GlassRenderer::applyGlassEffect(m_sampleFramebuffer, target,
 diff --git a/src/GlassLayerSurface.hpp b/src/GlassLayerSurface.hpp
-index 565c7d4..360a4af 100644
+index 565c7d4..512df14 100644
 --- a/src/GlassLayerSurface.hpp
 +++ b/src/GlassLayerSurface.hpp
-@@ -38,6 +38,7 @@ class CGlassLayerSurface {
+@@ -4,6 +4,7 @@
+ #include "PluginConfig.hpp"
+
+ #include <chrono>
++#include <optional>
+ #include <hyprland/src/desktop/view/LayerSurface.hpp>
+ #include <hyprland/src/render/Framebuffer.hpp>
+
+@@ -37,9 +38,14 @@ class CGlassLayerSurface {
+   private:
      PHLLSREF     m_layerSurface;
      SP<Render::IFramebuffer> m_sampleFramebuffer;
++    SP<Render::IFramebuffer> m_materialSampleFramebuffer;
      SP<Render::IFramebuffer> m_surfaceTempFramebuffer;
 +    std::array<SP<Render::IFramebuffer>, 2> m_contourBuffers;
      Vector2D     m_samplePaddingRatio;
      bool         m_hasCachedSample = false;
++    bool         m_hasMaterialSample = false;
++    float        m_materialBlurStrength = 0.0f;
++    int          m_materialBlurIterations = 0;
      bool         m_backgroundDirty = false;
+     std::chrono::steady_clock::time_point m_lastDirtyMark{};
+
+@@ -59,4 +65,10 @@ class CGlassLayerSurface {
+     [[nodiscard]] bool           resolveThemeIsDark() const;
+     [[nodiscard]] std::string    resolvePresetName() const;
+     [[nodiscard]] ELayerMaskMode resolveMaskMode() const;
++    struct SMaterialBlurConfig {
++        float strength = 0.0f;
++        int iterations = 1;
++        float alphaThreshold = 0.06f;
++    };
++    [[nodiscard]] std::optional<SMaterialBlurConfig> resolveMaterialBlur() const;
+ };
 diff --git a/src/GlassRenderer.cpp b/src/GlassRenderer.cpp
-index bc53d4c..420a474 100644
+index bc53d4c..8d5c70f 100644
 --- a/src/GlassRenderer.cpp
 +++ b/src/GlassRenderer.cpp
-@@ -2,6 +2,7 @@
- #include "BuiltInPresets.hpp"
- #include "Globals.hpp"
-
-+#include <algorithm>
- #include <array>
- #include <GLES3/gl32.h>
- #include <hyprland/src/render/OpenGL.hpp>
-@@ -151,6 +152,45 @@ void blurBackground(SP<Render::IFramebuffer> sampleFramebuffer, float radius, in
+@@ -151,6 +151,45 @@ void blurBackground(SP<Render::IFramebuffer> sampleFramebuffer, float radius, in
          static_cast<int>(callerFramebuffer->m_size.y));
  }
 
@@ -138,7 +261,7 @@ index bc53d4c..420a474 100644
  void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFramebuffer> targetFramebuffer,
                         CBox& rawBox, CBox& transformedBox,
                         float alpha, float cornerRadius, float roundingPower,
-@@ -185,6 +225,15 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+@@ -185,6 +224,22 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
 
      auto shader = g_pHyprOpenGL->useShader(shaderManager.glassShader);
 
@@ -150,11 +273,18 @@ index bc53d4c..420a474 100644
 +        glUniform1i(uniforms.contourTex, 2);
 +        glActiveTexture(GL_TEXTURE0);
 +    }
++    const bool useMaterial = mask && mask->materialTexture && mask->materialRegionRectCount > 0;
++    if (useMaterial) {
++        glActiveTexture(GL_TEXTURE3);
++        glBindTexture(GL_TEXTURE_2D, mask->materialTexture);
++        glUniform1i(uniforms.materialTex, 3);
++        glActiveTexture(GL_TEXTURE0);
++    }
 +
      shader->setUniformMatrix3fv(SHADER_PROJ, 1, GL_FALSE, glMatrix.getMatrix());
      shader->setUniformInt(SHADER_TEX, 0);
 
-@@ -194,6 +243,8 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+@@ -194,6 +249,8 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
 
      glUniform1f(uniforms.refractionStrength,  resolvePresetFloat(resolveContext, &SPresetValues::refractionStrength, &SOverridableConfig::refractionStrength));
      glUniform1f(uniforms.chromaticAberration, resolvePresetFloat(resolveContext, &SPresetValues::chromaticAberration, &SOverridableConfig::chromaticAberration));
@@ -163,9 +293,18 @@ index bc53d4c..420a474 100644
      glUniform1f(uniforms.fresnelStrength,     resolvePresetFloat(resolveContext, &SPresetValues::fresnelStrength, &SOverridableConfig::fresnelStrength));
      glUniform1f(uniforms.specularStrength,    resolvePresetFloat(resolveContext, &SPresetValues::specularStrength, &SOverridableConfig::specularStrength));
      glUniform1f(uniforms.glassOpacity,        resolvePresetFloat(resolveContext, &SPresetValues::glassOpacity, &SOverridableConfig::glassOpacity) * alpha);
-@@ -239,6 +290,9 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+@@ -238,7 +295,18 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+         glUniform1i(uniforms.regionRectCount, 0);
      }
 
++    glUniform1i(uniforms.useMaterial, useMaterial ? 1 : 0);
++    glUniform1f(uniforms.materialAlphaThreshold, useMaterial ? mask->materialAlphaThreshold : 1.0f);
++    glUniform1f(uniforms.materialAlphaFeather, useMaterial ? mask->materialAlphaFeather : 0.015f);
++    glUniform1i(uniforms.materialRegionRectCount, useMaterial ? mask->materialRegionRectCount : 0);
++    if (useMaterial)
++        glUniform4fv(uniforms.materialRegionRects, mask->materialRegionRectCount,
++                     reinterpret_cast<const float*>(mask->materialRegionRects.data()));
++
      shader->setUniformFloat(SHADER_RADIUS, cornerRadius);
 +    glUniform1f(uniforms.frameThickness, mask ? mask->frameThickness : 0.0f);
 +    glUniform2f(uniforms.frameSize, mask ? mask->frameSize.x : 0.0f, mask ? mask->frameSize.y : 0.0f);
@@ -174,10 +313,20 @@ index bc53d4c..420a474 100644
 
      glBindVertexArray(shader->getUniformLocation(SHADER_SHADER_VAO));
 diff --git a/src/GlassRenderer.hpp b/src/GlassRenderer.hpp
-index 582fc63..8345100 100644
+index 582fc63..2f1b032 100644
 --- a/src/GlassRenderer.hpp
 +++ b/src/GlassRenderer.hpp
-@@ -38,6 +38,11 @@ struct SMaskInfo {
+@@ -22,6 +22,9 @@ inline constexpr float BLUR_DOWNSCALE_THRESHOLD = 0.35f; // min blur_strength fo
+
+ // Must match the `regionRects[16]` array size declared in Shaders.hpp.
+ inline constexpr int MAX_REGION_RECTS = 16;
++// Semantic material regions are separate from the outer glass mask. They are
++// emitted by the shell for its translucent card backgrounds.
++inline constexpr int MAX_MATERIAL_REGION_RECTS = 32;
+
+ // Box-local pixel rect uploaded to the shader's regionRects uniform array.
+ struct SRegionRect {
+@@ -38,6 +41,18 @@ struct SMaskInfo {
      Vector2D uvOffset; // mapping from glass box UV → full surface UV
      Vector2D uvScale;
      float    alphaThreshold = 0.001f;
@@ -186,10 +335,17 @@ index 582fc63..8345100 100644
 +    Vector2D frameOffset;
 +    GLuint contourTexture = 0;
 +    float contourWidth = 20.0f;
++
++    // Stronger Gaussian sample used only below semantic material regions.
++    GLuint materialTexture = 0;
++    float materialAlphaThreshold = 1.0f;
++    float materialAlphaFeather = 0.015f;
++    std::array<SRegionRect, MAX_MATERIAL_REGION_RECTS> materialRegionRects{};
++    int materialRegionRectCount = 0;
 
      // 0 = alpha-threshold mask, 1 = ext-background-effect-v1 protocol region
      int                                        maskMode        = 0;
-@@ -54,6 +59,10 @@ void sampleBackground(SP<Render::IFramebuffer>& sampleFramebuffer, SP<Render::IF
+@@ -54,6 +69,10 @@ void sampleBackground(SP<Render::IFramebuffer>& sampleFramebuffer, SP<Render::IF
  void blurBackground(SP<Render::IFramebuffer> sampleFramebuffer, float radius, int iterations,
                      SP<Render::IFramebuffer> callerFramebuffer);
 
@@ -201,10 +357,10 @@ index 582fc63..8345100 100644
  // over the glass effect in a single pass. When mask is null (windows), the shader
  // outputs the glass effect alone.
 diff --git a/src/Globals.hpp b/src/Globals.hpp
-index b88cbbd..d105580 100644
+index b88cbbd..d8b60b1 100644
 --- a/src/Globals.hpp
 +++ b/src/Globals.hpp
-@@ -49,6 +49,10 @@ struct SGlobalState {
+@@ -49,6 +49,15 @@ struct SGlobalState {
      std::unordered_map<std::string, bool> layerNamespaceLiveResample;
      // Per-namespace mask mode override (namespace → mode)
      std::unordered_map<std::string, ELayerMaskMode> layerNamespaceMaskModes;
@@ -212,11 +368,16 @@ index b88cbbd..d105580 100644
 +    std::unordered_map<std::string, float> layerNamespaceRounding;
 +    std::unordered_map<std::string, float> layerNamespaceFrameThickness;
 +    std::unordered_set<std::string> layerNamespaceContour;
++    // Optional stronger Gaussian material sample for semantic subregions
++    // published through ext-background-effect-v1.
++    std::unordered_map<std::string, float> layerNamespaceMaterialBlurStrength;
++    std::unordered_map<std::string, int> layerNamespaceMaterialBlurIterations;
++    std::unordered_map<std::string, float> layerNamespaceMaterialAlphaThreshold;
 
      // Per-monitor generation counter, incremented when the scene behind layers
      // changes on that monitor. Layer surfaces compare to their cached value to
 diff --git a/src/PluginConfig.cpp b/src/PluginConfig.cpp
-index 02bc058..8ad14c3 100644
+index 02bc058..c90ccee 100644
 --- a/src/PluginConfig.cpp
 +++ b/src/PluginConfig.cpp
 @@ -4,6 +4,7 @@
@@ -307,17 +468,20 @@ index 02bc058..8ad14c3 100644
      mergeFloat(target.fresnelStrength, overrides.fresnelStrength);
      mergeFloat(target.specularStrength, overrides.specularStrength);
      mergeFloat(target.glassOpacity, overrides.glassOpacity);
-@@ -584,6 +595,9 @@ struct SPendingLayer {
+@@ -584,6 +595,12 @@ struct SPendingLayer {
      float                         maskThreshold = -1.0f;
      bool                          exclude       = false;
      int                           liveResample  = -1; // -1 = not set
 +    float                         rounding = -1.0f;
 +    float                         frameThickness = -1.0f;
++    float                         materialBlurStrength = -1.0f;
++    int                           materialBlurIterations = -1;
++    float                         materialAlphaThreshold = -1.0f;
 +    bool                          contour = false;
      std::optional<ELayerMaskMode> maskMode;
  };
 
-@@ -621,6 +635,28 @@ static int handleLuaLayer(lua_State* L) {
+@@ -621,6 +638,55 @@ static int handleLuaLayer(lua_State* L) {
          if (lua_isstring(L, -1))
              entry.maskMode = parseLayerMaskMode(lua_tostring(L, -1));
          lua_pop(L, 1);
@@ -343,10 +507,37 @@ index 02bc058..8ad14c3 100644
 +            entry.frameThickness = static_cast<float>(thickness);
 +        }
 +        lua_pop(L, 1);
++
++        lua_getfield(L, 2, "material_blur_strength");
++        if (lua_isnumber(L, -1)) {
++            const auto strength = lua_tonumber(L, -1);
++            if (!std::isfinite(strength) || strength < 0.0)
++                return luaL_error(L, "hyprglass.layer: material_blur_strength must be finite and non-negative");
++            entry.materialBlurStrength = static_cast<float>(strength);
++        }
++        lua_pop(L, 1);
++
++        lua_getfield(L, 2, "material_blur_iterations");
++        if (lua_isnumber(L, -1)) {
++            const auto iterations = lua_tonumber(L, -1);
++            if (!std::isfinite(iterations) || iterations < 1.0 || iterations > 5.0 || std::floor(iterations) != iterations)
++                return luaL_error(L, "hyprglass.layer: material_blur_iterations must be an integer from 1 to 5");
++            entry.materialBlurIterations = static_cast<int>(iterations);
++        }
++        lua_pop(L, 1);
++
++        lua_getfield(L, 2, "material_alpha_threshold");
++        if (lua_isnumber(L, -1)) {
++            const auto threshold = lua_tonumber(L, -1);
++            if (!std::isfinite(threshold) || threshold < 0.0 || threshold > 1.0)
++                return luaL_error(L, "hyprglass.layer: material_alpha_threshold must be between 0 and 1");
++            entry.materialAlphaThreshold = static_cast<float>(threshold);
++        }
++        lua_pop(L, 1);
      }
 
      s_pendingLayers.push_back(std::move(entry));
-@@ -646,6 +682,12 @@ void commitPendingLayers() {
+@@ -646,6 +712,18 @@ void commitPendingLayers() {
                  g_pGlobalState->layerNamespaceLiveResample[entry.ns] = entry.liveResample != 0;
              if (entry.maskMode)
                  g_pGlobalState->layerNamespaceMaskModes[entry.ns] = *entry.maskMode;
@@ -356,6 +547,12 @@ index 02bc058..8ad14c3 100644
 +                g_pGlobalState->layerNamespaceFrameThickness[entry.ns] = entry.frameThickness;
 +            if (entry.contour)
 +                g_pGlobalState->layerNamespaceContour.insert(entry.ns);
++            if (entry.materialBlurStrength >= 0.0f)
++                g_pGlobalState->layerNamespaceMaterialBlurStrength[entry.ns] = entry.materialBlurStrength;
++            if (entry.materialBlurIterations >= 0)
++                g_pGlobalState->layerNamespaceMaterialBlurIterations[entry.ns] = entry.materialBlurIterations;
++            if (entry.materialAlphaThreshold >= 0.0f)
++                g_pGlobalState->layerNamespaceMaterialAlphaThreshold[entry.ns] = entry.materialAlphaThreshold;
          }
      }
      s_pendingLayers.clear();
@@ -404,7 +601,7 @@ index 0eb48c6..770a6b9 100644
      float   specularStrength   = static_cast<float>(SENTINEL_FLOAT);
      float   glassOpacity       = static_cast<float>(SENTINEL_FLOAT);
 diff --git a/src/ShaderManager.cpp b/src/ShaderManager.cpp
-index 9d426e3..e83ad7b 100644
+index 9d426e3..6f1e739 100644
 --- a/src/ShaderManager.cpp
 +++ b/src/ShaderManager.cpp
 @@ -32,6 +32,7 @@ bool CShaderManager::compileGlassShader() {
@@ -415,7 +612,7 @@ index 9d426e3..e83ad7b 100644
      glassUniforms.fresnelStrength     = glGetUniformLocation(program, "fresnelStrength");
      glassUniforms.specularStrength    = glGetUniformLocation(program, "specularStrength");
      glassUniforms.glassOpacity        = glGetUniformLocation(program, "glassOpacity");
-@@ -50,6 +51,12 @@ bool CShaderManager::compileGlassShader() {
+@@ -50,6 +51,20 @@ bool CShaderManager::compileGlassShader() {
      glassUniforms.maskUVScale         = glGetUniformLocation(program, "maskUVScale");
      glassUniforms.maskAlphaThreshold  = glGetUniformLocation(program, "maskAlphaThreshold");
      glassUniforms.maskMode            = glGetUniformLocation(program, "maskMode");
@@ -425,10 +622,18 @@ index 9d426e3..e83ad7b 100644
 +    glassUniforms.contourTex = glGetUniformLocation(program, "contourTex");
 +    glassUniforms.useContour = glGetUniformLocation(program, "useContour");
 +    glassUniforms.contourWidth = glGetUniformLocation(program, "contourWidth");
++    glassUniforms.materialTex = glGetUniformLocation(program, "materialTex");
++    glassUniforms.useMaterial = glGetUniformLocation(program, "useMaterial");
++    glassUniforms.materialAlphaThreshold = glGetUniformLocation(program, "materialAlphaThreshold");
++    glassUniforms.materialAlphaFeather = glGetUniformLocation(program, "materialAlphaFeather");
++    glassUniforms.materialRegionRectCount = glGetUniformLocation(program, "materialRegionRectCount");
++    glassUniforms.materialRegionRects = glGetUniformLocation(program, "materialRegionRects[0]");
++    if (glassUniforms.materialRegionRects == -1)
++        glassUniforms.materialRegionRects = glGetUniformLocation(program, "materialRegionRects");
      glassUniforms.regionRectCount     = glGetUniformLocation(program, "regionRectCount");
      glassUniforms.regionRects         = glGetUniformLocation(program, "regionRects[0]");
      if (glassUniforms.regionRects == -1)
-@@ -78,6 +85,15 @@ bool CShaderManager::compileBlurShader() {
+@@ -78,6 +93,15 @@ bool CShaderManager::compileBlurShader() {
      return true;
  }
 
@@ -444,7 +649,7 @@ index 9d426e3..e83ad7b 100644
  void CShaderManager::initializeIfNeeded() {
      if (m_initialized)
          return;
-@@ -88,11 +104,15 @@ void CShaderManager::initializeIfNeeded() {
+@@ -88,11 +112,15 @@ void CShaderManager::initializeIfNeeded() {
      if (!compileBlurShader())
          return;
 
@@ -461,7 +666,7 @@ index 9d426e3..e83ad7b 100644
      m_initialized = false;
  }
 diff --git a/src/ShaderManager.hpp b/src/ShaderManager.hpp
-index 9b46928..8a8daa7 100644
+index 9b46928..e16fe73 100644
 --- a/src/ShaderManager.hpp
 +++ b/src/ShaderManager.hpp
 @@ -7,6 +7,7 @@
@@ -472,7 +677,7 @@ index 9b46928..8a8daa7 100644
      GLint fresnelStrength = -1;
      GLint specularStrength = -1;
      GLint glassOpacity = -1;
-@@ -29,6 +30,12 @@ struct SGlassUniforms {
+@@ -29,6 +30,18 @@ struct SGlassUniforms {
      GLint maskMode = -1;
      GLint regionRectCount = -1;
      GLint regionRects = -1;
@@ -482,10 +687,16 @@ index 9b46928..8a8daa7 100644
 +    GLint contourTex = -1;
 +    GLint useContour = -1;
 +    GLint contourWidth = -1;
++    GLint materialTex = -1;
++    GLint useMaterial = -1;
++    GLint materialAlphaThreshold = -1;
++    GLint materialAlphaFeather = -1;
++    GLint materialRegionRectCount = -1;
++    GLint materialRegionRects = -1;
  };
 
  struct SBlurUniforms {
-@@ -48,6 +55,9 @@ class CShaderManager {
+@@ -48,6 +61,9 @@ class CShaderManager {
 
      SP<CShader>    blurShader = makeShared<CShader>();
      SBlurUniforms  blurUniforms;
@@ -495,14 +706,14 @@ index 9b46928..8a8daa7 100644
 
    private:
      bool m_initialized = false;
-@@ -55,4 +65,5 @@ class CShaderManager {
+@@ -55,4 +71,5 @@ class CShaderManager {
      [[nodiscard]] static std::string loadShaderSource(const char* fileName);
      [[nodiscard]] bool compileGlassShader();
      [[nodiscard]] bool compileBlurShader();
 +    [[nodiscard]] bool compileContourShader();
  };
 diff --git a/src/Shaders.hpp b/src/Shaders.hpp
-index 947479e..c119530 100644
+index 947479e..7e9bafa 100644
 --- a/src/Shaders.hpp
 +++ b/src/Shaders.hpp
 @@ -35,6 +35,7 @@ uniform vec2 uvPadding;
@@ -526,7 +737,21 @@ index 947479e..c119530 100644
 
  uniform sampler2D maskTex;
  uniform int useMask;
-@@ -72,6 +79,8 @@ vec2 toTexUV(vec2 wuv) {
+@@ -60,6 +67,13 @@ uniform int maskMode;          // 0 = alpha threshold, 1 = protocol region
+ uniform int regionRectCount;   // 0..16
+ uniform vec4 regionRects[16];  // box-local pixels: xy = offset from box top-left, zw = size
+
++uniform sampler2D materialTex;
++uniform int useMaterial;
++uniform float materialAlphaThreshold;
++uniform float materialAlphaFeather;
++uniform int materialRegionRectCount;   // 0..32
++uniform vec4 materialRegionRects[32];  // box-local pixels: xy = offset from box top-left, zw = size
++
+ in vec2 v_texcoord;
+ layout(location = 0) out vec4 fragColor;
+
+@@ -72,10 +86,17 @@ vec2 toTexUV(vec2 wuv) {
  }
 
  vec4 sampleBlurred(vec2 wuv) {
@@ -535,7 +760,16 @@ index 947479e..c119530 100644
      vec2 tuv = toTexUV(wuv);
      return texture(tex, clamp(tuv, 0.001, 0.999));
  }
-@@ -93,6 +102,13 @@ float getRoundedBoxSDF(vec2 uv, float r) {
+
++vec4 sampleMaterialBlurred(vec2 wuv) {
++    vec2 tuv = toTexUV(wuv);
++    return texture(materialTex, clamp(tuv, 0.001, 0.999));
++}
++
+ // ============================================================================
+ // SDF
+ // ============================================================================
+@@ -93,6 +114,13 @@ float getRoundedBoxSDF(vec2 uv, float r) {
  }
 
  float getCornerSDF(vec2 uv) {
@@ -549,7 +783,7 @@ index 947479e..c119530 100644
      return getRoundedBoxSDF(uv, radius);
  }
 
-@@ -105,17 +121,37 @@ float getCornerSDF(vec2 uv) {
+@@ -105,17 +133,37 @@ float getCornerSDF(vec2 uv) {
  // ============================================================================
 
  vec2 refractionDir(vec2 uv) {
@@ -587,7 +821,7 @@ index 947479e..c119530 100644
 
      // Layers only: sample the temp FBO to get the rendered surface pixel.
      // Discard fully transparent fragments so glass only covers visible content.
-@@ -143,17 +179,34 @@ void main() {
+@@ -143,17 +191,34 @@ void main() {
          }
      }
 
@@ -625,7 +859,7 @@ index 947479e..c119530 100644
 
      // ========================================
      // EDGE PROXIMITY + DIRECTION
-@@ -161,7 +214,8 @@ void main() {
+@@ -161,7 +226,8 @@ void main() {
      // inwardDir: pixel-space direction toward center (smooth everywhere)
      // ========================================
      float edgeProximity = exp(cornerSdf / bezelWidthPx);
@@ -635,7 +869,7 @@ index 947479e..c119530 100644
 
      // ========================================
      // EDGE REFRACTION
-@@ -170,7 +224,9 @@ void main() {
+@@ -170,7 +236,9 @@ void main() {
      // and distorts what's already behind the window, without reaching
      // beyond the window boundary.
      // ========================================
@@ -646,7 +880,7 @@ index 947479e..c119530 100644
      float refractionMag = edgeProximity * refractionPx;
      vec2 baseOffset = inwardDir * refractionMag / fullSize;
 
-@@ -188,7 +244,7 @@ void main() {
+@@ -188,7 +256,7 @@ void main() {
      // Fades near edges so it doesn't interfere with edge refraction.
      // ========================================
      vec2 domeUV = vec2(0.0);
@@ -655,7 +889,36 @@ index 947479e..c119530 100644
          vec2 c = (uv - 0.5) * 2.0;
          vec2 dGrad = vec2(
              -4.0 * c.x * (1.0 - c.y * c.y),
-@@ -261,7 +317,7 @@ void main() {
+@@ -217,6 +285,28 @@ void main() {
+         color = sampleBlurred(uvG).rgb;
+     }
+
++    // Semantic card regions select a stronger, flat Gaussian sample. The
++    // region is rectangular, so retain the actual QML alpha test to follow
++    // each card's rounded edge instead of exposing a square blur block.
++    if (useMaterial == 1) {
++        vec2 pixelPos = uv * fullSize;
++        bool insideMaterial = false;
++        for (int i = 0; i < materialRegionRectCount; i++) {
++            vec4 r = materialRegionRects[i];
++            if (pixelPos.x >= r.x && pixelPos.y >= r.y &&
++                pixelPos.x <= r.x + r.z && pixelPos.y <= r.y + r.w) {
++                insideMaterial = true;
++                break;
++            }
++        }
++        if (insideMaterial) {
++            float materialMask = smoothstep(materialAlphaThreshold,
++                                             materialAlphaThreshold + materialAlphaFeather,
++                                             surfacePixel.a);
++            color = mix(color, sampleMaterialBlurred(uv).rgb, materialMask);
++        }
++    }
++
+     // ========================================
+     // FROSTED TINT (per-theme tone mapping)
+     // ========================================
+@@ -261,7 +351,7 @@ void main() {
      // SPECULAR — subtle top highlight (edge zone)
      // ========================================
      if (specularStrength > 0.001) {
@@ -664,7 +927,7 @@ index 947479e..c119530 100644
          float spec = topBias * edgeProximity * edgeProximity * specularStrength * 0.08;
          color += vec3(1.0, 0.99, 0.97) * spec;
      }
-@@ -270,11 +326,18 @@ void main() {
+@@ -270,11 +360,18 @@ void main() {
      // INNER SHADOW (bottom rim)
      // ========================================
      {
@@ -684,7 +947,7 @@ index 947479e..c119530 100644
      float glassA = glassOpacity * cornerAlpha;
 
      if (hasMask) {
-@@ -298,6 +361,61 @@ void main() {
+@@ -298,6 +395,61 @@ void main() {
          fragColor = vec4(color * glassA, glassA);
      }
  }
@@ -747,7 +1010,7 @@ index 947479e..c119530 100644
 
      {"gaussianblur.frag", R"GLSL(
 diff --git a/src/main.cpp b/src/main.cpp
-index 43fbf3a..ba3bbdd 100644
+index 43fbf3a..7fc0de1 100644
 --- a/src/main.cpp
 +++ b/src/main.cpp
 @@ -38,6 +38,7 @@ static void clearLayerGlassOnClose(PHLLS layerSurface) {
@@ -774,13 +1037,16 @@ index 43fbf3a..ba3bbdd 100644
  }
 
  static CGlassDecoration* glassDecorationFor(const PHLWINDOW& window) {
-@@ -206,6 +206,9 @@ static void parseKeyValuePairs(StringConfigPtr configPtr, char separator, Fn&& c
+@@ -206,6 +206,12 @@ static void parseKeyValuePairs(StringConfigPtr configPtr, char separator, Fn&& c
 
  static void parseLayerNamespaceFilters() {
      const auto& config = g_pGlobalState->config;
 +    g_pGlobalState->layerNamespaceRounding.clear();
 +    g_pGlobalState->layerNamespaceFrameThickness.clear();
 +    g_pGlobalState->layerNamespaceContour.clear();
++    g_pGlobalState->layerNamespaceMaterialBlurStrength.clear();
++    g_pGlobalState->layerNamespaceMaterialBlurIterations.clear();
++    g_pGlobalState->layerNamespaceMaterialAlphaThreshold.clear();
      parseCommaSeparated(config.layersNamespaces, g_pGlobalState->layerNamespaceFilter);
      parseCommaSeparated(config.layersExcludeNamespaces, g_pGlobalState->layerNamespaceExclude);
 
