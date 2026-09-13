@@ -21,4 +21,76 @@ Region {
     height: win.height - clampedThickness * 2 - win.dragMaskPadding * 2
     intersection: Intersection.Xor
 
+    R {
+        panel: root.panels.dashboard
+        y: 0
+        height: panel.height * (1 - root.panels.dashboard.offsetScale) + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.quickpanel
+        y: root.win.height - height
+        height: panel.height * (1 - root.panels.quickpanel.offsetScale) + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.dashboardLyrics
+        y: 0
+        height: panel.height * (1 - (panel.offsetScale ?? 0)) + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.launcher
+        y: root.win.height - height
+        height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
+    }
+
+    R {
+        id: sessionRegion
+
+        panel: root.panels.sessionWrapper
+        x: root.win.width - width
+        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width
+    }
+
+    R {
+        id: sidebarRegion
+
+        panel: root.panels.sidebar
+        x: root.win.width - width
+        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.osdWrapper
+        x: root.win.width - width
+        width: panel.width * (1 - root.panels.osd.offsetScale) + root.borderThickness + sessionRegion.width
+    }
+
+    R {
+        panel: root.panels.notifications
+        y: 0
+        height: panel.height + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.utilities
+        y: root.win.height - height
+        height: panel.height * (1 - root.panels.utilities.offsetScale) + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.popoutsWrapper
+        width: panel.width * (1 - root.panels.popoutsWrapper.offsetScale)
+    }
+
+    component R: Region {
+        required property Item panel
+
+        x: panel.x + root.bar.implicitWidth
+        y: panel.y + root.borderThickness
+        width: panel.width
+        height: panel.height
+        intersection: Intersection.Subtract
+    }
 }

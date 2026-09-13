@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
-import qs.components.containers
 import qs.services
 
 Item {
@@ -13,7 +12,6 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property bool sidebarOrSessionVisible
-    readonly property alias window: panelWindow
 
     property bool hovered
     readonly property Brightness.Monitor monitor: Brightness.getMonitorForScreen(root.screen)
@@ -41,8 +39,10 @@ Item {
     }
 
     visible: offsetScale < 1
+    anchors.rightMargin: (-implicitWidth - 5 - sidebarOffset) * offsetScale
     implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
+    opacity: 1 - offsetScale
 
     Behavior on offsetScale {
         Anim {}
@@ -91,30 +91,9 @@ Item {
         }
     }
 
-    GlassPanelWindow {
-        id: panelWindow
-
-        name: "osd"
-        hostWindow: root.QsWindow.window
-        shown: root.shouldBeActive && content.status === Loader.Ready
-        panelWidth: root.width
-        panelHeight: root.height
-        panelX: hostWindow.width - hostWindow.borderThickness - root.parent.anchors.rightMargin - width
-        panelY: (hostWindow.height - height) / 2
-        allowFullscreen: true
-        keepOpen: hostWindow.interactionWrapper.osdShortcutActive
-        onCloseRequested: root.screenState.osd = false
-        onHoveredChanged: {
-            root.hovered = hovered;
-            if (!hovered)
-                timer.restart();
-        }
-    }
-
     Loader {
         id: content
 
-        parent: panelWindow.contentItem
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
 

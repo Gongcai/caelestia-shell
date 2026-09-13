@@ -8,7 +8,6 @@ import Quickshell.Widgets
 import Caelestia.Config
 import Caelestia.Services
 import qs.components
-import qs.components.containers
 import qs.components.controls
 import qs.services
 
@@ -18,7 +17,6 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property Item dashboard
-    readonly property alias window: panelWindow
 
     readonly property bool shouldBeActive: Config.dashboard.enabled && screenState.dashboardLyrics
     readonly property bool expanded: screenState.dashboardLyricsExpanded
@@ -59,10 +57,12 @@ Item {
 
     implicitHeight: expanded ? Math.min(Math.max(420, dashboard.nonAnimHeight), screen.height - Tokens.padding.large * 2) : 40
     visible: offsetScale < 1
+    opacity: 1 - offsetScale
 
     anchors.left: parent.left
     anchors.right: dashboard.left
     anchors.top: parent.top
+    anchors.topMargin: (-implicitHeight - 5) * offsetScale
 
     Behavior on offsetScale {
         Anim {}
@@ -101,20 +101,7 @@ Item {
         }
     }
 
-    GlassPanelWindow {
-        id: panelWindow
-
-        name: "lyrics"
-        hostWindow: root.QsWindow.window
-        shown: root.shouldBeActive
-        panelWidth: root.width
-        panelHeight: root.height
-        panelX: hostWindow.bar.implicitWidth
-        panelY: hostWindow.borderThickness
-    }
-
     Loader {
-        parent: panelWindow.contentItem
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
         active: root.expanded && root.visible
@@ -133,7 +120,6 @@ Item {
     Item {
         id: compactLyrics
 
-        parent: panelWindow.contentItem
         anchors.fill: parent
         anchors.leftMargin: Tokens.padding.large
         anchors.rightMargin: Tokens.padding.large

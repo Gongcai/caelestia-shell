@@ -26,6 +26,17 @@ Item {
     property int totalContributions: -1
     property bool loading: false
     property string errorMessage: ""
+    property var pendingRequests: []
+
+    function newRequest(): var {
+        const request = new XMLHttpRequest();
+        pendingRequests.push(request);
+        return request;
+    }
+
+    function completeRequest(request): void {
+        pendingRequests = pendingRequests.filter(r => r !== request);
+    }
 
     // Device flow login state
     property string userCode: ""
@@ -82,21 +93,23 @@ Item {
     }
 
     function postForm(url, data, onDone): void {
-        const xhr = new XMLHttpRequest();
+        const xhr = newRequest();
         xhr.open("POST", url);
         xhr.timeout = 15000;
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.onreadystatechange = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE)
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                completeRequest(xhr);
                 onDone(xhr.status, xhr.responseText);
+            }
         };
         const body = Object.entries(data).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join("&");
         xhr.send(body);
     }
 
     function post(url, data, onDone): void {
-        const xhr = new XMLHttpRequest();
+        const xhr = newRequest();
         xhr.open("POST", url);
         xhr.timeout = 15000;
         if (signedIn)
@@ -104,22 +117,26 @@ Item {
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.onreadystatechange = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE)
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                completeRequest(xhr);
                 onDone(xhr.status, xhr.responseText);
+            }
         };
         xhr.send(JSON.stringify(data));
     }
 
     function fetch(url, onDone): void {
-        const xhr = new XMLHttpRequest();
+        const xhr = newRequest();
         xhr.open("GET", url);
         xhr.timeout = 15000;
         if (signedIn)
             xhr.setRequestHeader("Authorization", `Bearer ${token}`);
         xhr.setRequestHeader("Accept", "application/vnd.github+json");
         xhr.onreadystatechange = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE)
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                completeRequest(xhr);
                 onDone(xhr.status, xhr.responseText);
+            }
         };
         xhr.send();
     }
@@ -403,7 +420,13 @@ Item {
 
     onLoginInFlightChanged: screenState.dashboardGithubLogin = loginInFlight
 
-    Component.onDestruction: screenState.dashboardGithubLogin = false
+    Component.onDestruction: {
+        for (const request of pendingRequests) {
+            request.onreadystatechange = null;
+            request.abort();
+        }
+        screenState.dashboardGithubLogin = false;
+    }
 
     Connections {
         target: GlobalConfig.dashboard

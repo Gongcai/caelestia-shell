@@ -114,6 +114,15 @@ After applying the patch to the pinned upstream source, build with `make -j2`.
 Unload the plugin before replacing its installed library, then run the startup
 loader to load it and reload the configuration.
 
+The local build is linked with `-Wl,-z,nodelete`. Hyprland may retain a window
+decoration's type-erased deleter until a closing window finishes its update;
+keeping the plugin mapping resident prevents that deferred callback from
+landing in an unloaded or subsequently replaced library. Do not overwrite the
+installed `.so` while it is loaded. Build to a temporary path, unload only when
+the compositor is intentionally being stopped, then replace it before the next
+Hyprland start. The previous compositor crash occurred after repeated hot
+reloads had left such a callback pointing at a reused plugin mapping.
+
 For immediate fallback to ordinary Hyprland blur:
 
 ```sh

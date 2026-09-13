@@ -20,7 +20,6 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     required property Bar.BarWrapper bar
-    required property var rootWindow
     required property real borderThickness
 
     readonly property alias osd: osd
@@ -117,6 +116,7 @@ Item {
         screenState: root.screenState
 
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: -sidebar.width * (1 - sidebar.offsetScale) / 2
         anchors.top: parent.top
     }
 
@@ -149,7 +149,6 @@ Item {
 
         screen: root.screen
         screenState: root.screenState
-        rootWindow: root.rootWindow
         sidebar: sidebar
         popouts: popoutsWrapper.content
 
