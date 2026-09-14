@@ -29,7 +29,7 @@ Item {
     readonly property bool shouldBeActive: screenState.sidebar || (screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled))
     readonly property real totalPadding: content.anchors.margins + CUtils.clamp(content.anchors.margins - Config.border.thickness, 0, content.anchors.margins)
     readonly property real nonAnimHeight: ((content.item as Content)?.nonAnimHeight ?? 0) + totalPadding
-    property real offsetScale: shouldBeActive ? 0 : 1
+    property real offsetScale: shouldBeActive && content.status === Loader.Ready ? 0 : 1
     property real sidebarLerp
 
     visible: offsetScale < 1
@@ -89,6 +89,7 @@ Item {
             screenState: root.screenState
             popouts: root.popouts
             deformMatrix: root.deformMatrix
+            animateHeight: root.shouldBeActive && root.offsetScale === 0
         }
     }
 }

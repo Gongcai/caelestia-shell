@@ -13,6 +13,7 @@ Item {
     required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property matrix4x4 deformMatrix
+    required property bool animateHeight
 
     readonly property real nonAnimHeight: page.implicitHeight
 
@@ -53,5 +54,11 @@ Item {
     RecordingDeleteModal {
         props: root.props
         deformMatrix: root.deformMatrix
+    }
+
+    Behavior on implicitHeight {
+        enabled: root.animateHeight
+
+        Anim {}
     }
 }
