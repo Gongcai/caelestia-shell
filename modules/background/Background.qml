@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Caelestia.Config
-import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.background.widgets
@@ -34,6 +33,26 @@ Variants {
 
             Region {
                 item: widgets.visualiserInteractionTarget
+            }
+
+            Region {
+                item: widgets.calendarInteractionTarget
+            }
+
+            Region {
+                item: widgets.weatherInteractionTarget
+            }
+
+            Region {
+                item: widgets.musicInteractionTarget
+            }
+
+            Region {
+                item: widgets.worldClockInteractionTarget
+            }
+
+            Region {
+                item: widgets.timerInteractionTarget
             }
         }
 
@@ -94,6 +113,9 @@ Variants {
             anchors.fill: parent
             screen: win.modelData
             wallpaper: behindClock
+            wallpaperAvailable: ((wallpaper.item as Wallpaper)?.ready ?? false) || ((wallpaper.item as VideoWallpaper)?.ready ?? false)
+            wallpaperAnimated: wallpaper.item instanceof VideoWallpaper || ((wallpaper.item as Wallpaper)?.transitioning ?? false) || Config.background.visualiser.enabled
+            wallpaperKey: win.effectiveWallpaper
         }
     }
 }

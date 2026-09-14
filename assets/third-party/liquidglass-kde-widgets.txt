@@ -1,0 +1,17 @@
+Liquid Glass KDE Widgets
+https://github.com/jaxparrow07/liquidglass-kde-widgets
+Upstream revision: ff196b4a688eccc7c8c858b3d53a76d8e7055719
+License: GNU General Public License, version 3 (see the repository LICENSE).
+
+Caelestia adapts the liquid-glass, crop and Dual Kawase shaders, and the
+squircle ray-intersection approach used by the clock's TickRing component.
+The upstream shader credits iyinchao/liquid-glass-studio for its refraction
+model; that credit is retained in desktopglass.frag.
+
+The weather forecast layouts, music card layouts and album/lyrics flip,
+world-clock faces and city layouts, and timer wheels and preset layout are
+adapted from the upstream weather, music, city-* and timer packages.
+
+The host integration, shared wallpaper capture, transform mapping, settings
+and widget data bindings have been adapted for Quickshell. Apple fonts and
+icons bundled by the upstream project are not included in this adaptation.

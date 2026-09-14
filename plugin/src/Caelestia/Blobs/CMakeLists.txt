@@ -18,4 +18,8 @@ qt_add_shaders(caelestia-blobs "blob_shaders"
         shaders/blob.frag
         shaders/blob.vert
         shaders/backdropglass.frag
+        shaders/desktopglass.frag
+        shaders/desktopglasscrop.frag
+        shaders/kawase_down.frag
+        shaders/kawase_up.frag
 )

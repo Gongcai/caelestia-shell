@@ -1,12 +1,13 @@
 import QtQuick
 import QtMultimedia
-import qs.utils as Utils
 import qs.services
+import qs.utils as Utils
 
 Item {
     id: root
 
     property string source
+    readonly property bool ready: output.videoSink.videoSize.width > 0 && output.videoSink.videoSize.height > 0
 
     function syncPlayback(): void {
         if (visible && source && !GameMode.enabled) {
@@ -22,11 +23,11 @@ Item {
     Component.onCompleted: syncPlayback()
 
     Connections {
-        target: GameMode
-
         function onEnabledChanged(): void {
             root.syncPlayback();
         }
+
+        target: GameMode
     }
 
     VideoOutput {

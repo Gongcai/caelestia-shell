@@ -31,7 +31,7 @@ Item {
 
         anchors.fill: parent
 
-        layer.enabled: Config.background.desktopClock.shadow.enabled
+        layer.enabled: Config.background.desktopClock.shadow.enabled && !GameMode.enabled
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Colours.palette.m3shadow

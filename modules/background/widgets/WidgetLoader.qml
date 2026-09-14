@@ -21,6 +21,10 @@ Item {
     readonly property bool dragging: dragArea.dragging
 
     signal moveRequested(deltaX: real, deltaY: real)
+    signal contentSizeChanged
+
+    onWidthChanged: Qt.callLater(contentSizeChanged)
+    onHeightChanged: Qt.callLater(contentSizeChanged)
 
     implicitWidth: widgetLoader.implicitWidth
     implicitHeight: widgetLoader.implicitHeight
@@ -141,6 +145,9 @@ Item {
             property bool dragging
 
             anchors.fill: parent
+            // Stay below the widget so its buttons receive ordinary clicks.
+            // Empty parts of the card still support press-and-hold dragging.
+            z: -1
             acceptedButtons: Qt.LeftButton
             hoverEnabled: true
             preventStealing: true

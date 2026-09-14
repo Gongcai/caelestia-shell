@@ -14,6 +14,8 @@ Item {
     property string source: Wallpapers.current
     property CachingImage current
     property bool completed
+    readonly property bool ready: current?.status === Image.Ready
+    readonly property bool transitioning: ready && current.opacity < 1
 
     onSourceChanged: {
         if (!source)

@@ -245,12 +245,13 @@ Singleton {
     }
 
     component Transparency: QtObject {
-        readonly property bool enabled: Tokens.transparency.enabled
+        // Keep the saved appearance settings intact while effects are suspended.
+        readonly property bool enabled: Tokens.transparency.enabled && !GameMode.enabled
         readonly property real base: Math.max(0, Math.min(1, Tokens.transparency.base - (root.light ? 0.1 : 0)))
         readonly property real layers: Math.max(0, Math.min(1, Tokens.transparency.layers))
 
         onEnabledChanged: {
-            if (enabled)
+            if (enabled || GameMode.enabled)
                 root.requestReloadHyprRules();
             else
                 cAnimCompleteTimer.start();

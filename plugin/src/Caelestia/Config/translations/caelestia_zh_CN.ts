@@ -1816,6 +1816,162 @@
         <source>Soften the wallpaper beneath the visualiser surface</source>
         <translation>模糊可视化底板下方的壁纸</translation>
     </message>
+    <message>
+        <source>Classic</source>
+        <translation>经典</translation>
+    </message>
+    <message>
+        <source>Glass digital</source>
+        <translation>玻璃数字时钟</translation>
+    </message>
+    <message>
+        <source>Glass analog</source>
+        <translation>玻璃指针时钟</translation>
+    </message>
+    <message>
+        <source>Clock style</source>
+        <translation>时钟样式</translation>
+    </message>
+    <message>
+        <source>Show seconds</source>
+        <translation>显示秒针</translation>
+    </message>
+    <message>
+        <source>Show the second hand or highlight the current second</source>
+        <translation>显示秒针，或高亮当前秒数对应的刻度</translation>
+    </message>
+    <message>
+        <source>Calendar</source>
+        <translation>日历</translation>
+    </message>
+    <message>
+        <source>Show a glass calendar on the desktop</source>
+        <translation>在桌面上显示玻璃日历</translation>
+    </message>
+    <message>
+        <source>Glass appearance</source>
+        <translation>玻璃外观</translation>
+    </message>
+    <message>
+        <source>Frosted glass</source>
+        <translation>磨砂玻璃</translation>
+    </message>
+    <message>
+        <source>Soften the wallpaper behind the glass clock and calendar</source>
+        <translation>模糊玻璃时钟和日历下方的壁纸</translation>
+    </message>
+    <message>
+        <source>Glass opacity (%)</source>
+        <translation>玻璃不透明度（%）</translation>
+    </message>
+    <message>
+        <source>Increase the tint to make text easier to read</source>
+        <translation>加深底色，让文字更易读</translation>
+    </message>
+    <message>
+        <source>Refraction strength (%)</source>
+        <translation>折射强度（%）</translation>
+    </message>
+    <message>
+        <source>How strongly the glass edges bend the wallpaper</source>
+        <translation>玻璃边缘对壁纸的折射程度</translation>
+    </message>
+    <message>
+        <source>Compact</source>
+        <translation>紧凑</translation>
+    </message>
+    <message>
+        <source>Wide</source>
+        <translation>横向</translation>
+    </message>
+    <message>
+        <source>Full forecast</source>
+        <translation>完整预报</translation>
+    </message>
+    <message>
+        <source>Tall</source>
+        <translation>纵向</translation>
+    </message>
+    <message>
+        <source>Numbered dial</source>
+        <translation>数字表盘</translation>
+    </message>
+    <message>
+        <source>Minimal dial</source>
+        <translation>简约表盘</translation>
+    </message>
+    <message>
+        <source>Quarter marks</source>
+        <translation>四刻度表盘</translation>
+    </message>
+    <message>
+        <source>Digital</source>
+        <translation>数字时钟</translation>
+    </message>
+    <message>
+        <source>Weather</source>
+        <translation>天气</translation>
+    </message>
+    <message>
+        <source>Current conditions and forecasts from the shell weather service</source>
+        <translation>使用 shell 的当前天气与预报</translation>
+    </message>
+    <message>
+        <source>Layout</source>
+        <translation>布局</translation>
+    </message>
+    <message>
+        <source>Music</source>
+        <translation>音乐</translation>
+    </message>
+    <message>
+        <source>Album art, playback controls and lyrics</source>
+        <translation>专辑封面、播放控制与歌词</translation>
+    </message>
+    <message>
+        <source>World clock</source>
+        <translation>世界时钟</translation>
+    </message>
+    <message>
+        <source>Follow up to four cities with local day and night faces</source>
+        <translation>最多显示四个城市，表盘随当地昼夜变化</translation>
+    </message>
+    <message>
+        <source>Number of cities</source>
+        <translation>城市数量</translation>
+    </message>
+    <message>
+        <source>City %1</source>
+        <translation>城市 %1</translation>
+    </message>
+    <message>
+        <source>Timer</source>
+        <translation>倒计时</translation>
+    </message>
+    <message>
+        <source>A countdown with presets, pause and a completion reminder</source>
+        <translation>支持预设、暂停与到时提醒</translation>
+    </message>
+    <message>
+        <source>Show presets</source>
+        <translation>显示预设</translation>
+    </message>
+    <message>
+        <source>Use a wide card with quick countdown presets</source>
+        <translation>使用横向卡片显示快捷倒计时预设</translation>
+    </message>
+    <message>
+        <source>Default duration</source>
+        <translation>默认时长</translation>
+    </message>
+    <message>
+        <source>Starting duration in seconds</source>
+        <translation>初始倒计时时长，单位为秒</translation>
+    </message>
+    <message>
+        <source>Soften the wallpaper behind glass widgets</source>
+        <translation>柔化玻璃小组件下方的壁纸</translation>
+    </message>
 </context>
 <context>
     <name>Details</name>
@@ -5175,6 +5331,382 @@ Keyboard layout: %1</source>
     <message>
         <source>kdeconnect-cli is unavailable</source>
         <translation type="vanished">kdeconnect-cli 不可用</translation>
+    </message>
+</context>
+<context>
+    <name>GlassCalendar</name>
+    <message>
+        <source>Go to today</source>
+        <translation>回到今天</translation>
+    </message>
+    <message>
+        <source>Previous month</source>
+        <translation>上个月</translation>
+    </message>
+    <message>
+        <source>Next month</source>
+        <translation>下个月</translation>
+    </message>
+    <message>
+        <source>MMM yyyy</source>
+        <translation>yyyy年M月</translation>
+    </message>
+</context>
+<context>
+    <name>GlassClock</name>
+    <message>
+        <source>MMM d</source>
+        <translation>M月d日</translation>
+    </message>
+</context>
+<context>
+    <name>GlassWeather</name>
+    <message>
+        <source>Weather unavailable</source>
+        <translation>天气暂不可用</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>晴</translation>
+    </message>
+    <message>
+        <source>Partly cloudy</source>
+        <translation>多云</translation>
+    </message>
+    <message>
+        <source>Overcast</source>
+        <translation>阴</translation>
+    </message>
+    <message>
+        <source>Fog</source>
+        <translation>雾</translation>
+    </message>
+    <message>
+        <source>Drizzle</source>
+        <translation>毛毛雨</translation>
+    </message>
+    <message>
+        <source>Rain</source>
+        <translation>雨</translation>
+    </message>
+    <message>
+        <source>Snow</source>
+        <translation>雪</translation>
+    </message>
+    <message>
+        <source>Rain showers</source>
+        <translation>阵雨</translation>
+    </message>
+    <message>
+        <source>Snow showers</source>
+        <translation>阵雪</translation>
+    </message>
+    <message>
+        <source>Thunderstorm</source>
+        <translation>雷暴</translation>
+    </message>
+    <message>
+        <source>Weather</source>
+        <translation>天气</translation>
+    </message>
+    <message>
+        <source>Refresh weather</source>
+        <translation>刷新天气</translation>
+    </message>
+    <message>
+        <source>H:%1  L:%2</source>
+        <translation>最高 %1  最低 %2</translation>
+    </message>
+    <message>
+        <source>Feels like %1</source>
+        <translation>体感 %1</translation>
+    </message>
+    <message>
+        <source>Humidity %1% · Wind %2 km/h</source>
+        <translation>湿度 %1% · 风速 %2 公里/时</translation>
+    </message>
+    <message>
+        <source>Use the weather location in shell settings</source>
+        <translation>使用 shell 设置中的天气位置</translation>
+    </message>
+    <message>
+        <source>Forecast unavailable</source>
+        <translation>预报暂不可用</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>今天</translation>
+    </message>
+</context>
+<context>
+    <name>GlassMusic</name>
+    <message>
+        <source>Nothing playing</source>
+        <translation>暂无播放</translation>
+    </message>
+    <message>
+        <source>Unknown artist</source>
+        <translation>未知艺术家</translation>
+    </message>
+    <message>
+        <source>Start playback in a music app</source>
+        <translation>在音乐应用中开始播放</translation>
+    </message>
+    <message>
+        <source>Loading lyrics…</source>
+        <translation>正在加载歌词…</translation>
+    </message>
+    <message>
+        <source>No lyrics found</source>
+        <translation>暂无歌词</translation>
+    </message>
+    <message>
+        <source>Show album art</source>
+        <translation>显示专辑封面</translation>
+    </message>
+    <message>
+        <source>Show lyrics</source>
+        <translation>显示歌词</translation>
+    </message>
+    <message>
+        <source>Next player</source>
+        <translation>切换播放器</translation>
+    </message>
+    <message>
+        <source>Previous track</source>
+        <translation>上一首</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>播放</translation>
+    </message>
+    <message>
+        <source>Next track</source>
+        <translation>下一首</translation>
+    </message>
+    <message>
+        <source>Playback position</source>
+        <translation>播放进度</translation>
+    </message>
+</context>
+<context>
+    <name>GlassWorldClock</name>
+    <message>
+        <source>Unknown time zone</source>
+        <translation>未知时区</translation>
+    </message>
+    <message>
+        <source>Same time</source>
+        <translation>相同时刻</translation>
+    </message>
+    <message>
+        <source> h</source>
+        <translation> 小时</translation>
+    </message>
+    <message>
+        <source>Tomorrow · %1</source>
+        <translation>明天 · %1</translation>
+    </message>
+    <message>
+        <source>Yesterday · %1</source>
+        <translation>昨天 · %1</translation>
+    </message>
+</context>
+<context>
+    <name>GlassTimer</name>
+    <message>
+        <source>Presets</source>
+        <translation>预设</translation>
+    </message>
+    <message>
+        <source>%1 min</source>
+        <translation>%1 分钟</translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translation>已暂停</translation>
+    </message>
+    <message>
+        <source>Time’s up</source>
+        <translation>时间到</translation>
+    </message>
+    <message>
+        <source>Timer</source>
+        <translation>倒计时</translation>
+    </message>
+    <message>
+        <source>min</source>
+        <translation>分</translation>
+    </message>
+    <message>
+        <source>sec</source>
+        <translation>秒</translation>
+    </message>
+    <message>
+        <source>Cancel timer</source>
+        <translation>取消倒计时</translation>
+    </message>
+    <message>
+        <source>Pause timer</source>
+        <translation>暂停倒计时</translation>
+    </message>
+    <message>
+        <source>Resume timer</source>
+        <translation>继续倒计时</translation>
+    </message>
+    <message>
+        <source>Dismiss timer</source>
+        <translation>结束倒计时</translation>
+    </message>
+    <message>
+        <source>Start timer</source>
+        <translation>开始倒计时</translation>
+    </message>
+</context>
+<context>
+    <name>WorldCities</name>
+    <message>
+        <source>Local time</source>
+        <translation>本地时间</translation>
+    </message>
+    <message>
+        <source>Beijing</source>
+        <translation>北京</translation>
+    </message>
+    <message>
+        <source>Hong Kong</source>
+        <translation>香港</translation>
+    </message>
+    <message>
+        <source>Taipei</source>
+        <translation>台北</translation>
+    </message>
+    <message>
+        <source>Tokyo</source>
+        <translation>东京</translation>
+    </message>
+    <message>
+        <source>Seoul</source>
+        <translation>首尔</translation>
+    </message>
+    <message>
+        <source>Singapore</source>
+        <translation>新加坡</translation>
+    </message>
+    <message>
+        <source>Bangkok</source>
+        <translation>曼谷</translation>
+    </message>
+    <message>
+        <source>New Delhi</source>
+        <translation>新德里</translation>
+    </message>
+    <message>
+        <source>Kathmandu</source>
+        <translation>加德满都</translation>
+    </message>
+    <message>
+        <source>Dubai</source>
+        <translation>迪拜</translation>
+    </message>
+    <message>
+        <source>London</source>
+        <translation>伦敦</translation>
+    </message>
+    <message>
+        <source>Paris</source>
+        <translation>巴黎</translation>
+    </message>
+    <message>
+        <source>Berlin</source>
+        <translation>柏林</translation>
+    </message>
+    <message>
+        <source>Rome</source>
+        <translation>罗马</translation>
+    </message>
+    <message>
+        <source>Moscow</source>
+        <translation>莫斯科</translation>
+    </message>
+    <message>
+        <source>Istanbul</source>
+        <translation>伊斯坦布尔</translation>
+    </message>
+    <message>
+        <source>Cairo</source>
+        <translation>开罗</translation>
+    </message>
+    <message>
+        <source>Johannesburg</source>
+        <translation>约翰内斯堡</translation>
+    </message>
+    <message>
+        <source>New York</source>
+        <translation>纽约</translation>
+    </message>
+    <message>
+        <source>Chicago</source>
+        <translation>芝加哥</translation>
+    </message>
+    <message>
+        <source>Denver</source>
+        <translation>丹佛</translation>
+    </message>
+    <message>
+        <source>Los Angeles</source>
+        <translation>洛杉矶</translation>
+    </message>
+    <message>
+        <source>Vancouver</source>
+        <translation>温哥华</translation>
+    </message>
+    <message>
+        <source>Toronto</source>
+        <translation>多伦多</translation>
+    </message>
+    <message>
+        <source>Mexico City</source>
+        <translation>墨西哥城</translation>
+    </message>
+    <message>
+        <source>São Paulo</source>
+        <translation>圣保罗</translation>
+    </message>
+    <message>
+        <source>Honolulu</source>
+        <translation>檀香山</translation>
+    </message>
+    <message>
+        <source>Perth</source>
+        <translation>珀斯</translation>
+    </message>
+    <message>
+        <source>Adelaide</source>
+        <translation>阿德莱德</translation>
+    </message>
+    <message>
+        <source>Sydney</source>
+        <translation>悉尼</translation>
+    </message>
+    <message>
+        <source>Auckland</source>
+        <translation>奥克兰</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopTimers</name>
+    <message>
+        <source>Time’s up</source>
+        <translation>时间到</translation>
+    </message>
+    <message>
+        <source>Your desktop timer has finished.</source>
+        <translation>桌面倒计时已结束。</translation>
     </message>
 </context>
 </TS>

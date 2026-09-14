@@ -19,7 +19,7 @@ Item {
     property color fallbackColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
 
     // Slight glow to separate from bg
-    layer.enabled: true
+    layer.enabled: !GameMode.enabled
     layer.effect: MultiEffect {
         shadowEnabled: true
         blurMax: 1

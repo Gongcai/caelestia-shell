@@ -87,7 +87,7 @@ Item {
 
         anchors.fill: parent
 
-        layer.enabled: true
+        layer.enabled: !GameMode.enabled
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Colours.palette.m3shadow

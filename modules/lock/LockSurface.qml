@@ -162,7 +162,7 @@ WlSessionLockSurface {
         anchors.fill: parent
         opacity: 0
 
-        layer.enabled: true
+        layer.enabled: !GameMode.enabled
         layer.effect: MultiEffect {
             autoPaddingEnabled: false
             blurEnabled: true
@@ -214,9 +214,9 @@ WlSessionLockSurface {
             anchors.fill: parent
             color: Colours.palette.m3surface
             radius: parent.radius
-            opacity: Colours.transparency.enabled && lockGlass.status !== ShaderEffect.Error ? 0 : 1
+            opacity: lockGlass.visible && lockGlass.status !== ShaderEffect.Error ? 0 : 1
 
-            layer.enabled: true
+            layer.enabled: !GameMode.enabled
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 blurMax: 15
@@ -231,7 +231,7 @@ WlSessionLockSurface {
             transformItem: lockContent
             radius: lockBg.radius
             tint: Qt.alpha(Colours.palette.m3surface, 0.55)
-            visible: Colours.transparency.enabled
+            visible: Colours.transparency.enabled && !GameMode.enabled
         }
 
         MaterialIcon {

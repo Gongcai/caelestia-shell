@@ -15,10 +15,10 @@ Item {
     required property DesktopEntry modelData
     required property GridView view
 
-    signal activated(DesktopEntry entry)
-
     readonly property bool selected: GridView.isCurrentItem
-    readonly property bool favourite: Strings.testRegexList(GlobalConfig.launcher.favouriteApps, modelData.id)
+    readonly property bool favourite: !!modelData && Strings.testRegexList(GlobalConfig.launcher.favouriteApps, modelData.id)
+
+    signal activated(DesktopEntry entry)
 
     implicitWidth: view.cellWidth
     implicitHeight: view.cellHeight
@@ -33,7 +33,7 @@ Item {
         implicitHeight: Math.min(root.height - Tokens.spacing.small, 140)
 
         radius: Tokens.rounding.extraLarge
-        color: root.selected ? Colours.accentContainer : Qt.alpha(Colours.palette.m3onSurface, 0.025)
+        color: root.selected ? Colours.selectedSurface : Qt.alpha(Colours.palette.m3onSurface, 0.025)
         border.width: root.selected ? 1 : 0
         border.color: Qt.alpha(Colours.accent, 0.45)
 
@@ -42,7 +42,10 @@ Item {
 
             radius: tile.radius
             onEntered: root.view.currentIndex = root.index
-            onClicked: root.activated(root.modelData)
+            onClicked: {
+                if (root.modelData)
+                    root.activated(root.modelData);
+            }
         }
 
         Item {
@@ -58,7 +61,7 @@ Item {
             IconImage {
                 anchors.fill: parent
                 asynchronous: true
-                source: Quickshell.iconPath(root.modelData.icon, "image-missing")
+                source: Quickshell.iconPath(root.modelData?.icon ?? "", "image-missing")
             }
 
             Loader {
@@ -93,7 +96,7 @@ Item {
             anchors.leftMargin: Tokens.padding.small
             anchors.rightMargin: Tokens.padding.small
 
-            text: root.modelData.name
+            text: root.modelData?.name ?? ""
             color: Colours.palette.m3onSurface
             font: Tokens.font.label.medium
             horizontalAlignment: Text.AlignHCenter

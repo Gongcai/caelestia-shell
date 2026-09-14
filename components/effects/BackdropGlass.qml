@@ -26,7 +26,7 @@ ShaderEffect {
     readonly property vector2d sampleAxisX: Qt.vector2d((samplePoints[1].x - samplePoints[0].x) / sourceSize.x, (samplePoints[1].y - samplePoints[0].y) / sourceSize.y)
     readonly property vector2d sampleAxisY: Qt.vector2d((samplePoints[2].x - samplePoints[0].x) / sourceSize.x, (samplePoints[2].y - samplePoints[0].y) / sourceSize.y)
     readonly property var source: ShaderEffectSource {
-        sourceItem: root.sourceItem
+        sourceItem: root.visible ? root.sourceItem : null
         live: root.visible
         visible: false
     }

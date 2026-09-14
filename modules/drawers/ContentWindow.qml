@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
@@ -372,27 +371,11 @@ StyledWindow {
         }
     }
 
-    StyledWindow {
+    Launchpad.Window {
         id: launchpadWindow
-        name: "launchpad"
-        screen: root.screen
-        // Keep the surface mapped for the opening frame even if the content
-        // item is still settling its reveal animation after a prior close.
-        visible: root.screenState.launchpad || launchpadContent.visible
-        anchors.top: true
-        anchors.bottom: true
-        anchors.left: true
-        anchors.right: true
-        WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
-        Launchpad.Wrapper {
-            id: launchpadContent
-            anchors.fill: parent
-            screen: root.screen
-            screenState: root.screenState
-        }
+        screen: root.screen
+        screenState: root.screenState
     }
 
     ShellState.ComponentRef {

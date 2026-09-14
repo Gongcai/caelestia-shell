@@ -13,7 +13,8 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
 
-    readonly property bool shouldBeActive: screenState.launchpad
+    property bool contentReady: false
+    readonly property bool shouldBeActive: contentReady && screenState.launchpad
     property real reveal: shouldBeActive ? 1 : 0
 
     function close(): void {
@@ -34,10 +35,14 @@ Item {
     }
 
     function launchCurrent(): void {
-        const entry = grid.currentItem?.modelData;
+        const entry = (grid.currentItem as AppTile)?.modelData;
         if (entry)
             launch(entry);
     }
+
+    // The window creates this component on demand. Start the reveal and
+    // focus handling only after its children and layout exist.
+    Component.onCompleted: Qt.callLater(() => root.contentReady = true)
 
     onShouldBeActiveChanged: {
         if (shouldBeActive) {
@@ -160,22 +165,8 @@ Item {
                 onActivated: entry => root.launch(entry)
             }
 
-            add: Transition {
-                ParallelAnimation {
-                    Anim {
-                        property: "opacity"
-                        from: 0
-                        to: 1
-                        type: Anim.DefaultEffects
-                    }
-                    Anim {
-                        property: "scale"
-                        from: 0.8
-                        to: 1
-                        type: Anim.FastSpatial
-                    }
-                }
-            }
+            // The wrapper owns the reveal animation. Keep every delegate
+            // opaque when startup discovery or filtering interrupts layout.
 
             displaced: Transition {
                 Anim {
@@ -235,7 +226,6 @@ Item {
                 font: Tokens.font.label.medium
             }
         }
-
     }
 
     Behavior on reveal {

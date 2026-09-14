@@ -10,6 +10,7 @@ qml_module(caelestia-services
         tickingservice.cpp
         sensorslib.cpp
         usagefmt.cpp
+        timezones.cpp
         cpu.cpp
         gpu.cpp
         memory.cpp

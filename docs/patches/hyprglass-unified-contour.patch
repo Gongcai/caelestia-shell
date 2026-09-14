@@ -26,7 +26,7 @@ index 24c1814..4f93ee8 100644
      inline constexpr float   SPECULAR_STRENGTH    = 0.8f;
      inline constexpr float   GLASS_OPACITY        = 1.0f;
 diff --git a/src/GlassLayerSurface.cpp b/src/GlassLayerSurface.cpp
-index 014464a..8ebf788 100644
+index 014464a..c0c4de8 100644
 --- a/src/GlassLayerSurface.cpp
 +++ b/src/GlassLayerSurface.cpp
 @@ -85,6 +85,29 @@ ELayerMaskMode CGlassLayerSurface::resolveMaskMode() const {
@@ -165,9 +165,9 @@ index 014464a..8ebf788 100644
 +    }
 +
 +    if (g_pGlobalState->layerNamespaceContour.contains(layerSurface->m_namespace)) {
-+        maskInfo.contourTexture = GlassRenderer::buildContour(m_surfaceTempFramebuffer, m_contourBuffers,
-+                                                              target, std::max(maskInfo.alphaThreshold, 0.025f));
 +        maskInfo.contourWidth = 20.0f * monitor->m_scale;
++        maskInfo.contourTexture = GlassRenderer::buildContour(m_surfaceTempFramebuffer, m_contourBuffers,
++                                                              target, std::max(maskInfo.alphaThreshold, 0.025f), maskInfo.contourWidth);
 +    }
 +
      // The glass shader composites both the glass effect and the surface content
@@ -212,15 +212,15 @@ index 565c7d4..512df14 100644
 +    [[nodiscard]] std::optional<SMaterialBlurConfig> resolveMaterialBlur() const;
  };
 diff --git a/src/GlassRenderer.cpp b/src/GlassRenderer.cpp
-index bc53d4c..8d5c70f 100644
+index bc53d4c..d01c9ed 100644
 --- a/src/GlassRenderer.cpp
 +++ b/src/GlassRenderer.cpp
-@@ -151,6 +151,45 @@ void blurBackground(SP<Render::IFramebuffer> sampleFramebuffer, float radius, in
+@@ -151,6 +151,60 @@ void blurBackground(SP<Render::IFramebuffer> sampleFramebuffer, float radius, in
          static_cast<int>(callerFramebuffer->m_size.y));
  }
 
 +GLuint buildContour(SP<Render::IFramebuffer> surface, std::array<SP<Render::IFramebuffer>, 2>& buffers,
-+                    SP<Render::IFramebuffer> target, float threshold) {
++                    SP<Render::IFramebuffer> target, float threshold, float contourWidth) {
 +    const int width = std::max(1, static_cast<int>(surface->m_size.x) / 2);
 +    const int height = std::max(1, static_cast<int>(surface->m_size.y) / 2);
 +    for (auto& fb : buffers) {
@@ -235,6 +235,14 @@ index bc53d4c..8d5c70f 100644
 +    shader->setUniformMatrix3fv(SHADER_PROJ, 1, GL_FALSE, projection);
 +    shader->setUniformInt(SHADER_TEX, 0);
 +    glUniform1f(manager.contourThreshold, threshold);
++    const float pixelWidth = surface->m_size.x / width;
++    const float pixelHeight = surface->m_size.y / height;
++    // Cover the optical shoulder and the normal stencil at every output
++    // scale, including odd framebuffer dimensions at fractional scaling.
++    const float distanceLimit = contourWidth * 3.5f + 4.0f;
++    glUniform2f(manager.contourFieldSize, width, height);
++    glUniform2f(manager.contourFieldPixelSize, pixelWidth, pixelHeight);
++    glUniform1f(manager.contourDistanceLimit, distanceLimit);
 +    glBindVertexArray(shader->getUniformLocation(SHADER_SHADER_VAO));
 +    g_pHyprOpenGL->setCapStatus(GL_SCISSOR_TEST, false);
 +    const bool blend = glIsEnabled(GL_BLEND);
@@ -242,15 +250,22 @@ index bc53d4c..8d5c70f 100644
 +    g_pHyprOpenGL->setViewport(0, 0, width, height);
 +    glActiveTexture(GL_TEXTURE0);
 +    int output = 0;
-+    // 64 physical pixels is enough for the edge refraction band. Work is
-+    // bounded independently of the output resolution; no CPU readback.
-+    for (int step : {0, 16, 8, 4, 2, 1, 1}) {
++    const auto runPass = [&](int step) {
 +        glBindFramebuffer(GL_FRAMEBUFFER, fbId(buffers[output]));
 +        (step == 0 ? surface : buffers[1 - output])->getTexture()->bind();
 +        glUniform1i(manager.contourStep, step);
 +        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 +        output = 1 - output;
-+    }
++    };
++    // Bound work by the optical shoulder, not the full monitor dimensions.
++    // An extra unit step resolves jump-flood ties around curved joins.
++    runPass(0);
++    int firstStep = 1;
++    while (2 * firstStep * std::min(pixelWidth, pixelHeight) < distanceLimit)
++        firstStep *= 2;
++    for (int step = firstStep; step >= 1; step /= 2)
++        runPass(step);
++    runPass(1);
 +    g_pHyprOpenGL->setCapStatus(GL_BLEND, blend);
 +    glBindFramebuffer(GL_FRAMEBUFFER, fbId(target));
 +    g_pHyprOpenGL->setViewport(0, 0, target->m_size.x, target->m_size.y);
@@ -261,7 +276,7 @@ index bc53d4c..8d5c70f 100644
  void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFramebuffer> targetFramebuffer,
                         CBox& rawBox, CBox& transformedBox,
                         float alpha, float cornerRadius, float roundingPower,
-@@ -185,6 +224,22 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+@@ -185,6 +239,22 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
 
      auto shader = g_pHyprOpenGL->useShader(shaderManager.glassShader);
 
@@ -284,7 +299,7 @@ index bc53d4c..8d5c70f 100644
      shader->setUniformMatrix3fv(SHADER_PROJ, 1, GL_FALSE, glMatrix.getMatrix());
      shader->setUniformInt(SHADER_TEX, 0);
 
-@@ -194,6 +249,8 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+@@ -194,6 +264,8 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
 
      glUniform1f(uniforms.refractionStrength,  resolvePresetFloat(resolveContext, &SPresetValues::refractionStrength, &SOverridableConfig::refractionStrength));
      glUniform1f(uniforms.chromaticAberration, resolvePresetFloat(resolveContext, &SPresetValues::chromaticAberration, &SOverridableConfig::chromaticAberration));
@@ -293,7 +308,7 @@ index bc53d4c..8d5c70f 100644
      glUniform1f(uniforms.fresnelStrength,     resolvePresetFloat(resolveContext, &SPresetValues::fresnelStrength, &SOverridableConfig::fresnelStrength));
      glUniform1f(uniforms.specularStrength,    resolvePresetFloat(resolveContext, &SPresetValues::specularStrength, &SOverridableConfig::specularStrength));
      glUniform1f(uniforms.glassOpacity,        resolvePresetFloat(resolveContext, &SPresetValues::glassOpacity, &SOverridableConfig::glassOpacity) * alpha);
-@@ -238,7 +295,18 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
+@@ -238,7 +310,18 @@ void applyGlassEffect(SP<Render::IFramebuffer> sampleFramebuffer, SP<Render::IFr
          glUniform1i(uniforms.regionRectCount, 0);
      }
 
@@ -313,7 +328,7 @@ index bc53d4c..8d5c70f 100644
 
      glBindVertexArray(shader->getUniformLocation(SHADER_SHADER_VAO));
 diff --git a/src/GlassRenderer.hpp b/src/GlassRenderer.hpp
-index 582fc63..2f1b032 100644
+index 582fc63..9a43ace 100644
 --- a/src/GlassRenderer.hpp
 +++ b/src/GlassRenderer.hpp
 @@ -22,6 +22,9 @@ inline constexpr float BLUR_DOWNSCALE_THRESHOLD = 0.35f; // min blur_strength fo
@@ -351,7 +366,7 @@ index 582fc63..2f1b032 100644
 
 +// GPU-only, bounded jump flood of the current rendered alpha contour.
 +GLuint buildContour(SP<Render::IFramebuffer> surface, std::array<SP<Render::IFramebuffer>, 2>& buffers,
-+                    SP<Render::IFramebuffer> target, float threshold);
++                    SP<Render::IFramebuffer> target, float threshold, float contourWidth);
 +
  // When mask is non-null (layers only), the shader composites the surface content
  // over the glass effect in a single pass. When mask is null (windows), the shader
@@ -601,7 +616,7 @@ index 0eb48c6..770a6b9 100644
      float   specularStrength   = static_cast<float>(SENTINEL_FLOAT);
      float   glassOpacity       = static_cast<float>(SENTINEL_FLOAT);
 diff --git a/src/ShaderManager.cpp b/src/ShaderManager.cpp
-index 9d426e3..6f1e739 100644
+index 9d426e3..366485f 100644
 --- a/src/ShaderManager.cpp
 +++ b/src/ShaderManager.cpp
 @@ -32,6 +32,7 @@ bool CShaderManager::compileGlassShader() {
@@ -633,7 +648,7 @@ index 9d426e3..6f1e739 100644
      glassUniforms.regionRectCount     = glGetUniformLocation(program, "regionRectCount");
      glassUniforms.regionRects         = glGetUniformLocation(program, "regionRects[0]");
      if (glassUniforms.regionRects == -1)
-@@ -78,6 +93,15 @@ bool CShaderManager::compileBlurShader() {
+@@ -78,6 +93,18 @@ bool CShaderManager::compileBlurShader() {
      return true;
  }
 
@@ -643,13 +658,16 @@ index 9d426e3..6f1e739 100644
 +        return false;
 +    contourStep = glGetUniformLocation(contourShader->program(), "jumpStep");
 +    contourThreshold = glGetUniformLocation(contourShader->program(), "threshold");
++    contourFieldSize = glGetUniformLocation(contourShader->program(), "fieldSize");
++    contourFieldPixelSize = glGetUniformLocation(contourShader->program(), "fieldPixelSize");
++    contourDistanceLimit = glGetUniformLocation(contourShader->program(), "distanceLimit");
 +    return true;
 +}
 +
  void CShaderManager::initializeIfNeeded() {
      if (m_initialized)
          return;
-@@ -88,11 +112,15 @@ void CShaderManager::initializeIfNeeded() {
+@@ -88,11 +115,15 @@ void CShaderManager::initializeIfNeeded() {
      if (!compileBlurShader())
          return;
 
@@ -666,7 +684,7 @@ index 9d426e3..6f1e739 100644
      m_initialized = false;
  }
 diff --git a/src/ShaderManager.hpp b/src/ShaderManager.hpp
-index 9b46928..e16fe73 100644
+index 9b46928..f3b8da1 100644
 --- a/src/ShaderManager.hpp
 +++ b/src/ShaderManager.hpp
 @@ -7,6 +7,7 @@
@@ -696,24 +714,27 @@ index 9b46928..e16fe73 100644
  };
 
  struct SBlurUniforms {
-@@ -48,6 +61,9 @@ class CShaderManager {
+@@ -48,6 +61,12 @@ class CShaderManager {
 
      SP<CShader>    blurShader = makeShared<CShader>();
      SBlurUniforms  blurUniforms;
 +    SP<CShader> contourShader = makeShared<CShader>();
 +    GLint contourStep = -1;
 +    GLint contourThreshold = -1;
++    GLint contourFieldSize = -1;
++    GLint contourFieldPixelSize = -1;
++    GLint contourDistanceLimit = -1;
 
    private:
      bool m_initialized = false;
-@@ -55,4 +71,5 @@ class CShaderManager {
+@@ -55,4 +74,5 @@ class CShaderManager {
      [[nodiscard]] static std::string loadShaderSource(const char* fileName);
      [[nodiscard]] bool compileGlassShader();
      [[nodiscard]] bool compileBlurShader();
 +    [[nodiscard]] bool compileContourShader();
  };
 diff --git a/src/Shaders.hpp b/src/Shaders.hpp
-index 947479e..7e9bafa 100644
+index 947479e..98c8a5c 100644
 --- a/src/Shaders.hpp
 +++ b/src/Shaders.hpp
 @@ -35,6 +35,7 @@ uniform vec2 uvPadding;
@@ -731,7 +752,7 @@ index 947479e..7e9bafa 100644
 +uniform float frameThickness;
 +uniform vec2 frameSize;
 +uniform vec2 frameOffset;
-+uniform sampler2D contourTex;
++uniform highp sampler2D contourTex;
 +uniform int useContour;
 +uniform float contourWidth;
 
@@ -783,7 +804,7 @@ index 947479e..7e9bafa 100644
      return getRoundedBoxSDF(uv, radius);
  }
 
-@@ -105,17 +133,37 @@ float getCornerSDF(vec2 uv) {
+@@ -105,17 +133,56 @@ float getCornerSDF(vec2 uv) {
  // ============================================================================
 
  vec2 refractionDir(vec2 uv) {
@@ -800,8 +821,27 @@ index 947479e..7e9bafa 100644
  }
 
 +float contourDistance(vec2 uv) {
-+    vec4 field = texture(contourTex, clamp(uv, vec2(0), vec2(1)));
-+    return field.z > 0.5 ? length(field.xy) : 64.0;
++    // Interpolate scalar distances, never nearest-seed vectors: opposing
++    // vectors cancel on the medial axis and invent a bright, refracting seam.
++    return texture(contourTex, clamp(uv, vec2(0), vec2(1))).w;
++}
++
++vec2 contourGradient(vec2 uv) {
++    float span = max(2.0, contourWidth * 0.15);
++    vec2 d = span / vec2(textureSize(maskTex, 0));
++    float nw = contourDistance(uv + vec2(-d.x, -d.y));
++    float n  = contourDistance(uv + vec2( 0.0, -d.y));
++    float ne = contourDistance(uv + vec2( d.x, -d.y));
++    float w  = contourDistance(uv + vec2(-d.x,  0.0));
++    float e  = contourDistance(uv + vec2( d.x,  0.0));
++    float sw = contourDistance(uv + vec2(-d.x,  d.y));
++    float s  = contourDistance(uv + vec2( 0.0,  d.y));
++    float se = contourDistance(uv + vec2( d.x,  d.y));
++    vec2 gradient = vec2(ne + 2.0 * e + se - nw - 2.0 * w - sw,
++                         sw + 2.0 * s + se - nw - 2.0 * n - ne) / (8.0 * span);
++    // Preserve cancellation where edges meet. Normalizing a tiny gradient
++    // back to unit length causes abrupt direction flips in thin surfaces.
++    return gradient / max(length(gradient), 1.0);
 +}
 +
 +// Interleaved gradient noise has a well-distributed local value range without
@@ -821,26 +861,21 @@ index 947479e..7e9bafa 100644
 
      // Layers only: sample the temp FBO to get the rendered surface pixel.
      // Discard fully transparent fragments so glass only covers visible content.
-@@ -143,17 +191,34 @@ void main() {
+@@ -143,17 +210,29 @@ void main() {
          }
      }
 
 -    float cornerSdf = getCornerSDF(uv);
-+    vec4 contour = vec4(0.0);
-+    vec2 boundaryVector = vec2(0.0);
 +    vec2 contourNormal = vec2(0.0);
++    float contourDepth = 0.0;
 +    if (useContour == 1) {
 +        vec2 fieldUV = uv * maskUVScale + maskUVOffset;
-+        contour = texture(contourTex, fieldUV);
-+        boundaryVector = contour.xy * vec2(textureSize(maskTex, 0)) / vec2(textureSize(contourTex, 0));
-+        // Differentiate over a wider stencil to suppress raster seed steps.
-+        vec2 d = 2.0 / vec2(textureSize(contourTex, 0));
-+        contourNormal = vec2(
-+            contourDistance(fieldUV + vec2(d.x, 0)) - contourDistance(fieldUV - vec2(d.x, 0)),
-+            contourDistance(fieldUV + vec2(0, d.y)) - contourDistance(fieldUV - vec2(0, d.y)));
++        contourDepth = max(contourDistance(fieldUV), 0.0);
++        if (contourDepth < contourWidth * 3.0)
++            contourNormal = contourGradient(fieldUV);
 +    }
 +    float cornerSdf = useContour == 1
-+        ? (contour.z > 0.5 ? -length(boundaryVector) : -1000.0)
++        ? -contourDepth
 +        : getCornerSDF(uv);
 
      if (cornerSdf > 0.0) {
@@ -859,28 +894,42 @@ index 947479e..7e9bafa 100644
 
      // ========================================
      // EDGE PROXIMITY + DIRECTION
-@@ -161,7 +226,8 @@ void main() {
+@@ -161,7 +240,15 @@ void main() {
      // inwardDir: pixel-space direction toward center (smooth everywhere)
      // ========================================
      float edgeProximity = exp(cornerSdf / bezelWidthPx);
 -    vec2 inwardDir = refractionDir(uv);
-+    vec2 inwardDir = useContour == 1
-+        ? contourNormal / max(length(contourNormal), 0.001) : refractionDir(uv);
++    if (useContour == 1) {
++        // Keep the original optical response over the visible shoulder.
++        // Only taper its distant tail before the bounded distance field ends.
++        // The scalar field and smooth gradient fix seams independently of
++        // preset strength; reducing all displacement also erases dispersion.
++        float t = clamp((contourDepth / max(bezelWidthPx, 0.001) - 2.0), 0.0, 1.0);
++        edgeProximity *= 1.0 - t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
++    }
++    vec2 inwardDir = useContour == 1 ? contourNormal : refractionDir(uv);
 
      // ========================================
      // EDGE REFRACTION
-@@ -170,7 +236,9 @@ void main() {
+@@ -170,7 +257,8 @@ void main() {
      // and distorts what's already behind the window, without reaching
      // beyond the window boundary.
      // ========================================
 -    float refractionPx = refractionStrength * 50.0;
-+    // Unified surfaces need a wider optical shoulder than the old per-panel
-+    // path: the alpha contour is the only boundary available to the lens.
++    float chromaSpread = chromaticAberration * 0.35;
 +    float refractionPx = refractionStrength * (useContour == 1 ? contourWidth * 0.95 : 50.0);
      float refractionMag = edgeProximity * refractionPx;
      vec2 baseOffset = inwardDir * refractionMag / fullSize;
 
-@@ -188,7 +256,7 @@ void main() {
+@@ -178,7 +266,6 @@ void main() {
+     // CHROMATIC ABERRATION — per-channel refraction scale
+     // Blue refracts more than red → natural spectral fringing at edges.
+     // ========================================
+-    float chromaSpread = chromaticAberration * 0.35;
+     vec2 offsetR = baseOffset * (1.0 - chromaSpread);
+     vec2 offsetG = baseOffset;
+     vec2 offsetB = baseOffset * (1.0 + chromaSpread);
+@@ -188,7 +275,7 @@ void main() {
      // Fades near edges so it doesn't interfere with edge refraction.
      // ========================================
      vec2 domeUV = vec2(0.0);
@@ -889,7 +938,7 @@ index 947479e..7e9bafa 100644
          vec2 c = (uv - 0.5) * 2.0;
          vec2 dGrad = vec2(
              -4.0 * c.x * (1.0 - c.y * c.y),
-@@ -217,6 +285,28 @@ void main() {
+@@ -217,6 +304,28 @@ void main() {
          color = sampleBlurred(uvG).rgb;
      }
 
@@ -918,7 +967,7 @@ index 947479e..7e9bafa 100644
      // ========================================
      // FROSTED TINT (per-theme tone mapping)
      // ========================================
-@@ -261,7 +351,7 @@ void main() {
+@@ -261,7 +370,7 @@ void main() {
      // SPECULAR — subtle top highlight (edge zone)
      // ========================================
      if (specularStrength > 0.001) {
@@ -927,7 +976,7 @@ index 947479e..7e9bafa 100644
          float spec = topBias * edgeProximity * edgeProximity * specularStrength * 0.08;
          color += vec3(1.0, 0.99, 0.97) * spec;
      }
-@@ -270,11 +360,18 @@ void main() {
+@@ -270,11 +379,18 @@ void main() {
      // INNER SHADOW (bottom rim)
      // ========================================
      {
@@ -947,7 +996,7 @@ index 947479e..7e9bafa 100644
      float glassA = glassOpacity * cornerAlpha;
 
      if (hasMask) {
-@@ -298,6 +395,61 @@ void main() {
+@@ -298,6 +414,75 @@ void main() {
          fragColor = vec4(color * glassA, glassA);
      }
  }
@@ -957,36 +1006,47 @@ index 947479e..7e9bafa 100644
 +#version 300 es
 +precision highp float;
 +precision highp int;
-+uniform sampler2D tex;
++uniform highp sampler2D tex;
 +uniform int jumpStep;
 +uniform float threshold;
++uniform vec2 fieldSize;
++uniform vec2 fieldPixelSize;
++uniform float distanceLimit;
 +in vec2 v_texcoord;
 +layout(location = 0) out vec4 fragColor;
-+
-+bool inside(vec2 uv) {
-+    if (any(lessThan(uv, vec2(0))) || any(greaterThanEqual(uv, vec2(1))))
-+        return false;
-+    return texture(tex, uv).a >= threshold;
-+}
 +
 +void main() {
 +    vec2 size = vec2(textureSize(tex, 0));
 +    if (jumpStep == 0) {
 +        // Seed only the outer alpha contour, never card/text alpha changes.
-+        bool center = inside(v_texcoord);
++        float alpha = texture(tex, v_texcoord).a;
++        bool center = alpha >= threshold;
 +        vec2 nearest = vec2(0);
 +        float best = 1e10;
 +        for (int y = -1; y <= 1; ++y) {
 +            for (int x = -1; x <= 1; ++x) {
-+                vec2 delta = vec2(x, y) * 2.0 / size;
-+                if (inside(v_texcoord + delta) != center) {
-+                    vec2 offset = vec2(x, y) * 0.5;
-+                    float d = dot(offset, offset);
++                // Probe near native pixel spacing even though propagation
++                // uses a half-resolution field. Wider probes make a moving
++                // alpha edge jump between coarse threshold estimates.
++                vec2 delta = vec2(x, y) * 0.5;
++                vec2 sampleUV = v_texcoord + delta / fieldSize;
++                // A monitor crop is not a glass edge. Inventing seeds here
++                // puts an artificial opposing lens down the middle of a bar
++                // attached to the screen edge.
++                if (any(lessThan(sampleUV, vec2(0))) || any(greaterThanEqual(sampleUV, vec2(1))))
++                    continue;
++                float neighborAlpha = texture(tex, sampleUV).a;
++                if ((neighborAlpha >= threshold) != center) {
++                    float crossing = clamp((threshold - alpha) / (neighborAlpha - alpha), 0.0, 1.0);
++                    vec2 offset = delta * crossing;
++                    vec2 pixelOffset = offset * fieldPixelSize;
++                    float d = dot(pixelOffset, pixelOffset);
 +                    if (d < best) { best = d; nearest = offset; }
 +                }
 +            }
 +        }
-+        fragColor = vec4(nearest, best < 1e9 ? 1.0 : 0.0, 1.0);
++        float distance = min(sqrt(best), distanceLimit);
++        fragColor = vec4(nearest, best < 1e9 ? 1.0 : 0.0, center ? distance : -distance);
 +        return;
 +    }
 +    ivec2 p = ivec2(gl_FragCoord.xy);
@@ -1000,11 +1060,14 @@ index 947479e..7e9bafa 100644
 +                continue;
 +            vec4 candidate = texelFetch(tex, q, 0);
 +            vec2 offset = candidate.xy + vec2(delta);
-+            float d = dot(offset, offset);
++            vec2 pixelOffset = offset * fieldPixelSize;
++            float d = dot(pixelOffset, pixelOffset);
 +            if (candidate.z > 0.5 && d < best) { best = d; nearest = offset; }
 +        }
 +    }
-+    fragColor = vec4(nearest, best < 1e9 ? 1.0 : 0.0, 1.0);
++    // The distance sign belongs to this pixel, not to the winning seed.
++    float side = texelFetch(tex, p, 0).w >= 0.0 ? 1.0 : -1.0;
++    fragColor = vec4(nearest, best < 1e9 ? 1.0 : 0.0, side * min(sqrt(best), distanceLimit));
 +}
  )GLSL"},
 

@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Window
 import Quickshell
@@ -9,6 +11,66 @@ Item {
 
     required property var targetWindow
     property var materialRegion
+    readonly property bool active: !GameMode.enabled
+
+    function syncGeometry(): void {
+        if (materialRegion)
+            for (const region of materialRegion.regions)
+                region.syncGeometry();
+    }
+
+    function clearRegion(): void {
+        if (targetWindow)
+            targetWindow.BackgroundEffect.blurRegion = null;
+        if (materialRegion) {
+            materialRegion.destroy();
+            materialRegion = null;
+        }
+    }
+
+    function rebuild(): void {
+        if (!targetWindow)
+            return;
+
+        if (!active) {
+            clearRegion();
+            return;
+        }
+
+        const itemRegions = [];
+        const nextRegion = regionComponent.createObject(root);
+        for (const entry of MaterialBlur.itemsFor(targetWindow)) {
+            const item = entry.item;
+            if (!item)
+                continue;
+
+            const itemRegion = itemRegionComponent.createObject(nextRegion, { "target": item });
+            if (itemRegion) {
+                itemRegion.syncGeometry();
+                itemRegions.push(itemRegion);
+            }
+        }
+
+        if (itemRegions.length === 0) {
+            nextRegion.destroy();
+            clearRegion();
+            return;
+        }
+
+        nextRegion.regions = itemRegions;
+        const previousRegion = materialRegion;
+        materialRegion = nextRegion;
+        targetWindow.BackgroundEffect.blurRegion = materialRegion;
+        if (previousRegion)
+            previousRegion.destroy();
+    }
+
+    onActiveChanged: rebuild()
+    Component.onCompleted: rebuild()
+    Component.onDestruction: {
+        if (targetWindow)
+            targetWindow.BackgroundEffect.blurRegion = null;
+    }
 
     Component {
         id: regionComponent
@@ -42,69 +104,23 @@ Item {
         }
     }
 
-    function syncGeometry(): void {
-        if (materialRegion)
-            for (const region of materialRegion.regions)
-                region.syncGeometry();
-    }
-
-    function rebuild(): void {
-        if (!targetWindow)
-            return;
-
-        const itemRegions = [];
-        const nextRegion = regionComponent.createObject(root);
-        for (const entry of MaterialBlur.itemsFor(targetWindow)) {
-            const item = entry.item;
-            if (!item)
-                continue;
-
-            const itemRegion = itemRegionComponent.createObject(nextRegion, { "target": item });
-            if (itemRegion) {
-                itemRegion.syncGeometry();
-                itemRegions.push(itemRegion);
-            }
-        }
-
-        if (itemRegions.length === 0) {
-            nextRegion.destroy();
-            if (materialRegion) {
-                targetWindow.BackgroundEffect.blurRegion = null;
-                materialRegion.destroy();
-                materialRegion = null;
-            }
-            return;
-        }
-
-        nextRegion.regions = itemRegions;
-        const previousRegion = materialRegion;
-        materialRegion = nextRegion;
-        targetWindow.BackgroundEffect.blurRegion = materialRegion;
-        if (previousRegion)
-            previousRegion.destroy();
-    }
-
-    Component.onCompleted: rebuild()
-    Component.onDestruction: {
-        if (targetWindow)
-            targetWindow.BackgroundEffect.blurRegion = null;
-    }
-
     Connections {
-        // Region.item does not observe ancestor transforms. Update before the
-        // frame is polished/committed, without starting an idle animation timer.
-        target: root.targetWindow?.contentItem.Window.window ?? null
-
         function onAfterAnimating(): void {
             root.syncGeometry();
         }
+
+        // Region.item does not observe ancestor transforms. Update before the
+        // frame is polished/committed, without starting an idle animation timer.
+        target: root.targetWindow?.contentItem.Window.window ?? null
+        enabled: root.active
     }
 
     Connections {
-        target: MaterialBlur
-
         function onItemsChanged(): void {
             root.rebuild();
         }
+
+        target: MaterialBlur
+        enabled: root.active
     }
 }
