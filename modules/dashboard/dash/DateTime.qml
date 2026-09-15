@@ -23,7 +23,7 @@ Item {
             Layout.bottomMargin: -(font.pointSize * 0.4)
             Layout.alignment: Qt.AlignHCenter
             text: Time.hourStr
-            color: Colours.palette.m3secondary
+            color: Colours.panelTextSecondary
             font: Tokens.font.clock.size(28).weight(Font.DemiBold).build()
         }
 
@@ -38,7 +38,7 @@ Item {
             Layout.topMargin: -(font.pointSize * 0.4)
             Layout.alignment: Qt.AlignHCenter
             text: Time.minuteStr
-            color: Colours.palette.m3secondary
+            color: Colours.panelTextSecondary
             font: Tokens.font.clock.size(28).weight(Font.DemiBold).build()
         }
 

@@ -205,13 +205,15 @@ CustomMouseArea {
                         horizontalAlignment: Text.AlignHCenter
                         text: root.showLunar ? (Lunar.fromDate(dayItem.model.date)?.day ?? "") : grid.locale.toString(dayItem.model.day)
                         color: {
+                            if (!dayItem.model.today && dayItem.model.month !== grid.month)
+                                return Colours.palette.m3onSurfaceVariant;
+
                             const dayOfWeek = dayItem.model.date.getDay();
                             if (dayOfWeek === 0 || dayOfWeek === 6)
                                 return Colours.palette.m3tertiary;
 
-                            return Colours.palette.m3onSurfaceVariant;
+                            return Colours.panelTextSecondary;
                         }
-                        opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
                         font: Tokens.font.body.small
                     }
                 }

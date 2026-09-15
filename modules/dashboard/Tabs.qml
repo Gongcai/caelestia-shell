@@ -160,7 +160,7 @@ Item {
                 anchors.bottom: label.top
 
                 text: tab.iconName
-                color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                color: tab.current ? Colours.palette.m3primary : Colours.panelTextSecondary
                 fill: tab.current ? 1 : 0
                 fontStyle: Tokens.font.icon.medium
 
@@ -178,7 +178,7 @@ Item {
                 anchors.bottom: parent.bottom
 
                 text: tab.text
-                color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                color: tab.current ? Colours.palette.m3primary : Colours.panelTextSecondary
             }
         }
     }

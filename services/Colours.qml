@@ -42,6 +42,8 @@ Singleton {
     readonly property real pressedStateOpacity: 0.12
     readonly property real shadowOpacity: light ? 0.18 : 0.38
     readonly property color panelSurface: palette.m3surfaceContainerLow
+    // Opaque secondary text keeps its contrast over translucent panel surfaces.
+    readonly property color panelTextSecondary: blendColours(palette.m3onSurfaceVariant, palette.m3onSurface, 0.5)
     readonly property color selectedSurface: palette.m3primaryContainer
     readonly property color selectedOnSurface: palette.m3onPrimaryContainer
     readonly property color controlFill: Qt.alpha(palette.m3onSurface, light ? 0.08 : 0.12)
