@@ -263,11 +263,10 @@ up to 32 region rectangles.
 - Historical rounding-only patch: [patches/hyprglass-layer-rounding.patch](patches/hyprglass-layer-rounding.patch).
 - Built library: `~/.local/lib/hyprland/hyprglass.so`.
 - Installed contour/optics library:
-  `~/.local/lib/hyprland/hyprglass-contour-optics-623a1d337811.so`.
-  The startup symlink points to this file, and the current Hyprland session
-  has it mapped after a normal login. Future library replacements likewise
-  require a normal compositor restart; restarting Quickshell or reloading
-  Lua alone does not replace the shader. The previous libraries are retained.
+  `~/.local/lib/hyprland/hyprglass-contour-repair-ad9d19bc46af.so`.
+  The startup symlink and the current Hyprland session both point to this
+  file. Restarting Quickshell or reloading Lua alone does not replace the
+  shader. Previous libraries are retained.
 - Effect settings: `~/.config/hypr/hyprglass.lua`, included by `hyprland.lua`.
 - Startup loader: `~/.local/bin/caelestia-hyprglass`.
 
@@ -341,8 +340,9 @@ material-region compositing, opaque foregrounds, zero refraction and linear
 strength scaling. With the restored optical strength, the largest offset
 step during a 0.125-logical-pixel edge movement at 1.6x is 0.430 logical
 pixels. The previous capped version fails the new parameter-compatibility
-checks. These are isolated rendering checks. The installed contour/optics
-library has subsequently been activated through a normal Hyprland login.
+checks. These are isolated rendering checks. The repaired library is active
+in the current Hyprland session after a normal login; shell switching only
+reloads its Caelestia configuration and does not replace the mapped library.
 
 The material clipping regression additionally composites rounded cards above
 a 0.14-alpha drawer background, including 8-bit alpha quantization. Nine cases

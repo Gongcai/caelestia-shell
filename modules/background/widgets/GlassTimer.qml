@@ -21,7 +21,8 @@ Item {
     readonly property var timer: DesktopTimers.forScreen(screenName)
     readonly property string status: timer.status
     readonly property int remainingSeconds: Math.ceil(DesktopTimers.remaining(screenName) / 1000)
-    readonly property int selectedDuration: Math.max(0, Math.min(5999, widgetConfig.duration))
+    readonly property int configuredDuration: Math.max(0, Math.min(5999, widgetConfig.duration))
+    readonly property int selectedDuration: Math.max(0, minutesWheel.currentIndex) * 60 + Math.max(0, secondsWheel.currentIndex)
     readonly property string remainingText: String(Math.floor(remainingSeconds / 60)).padStart(2, "0") + ":" + String(remainingSeconds % 60).padStart(2, "0")
 
     function setDuration(minutes: int, seconds: int): void {
@@ -35,8 +36,14 @@ Item {
             DesktopTimers.resume(screenName);
         else if (status === "finished")
             DesktopTimers.cancel(screenName);
-        else
-            DesktopTimers.start(screenName, selectedDuration);
+        else {
+            // Snapshot the visible choice before stopping any remaining wheel motion.
+            const duration = selectedDuration;
+            minutesWheel.positionViewAtIndex(minutesWheel.currentIndex, Tumbler.Center);
+            secondsWheel.positionViewAtIndex(secondsWheel.currentIndex, Tumbler.Center);
+            widgetConfig.duration = duration;
+            DesktopTimers.start(screenName, duration);
+        }
     }
 
     implicitWidth: (widgetConfig.wide ? 560 : 280) * widgetScale
@@ -131,10 +138,12 @@ Item {
                     spacing: 4 * root.widgetScale
 
                     TimeWheel {
+                        id: minutesWheel
+
                         objectName: "timerMinutes"
                         model: 100
-                        currentIndex: Math.floor(root.selectedDuration / 60)
-                        onValueSelected: value => root.setDuration(value, root.selectedDuration % 60)
+                        currentIndex: Math.floor(root.configuredDuration / 60)
+                        onValueSelected: value => root.setDuration(value, root.configuredDuration % 60)
                     }
 
                     StyledText {
@@ -144,10 +153,12 @@ Item {
                     }
 
                     TimeWheel {
+                        id: secondsWheel
+
                         objectName: "timerSeconds"
                         model: 60
-                        currentIndex: root.selectedDuration % 60
-                        onValueSelected: value => root.setDuration(Math.floor(root.selectedDuration / 60), value)
+                        currentIndex: root.configuredDuration % 60
+                        onValueSelected: value => root.setDuration(Math.floor(root.configuredDuration / 60), value)
                     }
 
                     StyledText {
@@ -202,12 +213,14 @@ Item {
     }
 
     component TimeWheel: Tumbler {
+        id: wheel
+
         property bool ready
 
         signal valueSelected(value: int)
 
         function commitSelection(): void {
-            if (ready && !moving && currentIndex >= 0)
+            if (ready && root.status === "idle" && !moving && currentIndex >= 0)
                 valueSelected(currentIndex);
         }
 
@@ -229,6 +242,24 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font: Tokens.font.body.builders.small.size(24 * root.widgetScale).build()
+        }
+
+        MouseArea {
+            property real remainder
+
+            anchors.fill: parent
+            z: 1
+            acceptedButtons: Qt.NoButton
+            enabled: wheel.ready && root.status === "idle"
+            onWheel: event => {
+                const delta = event.pixelDelta.y ? event.pixelDelta.y / (wheel.availableHeight / wheel.visibleItemCount) : event.angleDelta.y / 120;
+                remainder -= delta;
+                const steps = Math.trunc(remainder);
+                remainder -= steps;
+                if (steps)
+                    wheel.valueSelected(Math.max(0, Math.min(wheel.count - 1, wheel.currentIndex + steps)));
+                event.accepted = true;
+            }
         }
     }
 }

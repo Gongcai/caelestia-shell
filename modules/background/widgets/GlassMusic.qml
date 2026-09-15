@@ -219,7 +219,7 @@ Item {
         objectName: "musicPlayer"
         x: root.width - root.padding - width * 2
         y: root.tall ? root.height - 156 * root.widgetScale : 12 * root.widgetScale
-        visible: !root.compact && Players.list.length > 1
+        visible: !root.compact && !root.lyricsVisible && Players.list.length > 1
         foreground: surface.foreground
         widgetScale: root.widgetScale
         icon: "speaker_group"
